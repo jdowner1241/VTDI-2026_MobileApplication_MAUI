@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.Color.BaseColors">
+
+
+    <!--  Red -->
+    <Color x:Key="red100">#f8d7da</Color>
+    <Color x:Key="red200">#f1aeb5</Color>
+    <Color x:Key="red300">#e2818c</Color>
+    <Color x:Key="red400">#d6536f</Color>
+    <Color x:Key="red500">#c82333</Color>
+    <Color x:Key="red600">#a71d2a</Color>
+    <Color x:Key="red700">#7a1320</Color>
+    <Color x:Key="red800">#521019</Color>
+    <Color x:Key="red900">#341013</Color>
+
+    <!--  Green -->
+    <Color x:Key="green100">#d1e7dd</Color>
+    <Color x:Key="green200">#a3cfbb</Color>
+    <Color x:Key="green300">#75b798</Color>
+    <Color x:Key="green400">#4a9d77</Color>
+    <Color x:Key="green500">#198754</Color>
+    <Color x:Key="green600">#146c43</Color>
+    <Color x:Key="green700">#0f5132</Color>
+    <Color x:Key="green800">#0a3622</Color>
+    <Color x:Key="green900">#051b11</Color>
+
+
+    <!--  Blue -->
+    <Color x:Key="blue100">#e6f0ff</Color>
+    <Color x:Key="blue200">#b3d1ff</Color>
+    <Color x:Key="blue300">#80b3ff</Color>
+    <Color x:Key="blue400">#4d94ff</Color>
+    <Color x:Key="blue500">#1a75ff</Color>
+    <Color x:Key="blue600">#005ce6</Color>
+    <Color x:Key="blue700">#0047b3</Color>
+    <Color x:Key="blue800">#003380</Color>
+    <Color x:Key="blue900">#001f4d</Color>
+
+
+    <!--  Purple -->
+    <Color x:Key="purple100">#e2d9f3</Color>
+    <Color x:Key="purple200">#c5b3e6</Color>
+    <Color x:Key="purple300">#a98eda</Color>
+    <Color x:Key="purple400">#8c68cd</Color>
+    <Color x:Key="purple500">#6f42c1</Color>
+    <Color x:Key="purple600">#59359a</Color>
+    <Color x:Key="purple700">#432874</Color>
+    <Color x:Key="purple800">#2c1a4d</Color>
+    <Color x:Key="purple900">#160d27</Color>
+
+    <!--  Yellow -->
+    <Color x:Key="yellow100">#fff3cd</Color>
+    <Color x:Key="yellow200">#ffe69c</Color>
+    <Color x:Key="yellow300">#ffda6a</Color>
+    <Color x:Key="yellow400">#ffcd39</Color>
+    <Color x:Key="yellow500">#ffc107</Color>
+    <Color x:Key="yellow600">#cc9a06</Color>
+    <Color x:Key="yellow700">#997404</Color>
+    <Color x:Key="yellow800">#664d03</Color>
+    <Color x:Key="yellow900">#332701</Color>
+
+
+    <!--  Orange -->
+    <Color x:Key="orange100">#ffe5d0</Color>
+    <Color x:Key="orange200">#fecba1</Color>
+    <Color x:Key="orange300">#feaf74</Color>
+    <Color x:Key="orange400">#fd9446</Color>
+    <Color x:Key="orange500">#fd7e14</Color>
+    <Color x:Key="orange600">#ca6510</Color>
+    <Color x:Key="orange700">#984c0c</Color>
+    <Color x:Key="orange800">#653208</Color>
+    <Color x:Key="orange900">#331904</Color>
+
+
+    <!--  Cyan -->
+    <Color x:Key="cyan100">#cff4fc</Color>
+    <Color x:Key="cyan200">#9eeaf9</Color>
+    <Color x:Key="cyan300">#6edff6</Color>
+    <Color x:Key="cyan400">#3dd5f3</Color>
+    <Color x:Key="cyan500">#0dcaf0</Color>
+    <Color x:Key="cyan600">#0aa2c0</Color>
+    <Color x:Key="cyan700">#087990</Color>
+    <Color x:Key="cyan800">#055160</Color>
+    <Color x:Key="cyan900">#032830</Color>
+
+
+    <!--  Teal -->
+    <Color x:Key="teal100">#d2f4ea</Color>
+    <Color x:Key="teal200">#a6e9d5</Color>
+    <Color x:Key="teal300">#79dfc1</Color>
+    <Color x:Key="teal400">#4dd4ac</Color>
+    <Color x:Key="teal500">#20c997</Color>
+    <Color x:Key="teal600">#1aa179</Color>
+    <Color x:Key="teal700">#13795b</Color>
+    <Color x:Key="teal800">#0d503c</Color>
+    <Color x:Key="teal900">#06281e</Color>
+
+    <!--  Pink -->
+    <Color x:Key="pink100">#f7d6e6</Color>
+    <Color x:Key="pink200">#efadce</Color>
+    <Color x:Key="pink300">#e685b5</Color>
+    <Color x:Key="pink400">#de5c9d</Color>
+    <Color x:Key="pink500">#d63384</Color>
+    <Color x:Key="pink600">#ab296a</Color>
+    <Color x:Key="pink700">#801f4f</Color>
+    <Color x:Key="pink800">#561435</Color>
+    <Color x:Key="pink900">#2b0a1a</Color>
+
+    <!--  Indigo -->
+    <Color x:Key="indigo100">#e0cffc</Color>
+    <Color x:Key="indigo200">#c29ffa</Color>
+    <Color x:Key="indigo300">#a370f7</Color>
+    <Color x:Key="indigo400">#8540f5</Color>
+    <Color x:Key="indigo500">#6610f2</Color>
+    <Color x:Key="indigo600">#520dc2</Color>
+    <Color x:Key="indigo700">#3d0a91</Color>
+    <Color x:Key="indigo800">#290661</Color>
+    <Color x:Key="indigo900">#1a043f</Color>
+
+    <!--  Black -->
+    <Color x:Key="black100">#e0e0e0</Color>
+    <Color x:Key="black200">#bdbdbd</Color>
+    <Color x:Key="black300">#9e9e9e</Color>
+    <Color x:Key="black400">#757575</Color>
+    <Color x:Key="black500">#000000</Color>
+    <Color x:Key="black600">#000000</Color>
+    <Color x:Key="black700">#000000</Color>
+    <Color x:Key="black800">#000000</Color>
+    <Color x:Key="black900">#000000</Color>
+
+    <!--  White -->
+    <Color x:Key="white100">#ffffff</Color>
+    <Color x:Key="white200">#ffffff</Color>
+    <Color x:Key="white300">#ffffff</Color>
+    <Color x:Key="white400">#ffffff</Color>
+    <Color x:Key="white500">#ffffff</Color>
+    <Color x:Key="white600">#f8f9fa</Color>
+    <Color x:Key="white700">#e9ecef</Color>
+    <Color x:Key="white800">#dee2e6</Color>
+    <Color x:Key="white900">#ced4da</Color>
+
+
+    <!--  Gray -->
+    <Color x:Key="gray100">#f8f9fa</Color>
+    <Color x:Key="gray200">#e9ecef</Color>
+    <Color x:Key="gray300">#dee2e6</Color>
+    <Color x:Key="gray400">#ced4da</Color>
+    <Color x:Key="gray500">#adb5bd</Color>
+    <Color x:Key="gray600">#6c757d</Color>
+    <Color x:Key="gray700">#495057</Color>
+    <Color x:Key="gray800">#343a40</Color>
+    <Color x:Key="gray900">#212529</Color>
+
+</ResourceDictionary>

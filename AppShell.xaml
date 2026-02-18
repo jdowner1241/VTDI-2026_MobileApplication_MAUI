@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Mystic_ToDo_MAUI_.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Mystic_ToDo_MAUI_"
+    xmlns:view="clr-namespace:Mystic_ToDo_MAUI_.View"
+    Title="Mystic_ToDo_MAUI_"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <Tab Title="Home" Icon="dotnet_bot.png">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate view:Home}"
+                Route="Home" />
+        </Tab>
+        <Tab Title="Calendar" Icon="dotnet_bot.png">
+            <ShellContent
+                Title="Calendar"
+                ContentTemplate="{DataTemplate view:Calendar}"
+                Route="Calendar" />
+        </Tab>
+        <Tab Title="Settings" Icon="dotnet_bot.png">
+            <ShellContent
+                Title="Setting"
+                ContentTemplate="{DataTemplate view:Setting}"
+                Route="Setting" />
+        </Tab>
+    </TabBar>
+
+</Shell>
