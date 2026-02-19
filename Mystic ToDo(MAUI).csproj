@@ -72,8 +72,13 @@
 
 	<ItemGroup>
 	  <Folder Include="Model\" />
-	  <Folder Include="Resources\SharedResources\backup\" />
 	  <Folder Include="ViewModel\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\SharedResources\Color\CustomeStyles.xaml.cs">
+	    <DependentUpon>CustomeStyles.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,6 +89,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\SharedResources\Color\Themes\Theme_Light.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\SharedResources\Color\CustomeStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\Calendar.xaml">

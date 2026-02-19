@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                    x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.Color.Themes.Theme_Light"
-                    x:Name="light">
+                    x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.Color.Themes.Theme_Light">
 
 
     <!-- Merge the dictionary that defines the Base colors -->
@@ -52,8 +51,23 @@
     <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource blue500}" />
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource green500}" />
     <SolidColorBrush x:Key="DisabledBrush" Color="{StaticResource gray500}" />
-
-    <!-- 50% black -->
+    <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource blue500}" />
+    <SolidColorBrush x:Key="UnselectedBrush" Color="{StaticResource gray600}" />
+    
+    <!-- Inverted Color -->
     <SolidColorBrush x:Key="InverseTextBrush" Color="{StaticResource white500}" />
+
+
+    <!-- Control Colors -->
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{StaticResource blue300}" />
+    <SolidColorBrush x:Key="ControlTextBrush" Color="{StaticResource black500}" />
+    <SolidColorBrush x:Key="PlaceholderTextBrush" Color="{StaticResource gray600}" />
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource purple600}" />
+    <SolidColorBrush x:Key="NavigationBarBrush" Color="{StaticResource purple400}" />
+    <SolidColorBrush x:Key="NavigationTextBrush" Color="{StaticResource black400}" />
+    <SolidColorBrush x:Key="TabBarBackgroundBrush" Color="{StaticResource gray500}" />
+    <SolidColorBrush x:Key="TabBarTextBrush" Color="{StaticResource black400}" />
+
+
 
 </ResourceDictionary>

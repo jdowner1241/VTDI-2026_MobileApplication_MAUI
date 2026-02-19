@@ -9,16 +9,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
 
-        <!-- Custom Colors and Themes -->
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
+                <!-- Custom Colors and Themes -->
                 <ResourceDictionary Source="Resources/SharedResources/Color/BaseColors.xaml" />
-                <ResourceDictionary Source="Resources/SharedResources/Color/Themes/Theme_Light.xaml" />
-                <ResourceDictionary Source="Resources/SharedResources/Color/Themes/Theme_Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+    
+
 </Application>

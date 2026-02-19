@@ -13,7 +13,13 @@ namespace Mystic_ToDo_MAUI_
 
         private void customIntial()
         {
-            new ThemeSwitcher().setTheme("Dark");
+            LoadTheme();
+        }
+
+        private static void LoadTheme()
+        {
+            var CurrentTheme = new ThemeSwitcher();
+            CurrentTheme.setTheme("Light");
         }
     }
 }
