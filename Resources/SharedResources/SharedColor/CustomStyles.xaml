@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.Styles">
+             x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.CustomStyles">
 
 
 
@@ -58,22 +58,22 @@
 
     <!-- CheckBox -->
     <Style TargetType="CheckBox">
-            <Setter Property="Color" Value="{StaticResource PrimaryBrush}" />
-            <Setter Property="MinimumHeightRequest" Value="44"/>
-            <Setter Property="MinimumWidthRequest" Value="44"/>
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal" />
-                        <VisualState x:Name="Disabled">
-                            <VisualState.Setters>
-                                <Setter Property="Color" Value="{StaticResource DisabledBrush}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
+        <Setter Property="Color" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="MinimumWidthRequest" Value="44"/>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Color" Value="{StaticResource DisabledBrush}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
 
     <!-- DatePicker -->
     <Style TargetType="DatePicker">
@@ -135,7 +135,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                        <Setter Property="TextColor" Value="{StaticResource DisabledBrush}" />
+                            <Setter Property="TextColor" Value="{StaticResource DisabledBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -170,22 +170,22 @@
     <!-- Label (Default) -->
     <Style TargetType="Label">
         <Setter Property="TextColor" Value="{StaticResource TextHeaderBrush}" />
-            <Setter Property="BackgroundColor" Value="Transparent" />
-            <Setter Property="FontFamily" Value="OpenSansRegular" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal" />
-                        <VisualState x:Name="Disabled">
-                            <VisualState.Setters>
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
                             <Setter Property="TextColor" Value="{StaticResource DisabledBrush}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
 
 
     <!-- Label-Header -->
@@ -196,7 +196,7 @@
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
 
-    <!-- Label-Header --> 
+    <!-- Label-Header -->
     <Style TargetType="Label" x:Key="SubHeadline">
         <Setter Property="TextColor" Value="{StaticResource TextHeaderBrush}" />
         <Setter Property="FontSize" Value="24" />
@@ -228,23 +228,23 @@
         </Setter>
     </Style>
 
-    
+
     <!-- ProgressBar -->
-        <Style TargetType="ProgressBar">
+    <Style TargetType="ProgressBar">
         <Setter Property="ProgressColor" Value="{StaticResource PrimaryBrush}" />
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal" />
-                        <VisualState x:Name="Disabled">
-                            <VisualState.Setters>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
                             <Setter Property="ProgressColor" Value="{StaticResource DisabledBrush}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
-        </Style>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
 
 
     <!-- Radio Button -->
@@ -292,8 +292,8 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                        <Setter Property="TextColor" Value="{StaticResource DisabledBrush}" />
-                        <Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderTextBrush}" />
+                            <Setter Property="TextColor" Value="{StaticResource DisabledBrush}" />
+                            <Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderTextBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -413,7 +413,7 @@
         </Setter>
     </Style>
 
-        <!--
+    <!--
     <Style TargetType="TitleBar">
         <Setter Property="MinimumHeightRequest" Value="32"/>
         <Setter Property="VisualStateManager.VisualStateGroups">

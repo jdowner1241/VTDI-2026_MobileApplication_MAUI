@@ -7,6 +7,7 @@ namespace Mystic_ToDo_MAUI_
         public App()
         {
             InitializeComponent();
+
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

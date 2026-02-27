@@ -3,13 +3,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Mystic_ToDo_MAUI_.View.Home"
              Title="Home">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to  Mystic To Do"
-            FontSize="Header"
-            TextColor="LightBlue"
-            FontFamily="VampireWars"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Folder Area -->
+        <Border BackgroundColor="{StaticResource indigo500 }"
+                Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Padding="20,10" >
+
+
+                <!-- Folder Entires  -->
+                <CollectionView SelectionMode="Single" ItemsSource="{Binding FolderList}">
+                    <CollectionView.Header>
+                        <Label 
+                          Text="Folder"
+                          FontSize="Subtitle"
+                          TextColor="LightBlue"
+                          FontFamily="VampireWars"
+                          VerticalOptions="Start" 
+                          HorizontalOptions="Center" />
+                    </CollectionView.Header>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Orientation="Horizontal" Padding="10">
+                                <Image Source="{Binding FolderIcon}" HeightRequest="30" Aspect="AspectFit"/>
+                                <Label Text="{Binding FolderName}" FontSize="Body" />
+                            </StackLayout> 
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.Footer>
+                        <!-- Add Folder Button -->
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Padding="10">
+                            <Button Text="Add" Command="{Binding AddFolderCommand}" Margin="10" />
+                            <Button Text="Remove" Command="{Binding RemoveFolderCommand}" Margin="10" />
+                        </StackLayout>
+                    </CollectionView.Footer>
+                </CollectionView>
+
+        </Border >
+
+
+
+
+
+        <!-- Editor -->
+        
+        <!-- Footer-->
+        
+
+    </Grid>
+
+   
+     
+    
 </ContentPage>

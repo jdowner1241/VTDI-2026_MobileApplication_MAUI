@@ -15,8 +15,19 @@ namespace Mystic_ToDo_MAUI_
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // Services
+            builder.Services.AddSingleton<Services.AppInitializer>();
+            builder.Services.AddSingleton<Services.ThemeSwitcher>();
+            builder.Services.AddSingleton<Services.db.DBInitializer>();
+            builder.Services.AddSingleton<Services.db.SeededData>();
+
+            // ViewModels
+            builder.Services.AddSingleton<ViewModel.HomeViewModel>();
+
+            //  Repositories
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

@@ -66,32 +66,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Model\" />
-	  <Folder Include="ViewModel\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Resources\SharedResources\Color\CustomeStyles.xaml.cs">
-	    <DependentUpon>CustomeStyles.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Resources\SharedResources\Color\BaseColors.xaml">
+	  <MauiXaml Update="Resources\SharedResources\SharedColor\BaseColors.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Resources\SharedResources\Color\Themes\Theme_Dark.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Resources\SharedResources\Color\Themes\Theme_Light.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Resources\SharedResources\Color\CustomeStyles.xaml">
+	  <MauiXaml Update="Resources\SharedResources\SharedColor\CustomStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\Calendar.xaml">

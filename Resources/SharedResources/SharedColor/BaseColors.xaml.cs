@@ -1,4 +1,4 @@
-namespace Mystic_ToDo_MAUI_.Resources.SharedResources.Color;
+namespace Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 
 public partial class BaseColors : ResourceDictionary
 {
