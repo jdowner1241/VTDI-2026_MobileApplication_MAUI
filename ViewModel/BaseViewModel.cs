@@ -10,13 +10,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel
     public partial class BaseViewModel : ObservableObject
     {
         [ObservableProperty]
-        string title;
+        private string title = string.Empty;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotLoading))]
-        bool isLoading;
+        private bool isLoading;
 
-        public bool IsNotLoading => !isLoading; 
+        public bool IsNotLoading => !IsLoading; 
 
     }
 }

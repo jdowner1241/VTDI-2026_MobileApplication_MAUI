@@ -11,7 +11,8 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
 
                 <!-- Custom Colors and Themes -->
-                <ResourceDictionary Source="Resources/SharedResources/Color/BaseColors.xaml" />
+                <ResourceDictionary Source="Resources/SharedResources/SharedColor/BaseColors.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

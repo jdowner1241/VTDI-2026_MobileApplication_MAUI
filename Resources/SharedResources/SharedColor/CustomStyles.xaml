@@ -18,9 +18,26 @@
 
     <!-- Border -->
     <Style TargetType="Border">
+        <!-- Normal stroke -->
         <Setter Property="Stroke" Value="{StaticResource BorderBrush}" />
-        <Setter Property="StrokeShape" Value="Rectangle"/>
-        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeThickness" Value="2" />
+
+        <!-- Rounded corners -->
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12"/>
+            </Setter.Value>
+        </Setter>
+
+        <!-- Glow effect via shadow -->
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="{StaticResource GlowBrush}"
+                    Radius="15"
+                    Opacity="0.8"
+                    Offset="0,0"/>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 

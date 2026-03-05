@@ -1,42 +1,44 @@
-﻿using Mystic_ToDo_MAUI_.Resources.SharedResources.Color;
-using Mystic_ToDo_MAUI_.Services.db;
-using Mystic_ToDo_MAUI_.ViewModel;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Mystic_ToDo_MAUI_.Services;
 
 namespace Mystic_ToDo_MAUI_
 {
     public partial class AppShell : Shell
     {
 
-        public AppShell()
+        private readonly AppInitializer _initializer;
+
+        public AppShell(IServiceProvider services)
         {
             InitializeComponent();
 
-            //customIntial();
+            // Resolve AppInitializer from DI (use GetRequiredService to guarantee non-null assignment)
+            _initializer = services.GetRequiredService<AppInitializer>();
+
+            // Kick off initialization once Shell is ready
+            Loaded += async (s, e) =>
+            {
+                if (_initializer != null)
+                {
+                    try
+                    {
+                        await _initializer.InitializeAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"AppInitializer failed: {ex}");
+                    }
+                }
+            };
+
         }
 
-        //private void customIntial()
-        //{
-        //    LoadTheme();
-        //    LoadDBComponents();
-        //    LoadViewModels();
-        //}
+        private void customIntial()
+        {
+            
 
-        //private void LoadViewModels()
-        //{
-        //    BindingContext = new HomeViewModel();
-        //     //this.BindingContext = _homeViewModel;
-        //}
+        }
 
-        //private void LoadDBComponents()
-        //{
-        //    // Initialize the database components and seed data
-        //    SeededData _seededData = new SeededData();
-        //}
-
-        //private static void LoadTheme()
-        //{
-        //    var CurrentTheme = new ThemeSwitcher();
-        //    CurrentTheme.setTheme("Dark");
-        //}
     }
 }

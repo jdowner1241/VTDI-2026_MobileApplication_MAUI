@@ -8,26 +8,44 @@ using CommunityToolkit.Mvvm.Input;
 using Mystic_ToDo_MAUI_.Services.db;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
+using Mystic_ToDo_MAUI_.ViewModel.GroupListVM;
+using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 
 namespace Mystic_ToDo_MAUI_.ViewModel
 {
     public partial class HomeViewModel : BaseViewModel
     {
+
+        // Repositories for database access
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
 
-        public ObservableCollection<GroupList> GroupList { get; private set; } = new();
+        // ObservableCollections for data binding
+        public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
         public ObservableCollection<TaskList> TaskList { get; private set; } = new();
         public ObservableCollection<TaskList_RepeatTag> TaskList_RepeatTag { get; private set; } = new();
+
+
+        // Supporting methods and properties
+        public record MoveGroupArgs(GroupListViewModel Group, GroupListViewModel NewParent);
+        
+        [ObservableProperty]
+        private GroupListViewModel selectedGroup;
+
+
+        // Constructor
         public HomeViewModel() 
         { 
             Title = "Home";
             this._groupListRepo = new DBManager<GroupList>();
             this._taskListRepo = new DBManager<TaskList>();
             this._taskList_RepeatTagRepo = new DBManager<TaskList_RepeatTag>();
+            this.selectedGroup = SelectedGroup;
+
         }
 
+        // <GroupListing Commands and Task>
         [RelayCommand]
         async Task GetGroupList() 
         {
@@ -41,7 +59,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 var groupListing = await _groupListRepo.GetAllAsync();
                 if (groupListing != null)
                 {
-                    foreach (var group in groupListing) GroupList.Add(group);
+                    foreach (var group in groupListing)
+                    { 
+                        var vm = new GroupListViewModel(group, groupListing);
+                        GroupList.Add(vm); 
+                    } 
                 }
 
             }
@@ -56,6 +78,130 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        [RelayCommand]
+        void SelectGroup(GroupListViewModel selectedGroup) 
+        {
+            if (selectedGroup == null) return;
+            Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
+            SelectedGroup = selectedGroup;
+
+
+        }
+
+        [RelayCommand]
+        void TapGroup(GroupListViewModel tappedGroup)
+        {
+            Debug.WriteLine($"Tapped group: {tappedGroup.GroupName}");
+            SelectedGroup = tappedGroup;
+        }
+
+        [RelayCommand]
+        void LongPressGroup(GroupListViewModel group)
+        {
+            Debug.WriteLine($"Long pressed group: {group.GroupName}");
+        }
+
+
+        [RelayCommand]
+        async Task AddGroup() {
+            try
+            {
+                // Prompt user for Group name
+                var name = await Shell.Current.DisplayPromptAsync(
+                    "New Group", 
+                    "Enter group name:", 
+                    "OK", 
+                    "Cancel", 
+                    "Group Name", 50);
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    await Shell.Current.DisplayAlertAsync("Invalid Name", "Group name cannot be empty.", "OK");
+                    return; // user cancelled or entered empty name
+                }
+
+                var newGroup = new GroupList
+                {
+                    GroupName = "New Group",
+                    ParentId = null,
+                    ColorHex = "#ff3322",
+                    IconPath = "Images.dotnet_bot.png",
+                    IsDefault = false
+                };
+
+                // Save the new group to the database
+                await _groupListRepo.SaveAsync(newGroup);
+
+                // Refresh the GroupList
+                await GetGroupList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to add group. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to add group.", "OK");
+            }
+        }
+
+        [RelayCommand]
+        async Task RemoveGroup(GroupListViewModel groupVm) 
+        {
+            if (groupVm == null) return;
+            try
+            {
+                await _groupListRepo.DeleteAsync(groupVm.GroupEntity);
+
+                // Refresh the GroupList
+                await GetGroupList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to remove group. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to remove group.", "OK");
+            }
+        }
+
+        // This method moves a group to a new parent group. It updates the ParentId of the group and saves it to the database.
+        [RelayCommand]
+        async Task MoveGroupToParent(MoveGroupArgs args ) 
+        {
+            if (args?.Group == null || args?.NewParent == null) return;
+
+            try
+            {
+                args.Group.GroupEntity.ParentId = args.NewParent.GroupEntity.ID;
+                await _groupListRepo.SaveAsync(args.Group.GroupEntity);
+
+                await GetGroupList(); // Refresh the GroupList
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine($"Unable to move group. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to move group.", "OK");
+            }
+        }
+
+        // This method reorders groups based on a new order provided as a list of GroupListViewModel. It updates the SortOrder of each group and saves the changes to the database.
+        [RelayCommand]
+        async Task ReorderGroups(IList<GroupListViewModel> newOrder)
+        {
+            try 
+            {
+                for (int i = 0; i < newOrder.Count; i++)
+                {
+                    newOrder[i].GroupEntity.SortOrder = i; 
+                    await _groupListRepo.SaveAsync(newOrder[i].GroupEntity);
+                }
+                await GetGroupList(); // Refresh the GroupList
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to reorder groups. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to reorder groups.", "OK");
+            }
+        }
+
+
+        // <GroupListing Commands and Task>
         [RelayCommand]
         async Task GetTaskList()
         {
@@ -83,6 +229,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 IsLoading = false;
             }
         }
+
+
 
         [RelayCommand]
         async Task GetTaskList_RepeatList_Tag()
