@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Mystic_ToDo_MAUI_.Services;
+using Mystic_ToDo_MAUI_.Services.debuggerHelpers;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -19,36 +20,57 @@ namespace Mystic_ToDo_MAUI_
             InitializeComponent();
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Debug.WriteLine("=== App Started ===");
+        }
 
-        //public App()
-        //{
-        //    try
-        //    {
-        //        AppDomain.CurrentDomain.UnhandledException += OnDomainUnhandled;
-        //        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+        protected override void OnSleep()
+        {
+            base.OnSleep();
+            Debug.WriteLine("=== App Sleeping ===");
+            DumpResources("OnSleep");
+        }
 
-        //        InitializeComponent();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine($"Startup exception: {ex}");
-        //        File.AppendAllText("crash.log", $"Startup exception: {ex}");
-        //    }
-        //}
+        protected override void OnResume()
+        {
+            base.OnResume();
+            Debug.WriteLine("=== App Resumed ===");
+        }
 
-        //private void OnDomainUnhandled(object sender, UnhandledExceptionEventArgs e)
-        //{
-        //    var ex = e.ExceptionObject as Exception;
-        //    Debug.WriteLine($"Domain unhandled: {ex}");
-        //    File.AppendAllText("crash.log", ex?.ToString() ?? "null");
+        protected override void CleanUp()
+        {
+            // This runs when the app is shutting down (WinUI/desktop)
+            Debug.WriteLine("=== App Closing ===");
+            ResourceDebugger.DumpAllResources("OnExit");
+            //DumpResources("OnExit");
+            base.CleanUp();
+        }
 
-        //}
+        private void DumpResources(string phase)
+        {
+            Debug.WriteLine($"--- Dumping resources at {phase} ---");
 
-        //private void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-        //{
-        //    Debug.WriteLine($"Task unobserved: {e.Exception}");
-        //    e.SetObserved();
-        //}
+            // Top-level resources
+            foreach (var key in Resources.Keys)
+            {
+                var value = Resources[key];
+                Debug.WriteLine($"Top-level Resource: {key} = {value}");
+            }
+
+            // Merged dictionaries
+            foreach (var dict in Resources.MergedDictionaries)
+            {
+                Debug.WriteLine($"Dictionary: {dict.GetType().FullName}");
+                foreach (var key in dict.Keys)
+                {
+                    var value = dict[key];
+                    Debug.WriteLine($"   Key: {key} = {value}");
+                }
+            }
+        }
+
 
         protected override Window CreateWindow(IActivationState? activationState)
         {

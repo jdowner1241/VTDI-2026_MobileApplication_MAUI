@@ -1,61 +1,55 @@
-﻿using MauiColor = Microsoft.Maui.Graphics.Color;
+﻿using Microsoft.Maui.Controls;
+using System;
 
 namespace Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.Themes
 {
     internal class Dark : ResourceDictionary
     {
-        
         public Dark()
         {
-            // Safely obtain the current application and its resources
-            var app = Application.Current;
+            // Colors (raw tokens) only — avoid creating platform-backed Brush objects here.
+            this["App_PrimaryColor"] = Color.FromArgb(BaseColors.blue500);
+            this["App_SecondaryColor"] = Color.FromArgb(BaseColors.teal200);
+            this["App_TertiaryColor"] = Color.FromArgb(BaseColors.blue300);
+            this["App_BackgroundColor"] = Color.FromArgb(BaseColors.black500);
+            this["App_SurfaceColor"] = Color.FromArgb(BaseColors.gray300);
+            this["App_TextColor"] = Color.FromArgb(BaseColors.white900);
+            this["App_TextHeaderColor"] = Color.FromArgb(BaseColors.purple800);
+            this["AppTextSubHeaderColor"] = Color.FromArgb(BaseColors.purple600);
+            this["App_MuteTextColor"] = Color.FromArgb(BaseColors.gray400);
 
-            if (app != null && app.Resources != null)
-            {
-                // Initialize color tokens
-                // Main Colors
-                this["PrimaryBrush"] = (MauiColor)app.Resources["blue500"];
-                this["SecondaryBrush"] = (MauiColor)app.Resources["teal200"];
-                this["TertiaryBrush"] = (MauiColor)app.Resources["blue300"];
-                this["BackgroundBrush"] = (MauiColor)app.Resources["black500"];
-                this["SurfaceBrush"] = (MauiColor)app.Resources["gray300"];
-                this["TextBrush"] = (MauiColor)app.Resources["white900"];
-                this["TextHeaderBrush"] = (MauiColor)app.Resources["purple800"];
-                this["TextSubHeaderBrush"] = (MauiColor)app.Resources["purple600"];
-                this["MuteTextBrush"] = (MauiColor)app.Resources["gray400"];
+            // States
+            this["App_ErrorColor"] = Color.FromArgb(BaseColors.red500);
+            this["App_WarningColor"] = Color.FromArgb(BaseColors.yellow500);
+            this["App_InfoColor"] = Color.FromArgb(BaseColors.blue500);
+            this["App_SuccessColor"] = Color.FromArgb(BaseColors.green500);
+            this["App_DisabledColor"] = Color.FromArgb(BaseColors.gray500);
+            this["App_SelectedColor"] = Color.FromArgb(BaseColors.blue500);
+            this["App_UnselectedColor"] = Color.FromArgb(BaseColors.gray600);
 
+            // Effect Colors (colors only)
+            this["App_GlowColor"] = Color.FromArgb(BaseColors.purple300);
+            this["App_ShadowColor"] = Color.FromArgb(BaseColors.gray200);
 
-                // Effects
-                this["BorderBrush"] = (MauiColor)app.Resources["purple300"];
-                this["LinkBrush"] = (MauiColor)app.Resources["blue500"];
-                this["LinkHoverBrush"] = (MauiColor)app.Resources["blue700"];
-                this["ShadowBrush"] = (MauiColor)app.Resources["gray200"];
-                this["GlowBrush"] = (MauiColor)app.Resources["purple300"];
-
-                // States
-                this["ErrorBrush"] = (MauiColor)app.Resources["red500"];
-                this["WarningBrush"] = (MauiColor)app.Resources["yellow500"];
-                this["InfoBrush"] = (MauiColor)app.Resources["blue500"];
-                this["SuccessBrush"] = (MauiColor)app.Resources["green500"];
-                this["DisabledBrush"] = (MauiColor)app.Resources["gray500"];
-                this["SelectedBrush"] = (MauiColor)app.Resources["blue500"];
-                this["UnselectedBrush"] = (MauiColor)app.Resources["gray600"];
+            // Brushes (colors only, no platform objects)
+            //this["BorderBrush"] = Color.FromArgb(BaseColors.purple300);
+           // this["LinkBrush"] = Color.FromArgb(BaseColors.blue500);
+            //this["LinkHoverBrush"] = Color.FromArgb(BaseColors.blue700);
+    
 
 
-                // Inverted Color
-                this["InverseTextBrush"] = (MauiColor)app.Resources["black500"];
+            // Controls (colors)
+            this["App_ControlBackgroundColor"] = Color.FromArgb(BaseColors.blue300);
+            this["App_ControlTextColor"] = Color.FromArgb(BaseColors.black500);
+            this["App_PlaceholderTextColor"] = Color.FromArgb(BaseColors.gray600);
+            this["App_DividerColor"] = Color.FromArgb(BaseColors.purple600);
+            this["App_NavigationBarColor"] = Color.FromArgb(BaseColors.purple400);
+            this["App_NavigationTextColor"] = Color.FromArgb(BaseColors.black400);
+            this["App_TabBarBackgroundColor"] = Color.FromArgb(BaseColors.gray500);
+            this["App_TabBarTextColor"] = Color.FromArgb(BaseColors.black400);
 
-                // Controler Colors
-                this["ControlBackgroundBrush"] = (MauiColor)app.Resources["blue300"];
-                this["ControlTextBrush"] = (MauiColor)app.Resources["black500"];
-                this["PlaceholderTextBrush"] = (MauiColor)app.Resources["gray600"];
-                this["DividerBrush"] = (MauiColor)app.Resources["purple600"];
-                this["NavigationBarBrush"] = (MauiColor)app.Resources["purple400"];
-                this["NavigationTextBrush"] = (MauiColor)app.Resources["black400"];
-                this["TabBarBackgroundBrush"] = (MauiColor)app.Resources["gray500"];
-                this["TabBarTextBrush"] = (MauiColor)app.Resources["black400"];
-
-            }
+            // Do NOT create SolidColorBrush or other platform-backed objects here.
+            // Create brushes lazily on the UI thread when needed.
         }
     }
 }

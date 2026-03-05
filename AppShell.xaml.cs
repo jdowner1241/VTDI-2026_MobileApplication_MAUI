@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Mystic_ToDo_MAUI_.Services;
 
@@ -24,6 +25,7 @@ namespace Mystic_ToDo_MAUI_
                     try
                     {
                         await _initializer.InitializeAsync();
+                        Debug.WriteLine("App initialization completed successfully.");
                     }
                     catch (Exception ex)
                     {

@@ -7,12 +7,15 @@
         <!-- Default Colors -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <!-- Default Colors and Themes -->
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                
+                
 
                 <!-- Custom Colors and Themes -->
                 <ResourceDictionary Source="Resources/SharedResources/SharedColor/BaseColors.xaml" />
-
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

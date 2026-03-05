@@ -76,6 +76,9 @@
 	  <MauiXaml Update="Resources\SharedResources\SharedColor\BaseColors.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Resources\SharedResources\SharedColor\BrushOnlyStyles.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Resources\SharedResources\SharedColor\CustomStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

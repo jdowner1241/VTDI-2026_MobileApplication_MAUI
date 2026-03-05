@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.BrushOnlyStyles">
+
+
+            <!-- Brushes created from color tokens (use DynamicResource) -->
+            <SolidColorBrush x:Key="App_PrimaryBrush" Color="{DynamicResource App_PrimaryColor}" />
+            <SolidColorBrush x:Key="App_SecondaryBrush" Color="{DynamicResource App_SecondaryColor}" />
+            <SolidColorBrush x:Key="App_BorderBrush" Color="{DynamicResource App_DividerColor}" />
+            <SolidColorBrush x:Key="App_GlowBrush" Color="{DynamicResource App_GlowColor}" />
+            <SolidColorBrush x:Key="App_ShadowBrush" Color="{DynamicResource App_ShadowColor}" />
+            <SolidColorBrush x:Key="App_ControlBackgroundBrush" Color="{DynamicResource App_ControlBackgroundColor}" />
+            <SolidColorBrush x:Key="App_ControlTextBrush" Color="{DynamicResource App_ControlTextColor}" />
+            <!-- Brushes created from color tokens (use DynamicResource) -->
+
+        <!-- Brushes created from color tokens (use DynamicResource) 
+        <SolidColorBrush x:Key="App_PrimaryBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_SecondaryBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_BorderBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_GlowBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_ShadowBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_ControlBackgroundBrush" Color="{StaticResource blue200}" />
+        <SolidColorBrush x:Key="App_ControlTextBrush" Color="{StaticResource blue200}" />
+         Brushes created from color tokens (use DynamicResource) -->
+    
+        <!-- Border -->
+        <Style TargetType="Border" BasedOn="{StaticResource BorderBase}">
+            <Setter Property="Stroke" Value="{DynamicResource App_BorderBrush}" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="{DynamicResource App_GlowBrush}"
+                      Radius="15"
+                      Opacity="0.8"
+                      Offset="0,0"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+     <!-- Shadow -->
+    <Style TargetType="Shadow">
+        <Setter Property="Brush" Value="{DynamicResource App_ShadowBrush}" />
+        <Setter Property="Radius" Value="15" />
+        <Setter Property="Opacity" Value="0.5" />
+        <Setter Property="Offset" Value="10,10" />
+    </Style>
+
+
+
+
+
+</ResourceDictionary>
