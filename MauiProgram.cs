@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Mystic_ToDo_MAUI_.Services;
-using Mystic_ToDo_MAUI_.Services.ThemeHelpers;
 
 namespace Mystic_ToDo_MAUI_
 {
@@ -20,8 +18,7 @@ namespace Mystic_ToDo_MAUI_
                 });
 
             // Services
-
-            builder.Services.AddSingleton<Services.ThemeSwitcher>();
+            builder.Services.AddSingleton<Services.ThemeHelpers.ThemeSwitcher>();
             builder.Services.AddSingleton<Services.db.DBInitializer>();
             builder.Services.AddSingleton<Services.AppInitializer>();
 

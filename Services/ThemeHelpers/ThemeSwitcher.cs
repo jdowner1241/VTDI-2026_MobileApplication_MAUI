@@ -1,11 +1,10 @@
 ﻿using Microsoft.Maui.Controls;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.Themes;
-using Mystic_ToDo_MAUI_.Services.ThemeHelpers;
 using System;
 using System.Diagnostics;
 
-namespace Mystic_ToDo_MAUI_.Services
+namespace Mystic_ToDo_MAUI_.Services.ThemeHelpers
 {
     public class ThemeSwitcher
     {

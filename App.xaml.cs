@@ -30,7 +30,7 @@ namespace Mystic_ToDo_MAUI_
         {
             base.OnSleep();
             Debug.WriteLine("=== App Sleeping ===");
-            DumpResources("OnSleep");
+ 
         }
 
         protected override void OnResume()
@@ -43,34 +43,9 @@ namespace Mystic_ToDo_MAUI_
         {
             // This runs when the app is shutting down (WinUI/desktop)
             Debug.WriteLine("=== App Closing ===");
-            ResourceDebugger.DumpAllResources("OnExit");
-            //DumpResources("OnExit");
+            //ResourceDebugger.DumpAllResources("OnExit");
             base.CleanUp();
         }
-
-        private void DumpResources(string phase)
-        {
-            Debug.WriteLine($"--- Dumping resources at {phase} ---");
-
-            // Top-level resources
-            foreach (var key in Resources.Keys)
-            {
-                var value = Resources[key];
-                Debug.WriteLine($"Top-level Resource: {key} = {value}");
-            }
-
-            // Merged dictionaries
-            foreach (var dict in Resources.MergedDictionaries)
-            {
-                Debug.WriteLine($"Dictionary: {dict.GetType().FullName}");
-                foreach (var key in dict.Keys)
-                {
-                    var value = dict[key];
-                    Debug.WriteLine($"   Key: {key} = {value}");
-                }
-            }
-        }
-
 
         protected override Window CreateWindow(IActivationState? activationState)
         {

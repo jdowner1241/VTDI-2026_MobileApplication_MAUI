@@ -2,6 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Mystic_ToDo_MAUI_"
+             xmlns:converters="clr-namespace:Mystic_ToDo_MAUI_.Services.Converters"
              x:Class="Mystic_ToDo_MAUI_.App">
     <Application.Resources>
         <!-- Default Colors -->
@@ -16,6 +17,9 @@
                 <!-- Custom Colors and Themes -->
                 <ResourceDictionary Source="Resources/SharedResources/SharedColor/BaseColors.xaml" />
                 
+
+
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

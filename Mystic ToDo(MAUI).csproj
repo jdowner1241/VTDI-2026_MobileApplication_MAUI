@@ -31,7 +31,7 @@
 		<ApplicationTitle>Mystic ToDo(MAUI)</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.mystictodomaui</ApplicationId>
+		<ApplicationId>com.mysticlimited.mystictodomaui</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -91,6 +91,10 @@
 	  <MauiXaml Update="View\Setting.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\Converters\" />
 	</ItemGroup>
 
 </Project>

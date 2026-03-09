@@ -1,15 +1,17 @@
-﻿using Mystic_ToDo_MAUI_.Model.db.tables;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Mystic_ToDo_MAUI_.Model.db.tables;
+using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
+using Mystic_ToDo_MAUI_.Services.db;
+using Mystic_ToDo_MAUI_.ViewModel.GroupListVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Mystic_ToDo_MAUI_.Services.db;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
-using Mystic_ToDo_MAUI_.ViewModel.GroupListVM;
-using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
+using System.Text;
+using System.Text.RegularExpressions;
+
 
 namespace Mystic_ToDo_MAUI_.ViewModel
 {
@@ -22,16 +24,26 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
 
         // ObservableCollections for data binding
-        public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
+
+        //public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
+
+        [ObservableProperty]
+        private ObservableCollection<GroupListViewModel> groupList = new();
         public ObservableCollection<TaskList> TaskList { get; private set; } = new();
         public ObservableCollection<TaskList_RepeatTag> TaskList_RepeatTag { get; private set; } = new();
 
 
+        // Constant properties
+        public const int RootParentId = 1;
+
         // Supporting methods and properties
         public record MoveGroupArgs(GroupListViewModel Group, GroupListViewModel NewParent);
-        
+
         [ObservableProperty]
         private GroupListViewModel selectedGroup;
+
+        private Dictionary<int, GroupListViewModel> _lookup = new();
+
 
 
         // Constructor
@@ -42,51 +54,182 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this._taskListRepo = new DBManager<TaskList>();
             this._taskList_RepeatTagRepo = new DBManager<TaskList_RepeatTag>();
             this.selectedGroup = SelectedGroup;
-
         }
 
-        // <GroupListing Commands and Task>
+
+
+        // -----------------------------
+        // GroupListing Commands and Task
+        // -----------------------------
         [RelayCommand]
-        async Task GetGroupList() 
+        async Task GetGroupList()
         {
             if (IsLoading) return;
 
             try
             {
                 IsLoading = true;
-                if (GroupList.Any()) GroupList.Clear();
+                GroupList.Clear();
 
                 var groupListing = await _groupListRepo.GetAllAsync();
-                if (groupListing != null)
+
+        
+                _lookup = groupListing.ToDictionary(
+                    g => g.ID,
+                    g => new GroupListViewModel(g, groupListing)
+                );
+
+
+                
+
+                // Build hierarchy
+                foreach (var vm in _lookup.Values)
                 {
-                    foreach (var group in groupListing)
-                    { 
-                        var vm = new GroupListViewModel(group, groupListing);
-                        GroupList.Add(vm); 
-                    } 
+                    Debug.WriteLine($"Processing group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
+
+
+                    if(vm.Id != RootParentId) 
+                    {
+                        if (vm.GroupEntity.ParentId is int parentId && _lookup.ContainsKey(parentId))
+                        {
+                            _lookup[parentId].SubGroups.Add(vm);
+                            Debug.WriteLine($"Processing Sub group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
+                        }
+                    }
+           
                 }
 
+                // -----------------------------
+                // EXPAND/COLLAPSE ROOT LOAD
+                // (Disabled for now)
+                // -----------------------------
+                /*
+                foreach (var root in _lookup.Values
+                             .Where(g => g.GroupEntity.ParentId == null)
+                             .OrderBy(g => g.SortOrder))
+                {
+                    root.Level = 0;
+                    GroupList.Add(root);
+                }
+                */
+
+                // Assign the ToggleExpand command to each ViewModel
+                /*
+                foreach (var vm in _lookup.Values)
+                {
+                    vm.ExpandAction = ToggleExpand;
+                }
+                */
+
+                // -----------------------------
+                // FLATTEN TREE (All expanded)
+                // -----------------------------
+                var flatList = new ObservableCollection<GroupListViewModel>();
+
+                foreach (var root in _lookup.Values
+                         .Where(g => g.GroupEntity.ParentId == 1)
+                         .OrderBy(g => g.SortOrder))
+                {
+                    FlattenGroups(root, 0, flatList);
+                }
+
+                GroupList = flatList;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Unable to get: GroupList. Error: {ex.Message}");
                 await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: GroupList.", "OK");
             }
-            finally 
+            finally
             {
                 IsLoading = false;
             }
         }
 
+
+        //Toggle Expand
+        public void ToggleExpand(GroupListViewModel item)
+        {
+            if (item.IsExpanded)
+                Collapse(item);
+            else
+                Expand(item);
+
+            item.IsExpanded = !item.IsExpanded;
+        }
+
+        // Group Expanded 
+        private void Expand(GroupListViewModel item)
+        {
+            int index = GroupList.IndexOf(item);
+
+            foreach (var child in item.SubGroups.OrderBy(c => c.SortOrder))
+            {
+                child.Level = item.Level + 1;
+
+                index++;
+                GroupList.Insert(index, child);
+
+                if (child.IsExpanded)
+                    Expand(child);
+            }
+        }
+
+        // Group Collapsed 
+        private void Collapse(GroupListViewModel item)
+        {
+            foreach (var child in item.SubGroups.ToList())
+            {
+                RemoveRecursive(child);
+            }
+        }
+
+        private void RemoveRecursive(GroupListViewModel item)
+        {
+            GroupList.Remove(item);
+
+            foreach (var child in item.SubGroups)
+                RemoveRecursive(child);
+        }
+
+        private void FlattenGroups(GroupListViewModel vm, int level, ObservableCollection<GroupListViewModel> flatList)
+        {
+            vm.Level = level;
+            flatList.Add(vm);
+
+            foreach (var child in vm.SubGroups.OrderBy(c => c.SortOrder))
+                FlattenGroups(child, level + 1, flatList);
+        }
+
+
+
+
         [RelayCommand]
         void SelectGroup(GroupListViewModel selectedGroup) 
         {
             if (selectedGroup == null) return;
+
+            // Clear previours selection
+            ClearSelection(GroupList);
+
+            // Mark the new selection
             Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
+            selectedGroup.IsSelected = true;
             SelectedGroup = selectedGroup;
 
 
         }
+
+        private void ClearSelection(IEnumerable<GroupListViewModel> groups)
+        {
+            foreach (var g in groups)
+            {
+                g.IsSelected = false;
+                if (g.SubGroups.Any())
+                    ClearSelection(g.SubGroups);
+            }
+        }
+
 
         [RelayCommand]
         void TapGroup(GroupListViewModel tappedGroup)
@@ -113,24 +256,34 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     "OK", 
                     "Cancel", 
                     "Group Name", 50);
-
+                
+                // Validate input
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     await Shell.Current.DisplayAlertAsync("Invalid Name", "Group name cannot be empty.", "OK");
                     return; // user cancelled or entered empty name
                 }
 
+                // Check for duplicate names (case-insensitive)
+                if (GroupList.Any(g => g.GroupName.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    await Shell.Current.DisplayAlertAsync("Duplicate Name", "A group with this name already exists.", "OK");
+                    return; // duplicate name
+                }
+
+                // Create new GroupList entity
                 var newGroup = new GroupList
                 {
-                    GroupName = "New Group",
-                    ParentId = null,
-                    ColorHex = "#ff3322",
-                    IconPath = "Images.dotnet_bot.png",
+                    GroupName = name,
+                    ParentId = selectedGroup?.Id,
+                    ColorHex = $"{BaseColors.blue300}",
+                    IconPath = "dotnet_bot.png",
                     IsDefault = false
                 };
 
                 // Save the new group to the database
-                await _groupListRepo.SaveAsync(newGroup);
+                await _groupListRepo.InsertAsync(newGroup);
+         
 
                 // Refresh the GroupList
                 await GetGroupList();
@@ -148,7 +301,26 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             if (groupVm == null) return;
             try
             {
-                await _groupListRepo.DeleteAsync(groupVm.GroupEntity);
+                if(groupVm.IsDefault == true) 
+                {
+                    await Shell.Current.DisplayAlertAsync("Error", $"Default groups cannot be removed.", "OK");
+                    return;
+                }
+
+                // Confirm deletion with the user
+                bool confirm = await Shell.Current.DisplayAlertAsync(
+                    "Confirm Deletion", 
+                    $"Are you sure you want to delete the group '{groupVm.GroupName}'?", 
+                    "Delete", 
+                    "Cancel");
+                if (confirm) 
+                {
+                    await _groupListRepo.DeleteAsync(groupVm.GroupEntity);
+                    Debug.WriteLine($"Group '{groupVm.GroupName}' deleted successfully.");
+                    await Shell.Current.DisplayAlertAsync("Info", $"Group '{groupVm.GroupName}' has been deleted.", "OK");
+                    
+                }
+                
 
                 // Refresh the GroupList
                 await GetGroupList();
@@ -168,8 +340,19 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
             try
             {
-                args.Group.GroupEntity.ParentId = args.NewParent.GroupEntity.ID;
-                await _groupListRepo.SaveAsync(args.Group.GroupEntity);
+                // Confirms that its not a default Group
+                if (!args.NewParent.IsDefault) 
+                {
+                    args.Group.GroupEntity.ParentId = args.NewParent.GroupEntity.ID;
+                    await _groupListRepo.UpdateAsync(args.Group.GroupEntity);
+                    Debug.WriteLine($"Group '{args.Group.GroupName}' moved to new parent '{args.NewParent.GroupName}' successfully.");
+                } 
+                else
+                {
+                    await Shell.Current.DisplayAlertAsync("Error", $"Cannot move group to a default group.", "OK");
+                    Debug.WriteLine($"Cannot move group '{args.Group.GroupName}' to default parent '{args.NewParent.GroupName}'.");
+                }
+          
 
                 await GetGroupList(); // Refresh the GroupList
             }
@@ -189,7 +372,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 for (int i = 0; i < newOrder.Count; i++)
                 {
                     newOrder[i].GroupEntity.SortOrder = i; 
-                    await _groupListRepo.SaveAsync(newOrder[i].GroupEntity);
+                    await _groupListRepo.UpdateAsync(newOrder[i].GroupEntity);
                 }
                 await GetGroupList(); // Refresh the GroupList
             }
@@ -201,7 +384,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
 
-        // <GroupListing Commands and Task>
+
+        // -----------------------------
+        // TaskListing Commands and Task
+        // -----------------------------
         [RelayCommand]
         async Task GetTaskList()
         {
@@ -240,6 +426,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             try
             {
                 IsLoading = true;
+
+
                 if (TaskList_RepeatTag.Any()) TaskList_RepeatTag.Clear();
 
                 var tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
@@ -263,6 +451,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // This is a placehold method to load data automatically on app startup.
         public async Task LoadDataAsync() 
         {
+            await GetGroupList();
+            //await GetTaskList();
+            //await GetTaskList_RepeatList_Tag();
 
         }
 

@@ -41,15 +41,19 @@ namespace Mystic_ToDo_MAUI_.Services.db
             await _groupListRepo.SeedDefaultsAsync(new List<GroupList>
             {
                 new GroupList {
-                                ID = 0, GroupName = "Default", ParentId = null,
+                                GroupName = "Root", ParentId = null,
                                 ColorHex=BaseColors.blue300, IconPath="dotnet_bot.png", IsDefault = true
                                 },
                 new GroupList {
-                                ID = 0, GroupName = "Important", ParentId = null,
+                                GroupName = "Default", ParentId = 1,
+                                ColorHex=BaseColors.blue300, IconPath="dotnet_bot.png", IsDefault = true
+                                },
+                new GroupList {
+                                GroupName = "Important", ParentId = 1,
                                 ColorHex=BaseColors.red300, IconPath="dotnet_bot.png", IsDefault = true
                                 },
                 new GroupList {
-                                ID = 0, GroupName = "Completed", ParentId = null,
+                                GroupName = "Completed", ParentId = 1,
                                 ColorHex=BaseColors.gray300, IconPath="dotnet_bot.png", IsDefault = true
                                 }
             });

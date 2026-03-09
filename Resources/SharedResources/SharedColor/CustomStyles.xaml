@@ -404,29 +404,33 @@
         </Setter>
     </Style>
 
-    <!--
+    <!-- TitleBar-->
     <Style TargetType="TitleBar">
-        <Setter Property="MinimumHeightRequest" Value="32"/>
+        <Setter Property="MinimumHeightRequest" Value="32" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="TitleActiveStates">
+
+                    <!-- Active state -->
                     <VisualState x:Name="TitleBarTitleActive">
                         <VisualState.Setters>
                             <Setter Property="BackgroundColor" Value="Transparent" />
-                            <Setter Property="ForegroundColor" Value="{AppThemeBinding Light={DynamicResource App_Black}, Dark={DynamicResource App_White}}" />
+                            <Setter Property="ForegroundColor" Value="{DynamicResource App_TextColor}" />
                         </VisualState.Setters>
                     </VisualState>
+
+                    <!-- Inactive state -->
                     <VisualState x:Name="TitleBarTitleInactive">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={DynamicResource App_White}, Dark={DynamicResource App_Black}}" />
-                            <Setter Property="ForegroundColor" Value="{AppThemeBinding Light={DynamicResource App_Gray400}, Dark={DynamicResource App_Gray500}}" />
+                            <Setter Property="BackgroundColor" Value="{DynamicResource App_BackgroundColor}" />
+                            <Setter Property="ForegroundColor" Value="{DynamicResource App_MuteTextColor}" />
                         </VisualState.Setters>
                     </VisualState>
+
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
     </Style>
-    -->
 
 
     <!-- Page -->
@@ -439,13 +443,13 @@
     <!-- Shell -->
     <Style TargetType="Shell" ApplyToDerivedTypes="True">
         <Setter Property="Shell.BackgroundColor" Value="{DynamicResource App_NavigationBarColor}" />
-        <Setter Property="Shell.ForegroundColor" Value="{DynamicResource App_NavigationTextColor}" />
-        <Setter Property="Shell.TitleColor" Value="{DynamicResource App_NavigationTextColor}" />
+        <Setter Property="Shell.ForegroundColor" Value="{DynamicResource App_TextHeaderColor}" />
+        <Setter Property="Shell.TitleColor" Value="{DynamicResource App_TextHeaderColor}" />
         <Setter Property="Shell.DisabledColor" Value="{DynamicResource App_DisabledColor}" />
         <Setter Property="Shell.UnselectedColor" Value="{DynamicResource App_UnselectedColor}" />
         <Setter Property="Shell.NavBarHasShadow" Value="False" />
         <Setter Property="Shell.TabBarBackgroundColor" Value="{DynamicResource App_TabBarBackgroundColor}" />
-        <Setter Property="Shell.TabBarForegroundColor" Value="{DynamicResource App_SurfaceColor}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{DynamicResource App_TertiaryColor}" />
         <Setter Property="Shell.TabBarTitleColor" Value="{DynamicResource App_NavigationTextColor}" />
         <Setter Property="Shell.TabBarUnselectedColor" Value="{DynamicResource App_UnselectedColor}" />
     </Style>
@@ -460,7 +464,7 @@
     <!-- TabbedPage -->
     <Style TargetType="TabbedPage">
         <Setter Property="BarBackgroundColor" Value="{DynamicResource App_TabBarBackgroundColor}" />
-        <Setter Property="BarTextColor" Value="{DynamicResource App_TertiaryColor}" />
+        <Setter Property="BarTextColor" Value="{DynamicResource AppTextSubHeaderColor}" />
         <Setter Property="UnselectedTabColor" Value="{DynamicResource App_UnselectedColor}" />
         <Setter Property="SelectedTabColor" Value="{DynamicResource App_SelectedColor}" />
     </Style>

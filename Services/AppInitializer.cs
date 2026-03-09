@@ -2,6 +2,7 @@
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Services.db;
 using Mystic_ToDo_MAUI_.Services.debuggerHelpers;
+using Mystic_ToDo_MAUI_.Services.ThemeHelpers;
 using Mystic_ToDo_MAUI_.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,7 @@ namespace Mystic_ToDo_MAUI_.Services
 
             // Initialize ViewModels (if needed)
             await _homeViewModel.LoadDataAsync();
+
         }
 
     }
