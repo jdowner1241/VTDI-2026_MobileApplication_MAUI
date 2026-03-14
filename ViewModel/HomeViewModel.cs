@@ -45,6 +45,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private Dictionary<int, GroupListViewModel> _lookup = new();
 
 
+        [ObservableProperty]
+        private bool isGroupListExpanded;
+        [ObservableProperty]
+        private ImageSource groupExpanderIcon;
+       
 
         // Constructor
         public HomeViewModel() 
@@ -54,6 +59,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this._taskListRepo = new DBManager<TaskList>();
             this._taskList_RepeatTagRepo = new DBManager<TaskList_RepeatTag>();
             this.selectedGroup = SelectedGroup;
+          
+            this.IsGroupListExpanded = true;
+            this.GroupExpanderIcon = "arrow_right.png";
         }
 
 
@@ -201,6 +209,25 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 FlattenGroups(child, level + 1, flatList);
         }
 
+        // GroupList Section Expanded/Collapsed and Selection Commands
+        [RelayCommand]
+        private void ExpanderForGroup() 
+        {
+
+            IsGroupListExpanded = !IsGroupListExpanded;
+            if (IsGroupListExpanded)
+            {
+                Debug.WriteLine("Group list expanded.");
+                GroupExpanderIcon = "arrow_right.png";
+                 
+            }
+            else
+            {
+                Debug.WriteLine("Group list collapsed.");
+                GroupExpanderIcon = "arrow_left.png";
+            }
+            
+        }
 
 
 

@@ -20,93 +20,101 @@
         </Grid.RowDefinitions>
 
         <!-- Folder Area -->
-        <Border BackgroundColor="{StaticResource Black }" Stroke="{StaticResource purple400}" 
-                Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Padding="20,10" >
-
-               
+        <HorizontalStackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
+            <Border x:Name="GroupListDock1" IsVisible="{Binding IsGroupListExpanded}"
+                BackgroundColor="{StaticResource Black }" Stroke="{StaticResource purple400}" 
+                 Padding="10,10" >
 
                 <!-- Folder Entires  -->
                 <RefreshView IsRefreshing="{Binding IsLoading}"
-                                    Command="{Binding GetGroupListCommand}">
-                    
-                    
-                <CollectionView ItemsSource="{Binding GroupList}"
-                    SelectionMode="Single"
-                    SelectionChangedCommand="{Binding SelectGroupCommand}"
-                    SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
-                    Background="{StaticResource black500}">
+                        Command="{Binding GetGroupListCommand}">
 
-                    <CollectionView.Header>
-                        <Label Text="Folder"
-                               FontSize="Subtitle"
-                               TextColor="{StaticResource cyan500}"
-                               FontFamily="VampireWars"
-                               HorizontalOptions="Center" 
-                               Margin="0,0,0,10"/>    
-                    </CollectionView.Header>
+                    <CollectionView ItemsSource="{Binding GroupList}"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding SelectGroupCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                        Background="{StaticResource black500}">
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="groupvm:GroupListViewModel">
-                            <!-- Each folder row -->
+                        <CollectionView.Header>
+                            <Label Text="Folder"
+                                FontSize="Subtitle"
+                                TextColor="{StaticResource cyan500}"
+                                FontFamily="VampireWars"
+                                HorizontalOptions="Center" 
+                                Margin="0,0,0,10"/>
+                        </CollectionView.Header>
 
-                            <Grid ColumnSpacing="5" RowSpacing="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="groupvm:GroupListViewModel">
+                                <!-- Each folder row -->
 
-                                <!-- Selection indicator -->
-                                <BoxView Grid.Column="0"
-                                     HeightRequest="20"
-                                     WidthRequest="10"
-                                     Color="{Binding SelectionIndicatorColor}" />
+                                <Grid ColumnSpacing="5" RowSpacing="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-
-                                <!-- Content -->
-                                <StackLayout Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    Spacing="10"
-                                    Margin="{Binding IndentMargin}"
-                                    Background="{StaticResource blue500}">
-
-                                    <Image Source="{Binding Icon}"
-                                         HeightRequest="20"
-                                         Aspect="AspectFit"/>
-
-                                    <Label Text="{Binding GroupName}"
-                                        FontSize="Body"
-                                        TextColor="{StaticResource black900}" />
-
-                                </StackLayout>
-
-                            </Grid>
-                        
-
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-
-                    <CollectionView.Footer>
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-                            <Button Text="Add"
-                                BackgroundColor="{StaticResource blue600}"
-                                FontSize="Small"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=AddGroupCommand}" />
-                            <Button Text="Remove"
-                                BackgroundColor="{StaticResource blue600}"
-                                FontSize="Small"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=RemoveGroupCommand}"
-                                CommandParameter="{Binding SelectedGroup}" />
-                        </StackLayout>
-                    </CollectionView.Footer>
-                </CollectionView>
-            </RefreshView> 
-        </Border >
+                                    <!-- Selection indicator -->
+                                    <BoxView Grid.Column="0"
+                         HeightRequest="20"
+                         WidthRequest="10"
+                         Color="{Binding SelectionIndicatorColor}" />
 
 
+                                    <!-- Content -->
+                                    <StackLayout Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        Spacing="10"
+                                        Margin="{Binding IndentMargin}"
+                                        Background="{StaticResource blue500}">
 
+                                        <Image Source="{Binding Icon}"
+                                            HeightRequest="20"
+                                            Aspect="AspectFit"/>
+
+                                        <Label Text="{Binding GroupName}"
+                                            FontSize="Body"
+                                            TextColor="{StaticResource black900}" />
+
+                                    </StackLayout>
+
+                                </Grid>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                        <CollectionView.Footer>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                                <Button Text="Add"
+                                    BackgroundColor="{StaticResource blue600}"
+                                    FontSize="Small"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=AddGroupCommand}" />
+                                <Button Text="Remove"
+                                    BackgroundColor="{StaticResource blue600}"
+                                    FontSize="Small"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=RemoveGroupCommand}"
+                                    CommandParameter="{Binding SelectedGroup}" />
+                            </StackLayout>
+                        </CollectionView.Footer>
+                    </CollectionView>
+                </RefreshView>
+            </Border >
+
+            <!-- FolderGroupDock Toggle Button -->
+            <Button x:Name="Expand" ImageSource="{Binding GroupExpanderIcon}" BackgroundColor="Transparent" Text=""
+                      VerticalOptions="Center" HorizontalOptions="Center"
+                      HeightRequest="20" WidthRequest="20" CornerRadius="0"
+                      Padding="0"
+                      Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=ExpanderForGroupCommand}"
+                      CommandParameter="" >
+            </Button>
+
+        </HorizontalStackLayout>
 
 
         <!-- Editor -->
+        
+        
         
         <!-- Footer-->
         
