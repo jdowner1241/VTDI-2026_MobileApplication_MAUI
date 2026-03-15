@@ -16,14 +16,14 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.4*" />
-            <RowDefinition Height="0.6*" />
             <RowDefinition Height="30" />
+            <RowDefinition Height="0.6*" />
         </Grid.RowDefinitions>
 
         <!-- Folder Area -->
         <HorizontalStackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
             <Border x:Name="GroupListDock1" IsVisible="{Binding IsGroupListExpanded}"
-                BackgroundColor="{StaticResource Black }" Stroke="{StaticResource purple400}" 
+                BackgroundColor="{StaticResource Black }" Stroke="{StaticResource App_purple300Brush}" 
                  Padding="10,10" >
 
                 <!-- Folder Entires  -->
@@ -34,12 +34,12 @@
                         SelectionMode="Single"
                         SelectionChangedCommand="{Binding SelectGroupCommand}"
                         SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
-                        Background="{StaticResource black500}">
+                        Background="{StaticResource App_black500}">
 
                         <CollectionView.Header>
                             <Label Text="Folder"
                                 FontSize="Subtitle"
-                                TextColor="{StaticResource cyan500}"
+                                TextColor="{StaticResource App_cyan500}"
                                 FontFamily="VampireWars"
                                 HorizontalOptions="Center" 
                                 Margin="0,0,0,10"/>
@@ -67,7 +67,7 @@
                                         Orientation="Horizontal"
                                         Spacing="10"
                                         Margin="{Binding IndentMargin}"
-                                        Background="{StaticResource blue500}">
+                                        Background="{StaticResource App_blue500}">
 
                                         <Image Source="{Binding Icon}"
                                             HeightRequest="20"
@@ -75,7 +75,7 @@
 
                                         <Label Text="{Binding GroupName}"
                                             FontSize="Body"
-                                            TextColor="{StaticResource black900}" />
+                                            TextColor="{StaticResource App_black900}" />
 
                                     </StackLayout>
 
@@ -87,11 +87,11 @@
                         <CollectionView.Footer>
                             <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
                                 <Button Text="Add"
-                                    BackgroundColor="{StaticResource blue600}"
+                                    BackgroundColor="{StaticResource App_blue600}"
                                     FontSize="Small"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=AddGroupCommand}" />
                                 <Button Text="Remove"
-                                    BackgroundColor="{StaticResource blue600}"
+                                    BackgroundColor="{StaticResource App_blue600}"
                                     FontSize="Small"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=RemoveGroupCommand}"
                                     CommandParameter="{Binding SelectedGroup}" />
@@ -114,15 +114,16 @@
 
         <!-- Editor -->
         <Border Grid.Column="1" Grid.Row="0" 
-            BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
+            BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
              Padding="10,10" Margin="10,0,10,10">
 
-            <ScrollView>
+            
                 <Grid >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="0.2*" />
+                        <ColumnDefinition Width="0.2*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -146,56 +147,73 @@
 
                     <!-- Editor :  Alarm -->
 
-                    <toolkit:Expander  Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
+                    <toolkit:Expander  Grid.Column="0" Grid.Row="1">
                         <toolkit:Expander.Header>
                             <Label Text="Alarm"
                                FontAttributes="Bold"
                                FontSize="Medium" />
                         </toolkit:Expander.Header>
-                        <HorizontalStackLayout Padding="10">
-                            <Image Source="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Papio_anubis_%28Serengeti%2C_2009%29.jpg/200px-Papio_anubis_%28Serengeti%2C_2009%29.jpg"
-                                   Aspect="AspectFill"
-                                   HeightRequest="120"
-                                   WidthRequest="120" />
-                            <Label Text="Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae."
+                        <VerticalStackLayout>
+                            
+                            <HorizontalStackLayout Padding="10" Margin="0, 10">
+                                <Label Text="Set Alarm"
                                     FontAttributes="Italic" />
-                        </HorizontalStackLayout>
+                                <DatePicker />
+                            </HorizontalStackLayout>
+                            
+                            <HorizontalStackLayout Padding="10" Margin="0, 10">
+                                <Label Text="Repeat Alarm"
+                                        FontAttributes="Italic" />
+                                <Picker Title="Select an option"
+                                    ItemsSource="{Binding TaskList_RepeatTag}"
+                                    SelectedItem="{Binding RepeatListTagIndex}" />
+                            </HorizontalStackLayout>
+                            
+                        </VerticalStackLayout>
+               
                     </toolkit:Expander>
 
-                    <!-- Editor :  Description -->
-                    <toolkit:Expander Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+                    <!-- Editor :  More Info -->
+                    <toolkit:Expander Grid.Column="2" Grid.Row="1">
                         <toolkit:Expander.Header>
-                            <Label Text="Alarm"
+                            <Label Text="Details"
                                  FontAttributes="Bold"
                                  FontSize="Medium" />
                         </toolkit:Expander.Header>
-                        <HorizontalStackLayout Padding="10">
-                            <Image Source="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Papio_anubis_%28Serengeti%2C_2009%29.jpg/200px-Papio_anubis_%28Serengeti%2C_2009%29.jpg"
-                                     Aspect="AspectFill"
-                                     HeightRequest="120"
-                                     WidthRequest="120" />
-                            <Label Text="Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae."
-                                    FontAttributes="Italic" />
-                        </HorizontalStackLayout>
+
+                        <VerticalStackLayout>
+
+                            <HorizontalStackLayout Padding="10" Margin="0, 10">
+                                <Label Text="Notes"
+                                        FontAttributes="Italic" />
+                                <Editor />
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Padding="10" Margin="0, 10">
+                                <Label Text="Attachment"
+                                        FontAttributes="Italic" />
+                                <ImageButton Source="attach_file.png" Command="{Binding EditorAttachCommand}"/>
+                            </HorizontalStackLayout>
+
+                        </VerticalStackLayout>
                     </toolkit:Expander>
 
 
                 </Grid>
-            </ScrollView>
+ 
         </Border>
 
-        <!-- Editor Table -->
+     
+        <!-- Search Bar-->
         <Border Grid.Column="1" Grid.Row="1" 
-           BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
-            Padding="10,10" Margin="10,10,10,10">
-            
-            
-        </Border>
-        <!-- Footer-->
-        <Border Grid.Column="1" Grid.Row="2" 
-           BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
+           BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
             Padding="10,10" Margin="10,0,10,0">
-
+            
+        <!-- Editor Table -->
+        <Border Grid.Column="1" Grid.Row="2"
+                BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
+                Padding="10,10" Margin="10,10,10,10">
+        </Border>
 
         </Border>
 

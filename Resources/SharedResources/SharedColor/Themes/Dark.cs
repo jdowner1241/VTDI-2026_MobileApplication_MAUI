@@ -14,9 +14,10 @@ namespace Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.Themes
             this["App_BackgroundColor"] = Color.FromArgb(BaseColors.black500);
             this["App_SurfaceColor"] = Color.FromArgb(BaseColors.gray400);
             this["App_TextColor"] = Color.FromArgb(BaseColors.white900);
-            this["App_TextHeaderColor"] = Color.FromArgb(BaseColors.purple800);
-            this["AppTextSubHeaderColor"] = Color.FromArgb(BaseColors.purple600);
+            this["App_TextHeaderColor"] = Color.FromArgb(BaseColors.purple300);
+            this["App_TextSubHeaderColor"] = Color.FromArgb(BaseColors.blue300);
             this["App_MuteTextColor"] = Color.FromArgb(BaseColors.gray400);
+            this["App_InverseTextColor"] = Color.FromArgb(BaseColors.black900);
 
             // States
             this["App_ErrorColor"] = Color.FromArgb(BaseColors.red500);

@@ -5,152 +5,287 @@
 
 
     <!--  Red -->
-    <Color x:Key="red100">#f8d7da</Color>
-    <Color x:Key="red200">#f1aeb5</Color>
-    <Color x:Key="red300">#e2818c</Color>
-    <Color x:Key="red400">#d6536f</Color>
-    <Color x:Key="red500">#c82333</Color>
-    <Color x:Key="red600">#a71d2a</Color>
-    <Color x:Key="red700">#7a1320</Color>
-    <Color x:Key="red800">#521019</Color>
-    <Color x:Key="red900">#341013</Color>
+    <Color x:Key="App_red100">#f8d7da</Color>
+    <Color x:Key="App_red200">#f1aeb5</Color>
+    <Color x:Key="App_red300">#e2818c</Color>
+    <Color x:Key="App_red400">#d6536f</Color>
+    <Color x:Key="App_red500">#c82333</Color>
+    <Color x:Key="App_red600">#a71d2a</Color>
+    <Color x:Key="App_red700">#7a1320</Color>
+    <Color x:Key="App_red800">#521019</Color>
+    <Color x:Key="App_red900">#341013</Color>
 
+    <SolidColorBrush x:Key="App_red100Brush" Color="{StaticResource App_red100}"/>
+    <SolidColorBrush x:Key="App_red200Brush" Color="{StaticResource App_red200}"/>
+    <SolidColorBrush x:Key="App_red300Brush" Color="{StaticResource App_red300}"/>
+    <SolidColorBrush x:Key="App_red400Brush" Color="{StaticResource App_red400}"/>
+    <SolidColorBrush x:Key="App_red500Brush" Color="{StaticResource App_red500}"/>
+    <SolidColorBrush x:Key="App_red600Brush" Color="{StaticResource App_red600}"/>
+    <SolidColorBrush x:Key="App_red700Brush" Color="{StaticResource App_red700}"/>
+    <SolidColorBrush x:Key="App_red800Brush" Color="{StaticResource App_red800}"/>
+    <SolidColorBrush x:Key="App_red900Brush" Color="{StaticResource App_red900}"/>
+    
     <!--  Green -->
-    <Color x:Key="green100">#d1e7dd</Color>
-    <Color x:Key="green200">#a3cfbb</Color>
-    <Color x:Key="green300">#75b798</Color>
-    <Color x:Key="green400">#4a9d77</Color>
-    <Color x:Key="green500">#198754</Color>
-    <Color x:Key="green600">#146c43</Color>
-    <Color x:Key="green700">#0f5132</Color>
-    <Color x:Key="green800">#0a3622</Color>
-    <Color x:Key="green900">#051b11</Color>
+    <Color x:Key="App_green100">#d1e7dd</Color>
+    <Color x:Key="App_green200">#a3cfbb</Color>
+    <Color x:Key="App_green300">#75b798</Color>
+    <Color x:Key="App_green400">#4a9d77</Color>
+    <Color x:Key="App_green500">#198754</Color>
+    <Color x:Key="App_green600">#146c43</Color>
+    <Color x:Key="App_green700">#0f5132</Color>
+    <Color x:Key="App_green800">#0a3622</Color>
+    <Color x:Key="App_green900">#051b11</Color>
+
+    <SolidColorBrush x:Key="App_green100Brush" Color="{StaticResource App_green100}"/>
+    <SolidColorBrush x:Key="App_green200Brush" Color="{StaticResource App_green200}"/>
+    <SolidColorBrush x:Key="App_green300Brush" Color="{StaticResource App_green300}"/>
+    <SolidColorBrush x:Key="App_green400Brush" Color="{StaticResource App_green400}"/>
+    <SolidColorBrush x:Key="App_green500Brush" Color="{StaticResource App_green500}"/>
+    <SolidColorBrush x:Key="App_green600Brush" Color="{StaticResource App_green600}"/>
+    <SolidColorBrush x:Key="App_green700Brush" Color="{StaticResource App_green700}"/>
+    <SolidColorBrush x:Key="App_green800Brush" Color="{StaticResource App_green800}"/>
+    <SolidColorBrush x:Key="App_green900Brush" Color="{StaticResource App_green900}"/>
 
 
     <!--  Blue -->
-    <Color x:Key="blue100">#e6f0ff</Color>
-    <Color x:Key="blue200">#b3d1ff</Color>
-    <Color x:Key="blue300">#80b3ff</Color>
-    <Color x:Key="blue400">#4d94ff</Color>
-    <Color x:Key="blue500">#1a75ff</Color>
-    <Color x:Key="blue600">#005ce6</Color>
-    <Color x:Key="blue700">#0047b3</Color>
-    <Color x:Key="blue800">#003380</Color>
-    <Color x:Key="blue900">#001f4d</Color>
+    <Color x:Key="App_blue100">#e6f0ff</Color>
+    <Color x:Key="App_blue200">#b3d1ff</Color>
+    <Color x:Key="App_blue300">#80b3ff</Color>
+    <Color x:Key="App_blue400">#4d94ff</Color>
+    <Color x:Key="App_blue500">#1a75ff</Color>
+    <Color x:Key="App_blue600">#005ce6</Color>
+    <Color x:Key="App_blue700">#0047b3</Color>
+    <Color x:Key="App_blue800">#003380</Color>
+    <Color x:Key="App_blue900">#001f4d</Color>
 
+    <SolidColorBrush x:Key="App_blue100Brush" Color="{StaticResource App_blue100}"/>
+    <SolidColorBrush x:Key="App_blue200Brush" Color="{StaticResource App_blue200}"/>
+    <SolidColorBrush x:Key="App_blue300Brush" Color="{StaticResource App_blue300}"/>
+    <SolidColorBrush x:Key="App_blue400Brush" Color="{StaticResource App_blue400}"/>
+    <SolidColorBrush x:Key="App_blue500Brush" Color="{StaticResource App_blue500}"/>
+    <SolidColorBrush x:Key="App_blue600Brush" Color="{StaticResource App_blue600}"/>
+    <SolidColorBrush x:Key="App_blue700Brush" Color="{StaticResource App_blue700}"/>
+    <SolidColorBrush x:Key="App_blue800Brush" Color="{StaticResource App_blue800}"/>
+    <SolidColorBrush x:Key="App_blue900Brush" Color="{StaticResource App_blue900}"/>
 
+    
     <!--  Purple -->
-    <Color x:Key="purple100">#e2d9f3</Color>
-    <Color x:Key="purple200">#c5b3e6</Color>
-    <Color x:Key="purple300">#a98eda</Color>
-    <Color x:Key="purple400">#8c68cd</Color>
-    <Color x:Key="purple500">#6f42c1</Color>
-    <Color x:Key="purple600">#59359a</Color>
-    <Color x:Key="purple700">#432874</Color>
-    <Color x:Key="purple800">#2c1a4d</Color>
-    <Color x:Key="purple900">#160d27</Color>
+    <Color x:Key="App_purple100">#e2d9f3</Color>
+    <Color x:Key="App_purple200">#c5b3e6</Color>
+    <Color x:Key="App_purple300">#a98eda</Color>
+    <Color x:Key="App_purple400">#8c68cd</Color>
+    <Color x:Key="App_purple500">#6f42c1</Color>
+    <Color x:Key="App_purple600">#59359a</Color>
+    <Color x:Key="App_purple700">#432874</Color>
+    <Color x:Key="App_purple800">#2c1a4d</Color>
+    <Color x:Key="App_purple900">#160d27</Color>
+
+    <SolidColorBrush x:Key="App_purple100Brush" Color="{StaticResource App_purple100}"/>
+    <SolidColorBrush x:Key="App_purple200Brush" Color="{StaticResource App_purple200}"/>
+    <SolidColorBrush x:Key="App_purple300Brush" Color="{StaticResource App_purple300}"/>
+    <SolidColorBrush x:Key="App_purple400Brush" Color="{StaticResource App_purple400}"/>
+    <SolidColorBrush x:Key="App_purple500Brush" Color="{StaticResource App_purple500}"/>
+    <SolidColorBrush x:Key="App_purple600Brush" Color="{StaticResource App_purple600}"/>
+    <SolidColorBrush x:Key="App_purple700Brush" Color="{StaticResource App_purple700}"/>
+    <SolidColorBrush x:Key="App_purple800Brush" Color="{StaticResource App_purple800}"/>
+    <SolidColorBrush x:Key="App_purple900Brush" Color="{StaticResource App_purple900}"/>
+
 
     <!--  Yellow -->
-    <Color x:Key="yellow100">#fff3cd</Color>
-    <Color x:Key="yellow200">#ffe69c</Color>
-    <Color x:Key="yellow300">#ffda6a</Color>
-    <Color x:Key="yellow400">#ffcd39</Color>
-    <Color x:Key="yellow500">#ffc107</Color>
-    <Color x:Key="yellow600">#cc9a06</Color>
-    <Color x:Key="yellow700">#997404</Color>
-    <Color x:Key="yellow800">#664d03</Color>
-    <Color x:Key="yellow900">#332701</Color>
+    <Color x:Key="App_yellow100">#fff3cd</Color>
+    <Color x:Key="App_yellow200">#ffe69c</Color>
+    <Color x:Key="App_yellow300">#ffda6a</Color>
+    <Color x:Key="App_yellow400">#ffcd39</Color>
+    <Color x:Key="App_yellow500">#ffc107</Color>
+    <Color x:Key="App_yellow600">#cc9a06</Color>
+    <Color x:Key="App_yellow700">#997404</Color>
+    <Color x:Key="App_yellow800">#664d03</Color>
+    <Color x:Key="App_yellow900">#332701</Color>
+
+    <SolidColorBrush x:Key="App_yellow100Brush" Color="{StaticResource App_yellow100}"/>
+    <SolidColorBrush x:Key="App_yellow200Brush" Color="{StaticResource App_yellow200}"/>
+    <SolidColorBrush x:Key="App_yellow300Brush" Color="{StaticResource App_yellow300}"/>
+    <SolidColorBrush x:Key="App_yellow400Brush" Color="{StaticResource App_yellow400}"/>
+    <SolidColorBrush x:Key="App_yellow500Brush" Color="{StaticResource App_yellow500}"/>
+    <SolidColorBrush x:Key="App_yellow600Brush" Color="{StaticResource App_yellow600}"/>
+    <SolidColorBrush x:Key="App_yellow700Brush" Color="{StaticResource App_yellow700}"/>
+    <SolidColorBrush x:Key="App_yellow800Brush" Color="{StaticResource App_yellow800}"/>
+    <SolidColorBrush x:Key="App_yellow900Brush" Color="{StaticResource App_yellow900}"/>
 
 
     <!--  Orange -->
-    <Color x:Key="orange100">#ffe5d0</Color>
-    <Color x:Key="orange200">#fecba1</Color>
-    <Color x:Key="orange300">#feaf74</Color>
-    <Color x:Key="orange400">#fd9446</Color>
-    <Color x:Key="orange500">#fd7e14</Color>
-    <Color x:Key="orange600">#ca6510</Color>
-    <Color x:Key="orange700">#984c0c</Color>
-    <Color x:Key="orange800">#653208</Color>
-    <Color x:Key="orange900">#331904</Color>
+    <Color x:Key="App_orange100">#ffe5d0</Color>
+    <Color x:Key="App_orange200">#fecba1</Color>
+    <Color x:Key="App_orange300">#feaf74</Color>
+    <Color x:Key="App_orange400">#fd9446</Color>
+    <Color x:Key="App_orange500">#fd7e14</Color>
+    <Color x:Key="App_orange600">#ca6510</Color>
+    <Color x:Key="App_orange700">#984c0c</Color>
+    <Color x:Key="App_orange800">#653208</Color>
+    <Color x:Key="App_orange900">#331904</Color>
+
+    <SolidColorBrush x:Key="App_orange100Brush" Color="{StaticResource App_orange100}"/>
+    <SolidColorBrush x:Key="App_orange200Brush" Color="{StaticResource App_orange200}"/>
+    <SolidColorBrush x:Key="App_orange300Brush" Color="{StaticResource App_orange300}"/>
+    <SolidColorBrush x:Key="App_orange400Brush" Color="{StaticResource App_orange400}"/>
+    <SolidColorBrush x:Key="App_orange500Brush" Color="{StaticResource App_orange500}"/>
+    <SolidColorBrush x:Key="App_orange600Brush" Color="{StaticResource App_orange600}"/>
+    <SolidColorBrush x:Key="App_orange700Brush" Color="{StaticResource App_orange700}"/>
+    <SolidColorBrush x:Key="App_orange800Brush" Color="{StaticResource App_orange800}"/>
+    <SolidColorBrush x:Key="App_orange900Brush" Color="{StaticResource App_orange900}"/>
 
 
     <!--  Cyan -->
-    <Color x:Key="cyan100">#cff4fc</Color>
-    <Color x:Key="cyan200">#9eeaf9</Color>
-    <Color x:Key="cyan300">#6edff6</Color>
-    <Color x:Key="cyan400">#3dd5f3</Color>
-    <Color x:Key="cyan500">#0dcaf0</Color>
-    <Color x:Key="cyan600">#0aa2c0</Color>
-    <Color x:Key="cyan700">#087990</Color>
-    <Color x:Key="cyan800">#055160</Color>
-    <Color x:Key="cyan900">#032830</Color>
+    <Color x:Key="App_cyan100">#cff4fc</Color>
+    <Color x:Key="App_cyan200">#9eeaf9</Color>
+    <Color x:Key="App_cyan300">#6edff6</Color>
+    <Color x:Key="App_cyan400">#3dd5f3</Color>
+    <Color x:Key="App_cyan500">#0dcaf0</Color>
+    <Color x:Key="App_cyan600">#0aa2c0</Color>
+    <Color x:Key="App_cyan700">#087990</Color>
+    <Color x:Key="App_cyan800">#055160</Color>
+    <Color x:Key="App_cyan900">#032830</Color>
+
+    <SolidColorBrush x:Key="App_cyan100Brush" Color="{StaticResource App_cyan100}"/>
+    <SolidColorBrush x:Key="App_cyan200Brush" Color="{StaticResource App_cyan200}"/>
+    <SolidColorBrush x:Key="App_cyan300Brush" Color="{StaticResource App_cyan300}"/>
+    <SolidColorBrush x:Key="App_cyan400Brush" Color="{StaticResource App_cyan400}"/>
+    <SolidColorBrush x:Key="App_cyan500Brush" Color="{StaticResource App_cyan500}"/>
+    <SolidColorBrush x:Key="App_cyan600Brush" Color="{StaticResource App_cyan600}"/>
+    <SolidColorBrush x:Key="App_cyan700Brush" Color="{StaticResource App_cyan700}"/>
+    <SolidColorBrush x:Key="App_cyan800Brush" Color="{StaticResource App_cyan800}"/>
+    <SolidColorBrush x:Key="App_cyan900Brush" Color="{StaticResource App_cyan900}"/>
 
 
     <!--  Teal -->
-    <Color x:Key="teal100">#d2f4ea</Color>
-    <Color x:Key="teal200">#a6e9d5</Color>
-    <Color x:Key="teal300">#79dfc1</Color>
-    <Color x:Key="teal400">#4dd4ac</Color>
-    <Color x:Key="teal500">#20c997</Color>
-    <Color x:Key="teal600">#1aa179</Color>
-    <Color x:Key="teal700">#13795b</Color>
-    <Color x:Key="teal800">#0d503c</Color>
-    <Color x:Key="teal900">#06281e</Color>
+    <Color x:Key="App_teal100">#d2f4ea</Color>
+    <Color x:Key="App_teal200">#a6e9d5</Color>
+    <Color x:Key="App_teal300">#79dfc1</Color>
+    <Color x:Key="App_teal400">#4dd4ac</Color>
+    <Color x:Key="App_teal500">#20c997</Color>
+    <Color x:Key="App_teal600">#1aa179</Color>
+    <Color x:Key="App_teal700">#13795b</Color>
+    <Color x:Key="App_teal800">#0d503c</Color>
+    <Color x:Key="App_teal900">#06281e</Color>
+
+    <SolidColorBrush x:Key="App_teal100Brush" Color="{StaticResource App_teal100}"/>
+    <SolidColorBrush x:Key="App_teal200Brush" Color="{StaticResource App_teal200}"/>
+    <SolidColorBrush x:Key="App_teal300Brush" Color="{StaticResource App_teal300}"/>
+    <SolidColorBrush x:Key="App_teal400Brush" Color="{StaticResource App_teal400}"/>
+    <SolidColorBrush x:Key="App_teal500Brush" Color="{StaticResource App_teal500}"/>
+    <SolidColorBrush x:Key="App_teal600Brush" Color="{StaticResource App_teal600}"/>
+    <SolidColorBrush x:Key="App_teal700Brush" Color="{StaticResource App_teal700}"/>
+    <SolidColorBrush x:Key="App_teal800Brush" Color="{StaticResource App_teal800}"/>
+    <SolidColorBrush x:Key="App_teal900Brush" Color="{StaticResource App_teal900}"/>
+
+
 
     <!--  Pink -->
-    <Color x:Key="pink100">#f7d6e6</Color>
-    <Color x:Key="pink200">#efadce</Color>
-    <Color x:Key="pink300">#e685b5</Color>
-    <Color x:Key="pink400">#de5c9d</Color>
-    <Color x:Key="pink500">#d63384</Color>
-    <Color x:Key="pink600">#ab296a</Color>
-    <Color x:Key="pink700">#801f4f</Color>
-    <Color x:Key="pink800">#561435</Color>
-    <Color x:Key="pink900">#2b0a1a</Color>
+    <Color x:Key="App_pink100">#f7d6e6</Color>
+    <Color x:Key="App_pink200">#efadce</Color>
+    <Color x:Key="App_pink300">#e685b5</Color>
+    <Color x:Key="App_pink400">#de5c9d</Color>
+    <Color x:Key="App_pink500">#d63384</Color>
+    <Color x:Key="App_pink600">#ab296a</Color>
+    <Color x:Key="App_pink700">#801f4f</Color>
+    <Color x:Key="App_pink800">#561435</Color>
+    <Color x:Key="App_pink900">#2b0a1a</Color>
+
+    <SolidColorBrush x:Key="App_pink100Brush" Color="{StaticResource App_pink100}"/>
+    <SolidColorBrush x:Key="App_pink200Brush" Color="{StaticResource App_pink200}"/>
+    <SolidColorBrush x:Key="App_pink300Brush" Color="{StaticResource App_pink300}"/>
+    <SolidColorBrush x:Key="App_pink400Brush" Color="{StaticResource App_pink400}"/>
+    <SolidColorBrush x:Key="App_pink500Brush" Color="{StaticResource App_pink500}"/>
+    <SolidColorBrush x:Key="App_pink600Brush" Color="{StaticResource App_pink600}"/>
+    <SolidColorBrush x:Key="App_pink700Brush" Color="{StaticResource App_pink700}"/>
+    <SolidColorBrush x:Key="App_pink800Brush" Color="{StaticResource App_pink800}"/>
+    <SolidColorBrush x:Key="App_pink900Brush" Color="{StaticResource App_pink900}"/>
+
 
     <!--  Indigo -->
-    <Color x:Key="indigo100">#e0cffc</Color>
-    <Color x:Key="indigo200">#c29ffa</Color>
-    <Color x:Key="indigo300">#a370f7</Color>
-    <Color x:Key="indigo400">#8540f5</Color>
-    <Color x:Key="indigo500">#6610f2</Color>
-    <Color x:Key="indigo600">#520dc2</Color>
-    <Color x:Key="indigo700">#3d0a91</Color>
-    <Color x:Key="indigo800">#290661</Color>
-    <Color x:Key="indigo900">#1a043f</Color>
+    <Color x:Key="App_indigo100">#e0cffc</Color>
+    <Color x:Key="App_indigo200">#c29ffa</Color>
+    <Color x:Key="App_indigo300">#a370f7</Color>
+    <Color x:Key="App_indigo400">#8540f5</Color>
+    <Color x:Key="App_indigo500">#6610f2</Color>
+    <Color x:Key="App_indigo600">#520dc2</Color>
+    <Color x:Key="App_indigo700">#3d0a91</Color>
+    <Color x:Key="App_indigo800">#290661</Color>
+    <Color x:Key="App_indigo900">#1a043f</Color>
 
+    <SolidColorBrush x:Key="App_indigo100Brush" Color="{StaticResource App_indigo100}"/>
+    <SolidColorBrush x:Key="App_indigo200Brush" Color="{StaticResource App_indigo200}"/>
+    <SolidColorBrush x:Key="App_indigo300Brush" Color="{StaticResource App_indigo300}"/>
+    <SolidColorBrush x:Key="App_indigo400Brush" Color="{StaticResource App_indigo400}"/>
+    <SolidColorBrush x:Key="App_indigo500Brush" Color="{StaticResource App_indigo500}"/>
+    <SolidColorBrush x:Key="App_indigo600Brush" Color="{StaticResource App_indigo600}"/>
+    <SolidColorBrush x:Key="App_indigo700Brush" Color="{StaticResource App_indigo700}"/>
+    <SolidColorBrush x:Key="App_indigo800Brush" Color="{StaticResource App_indigo800}"/>
+    <SolidColorBrush x:Key="App_indigo900Brush" Color="{StaticResource App_indigo900}"/>
+
+    
     <!--  Black -->
-    <Color x:Key="black100">#e0e0e0</Color>
-    <Color x:Key="black200">#bdbdbd</Color>
-    <Color x:Key="black300">#9e9e9e</Color>
-    <Color x:Key="black400">#757575</Color>
-    <Color x:Key="black500">#000000</Color>
-    <Color x:Key="black600">#000000</Color>
-    <Color x:Key="black700">#000000</Color>
-    <Color x:Key="black800">#000000</Color>
-    <Color x:Key="black900">#000000</Color>
+    <Color x:Key="App_black100">#e0e0e0</Color>
+    <Color x:Key="App_black200">#bdbdbd</Color>
+    <Color x:Key="App_black300">#9e9e9e</Color>
+    <Color x:Key="App_black400">#757575</Color>
+    <Color x:Key="App_black500">#000000</Color>
+    <Color x:Key="App_black600">#000000</Color>
+    <Color x:Key="App_black700">#000000</Color>
+    <Color x:Key="App_black800">#000000</Color>
+    <Color x:Key="App_black900">#000000</Color>
+
+    <SolidColorBrush x:Key="App_black100Brush" Color="{StaticResource App_black100}"/>
+    <SolidColorBrush x:Key="App_black200Brush" Color="{StaticResource App_black200}"/>
+    <SolidColorBrush x:Key="App_black300Brush" Color="{StaticResource App_black300}"/>
+    <SolidColorBrush x:Key="App_black400Brush" Color="{StaticResource App_black400}"/>
+    <SolidColorBrush x:Key="App_black500Brush" Color="{StaticResource App_black500}"/>
+    <SolidColorBrush x:Key="App_black600Brush" Color="{StaticResource App_black600}"/>
+    <SolidColorBrush x:Key="App_black700Brush" Color="{StaticResource App_black700}"/>
+    <SolidColorBrush x:Key="App_black800Brush" Color="{StaticResource App_black800}"/>
+    <SolidColorBrush x:Key="App_black900Brush" Color="{StaticResource App_black900}"/>
 
     <!--  White -->
-    <Color x:Key="white100">#ffffff</Color>
-    <Color x:Key="white200">#ffffff</Color>
-    <Color x:Key="white300">#ffffff</Color>
-    <Color x:Key="white400">#ffffff</Color>
-    <Color x:Key="white500">#ffffff</Color>
-    <Color x:Key="white600">#f8f9fa</Color>
-    <Color x:Key="white700">#e9ecef</Color>
-    <Color x:Key="white800">#dee2e6</Color>
-    <Color x:Key="white900">#ced4da</Color>
+    <Color x:Key="App_white100">#ffffff</Color>
+    <Color x:Key="App_white200">#ffffff</Color>
+    <Color x:Key="App_white300">#ffffff</Color>
+    <Color x:Key="App_white400">#ffffff</Color>
+    <Color x:Key="App_white500">#ffffff</Color>
+    <Color x:Key="App_white600">#f8f9fa</Color>
+    <Color x:Key="App_white700">#e9ecef</Color>
+    <Color x:Key="App_white800">#dee2e6</Color>
+    <Color x:Key="App_white900">#ced4da</Color>
+
+    <SolidColorBrush x:Key="App_white100Brush" Color="{StaticResource App_white100}"/>
+    <SolidColorBrush x:Key="App_white200Brush" Color="{StaticResource App_white200}"/>
+    <SolidColorBrush x:Key="App_white300Brush" Color="{StaticResource App_white300}"/>
+    <SolidColorBrush x:Key="App_white400Brush" Color="{StaticResource App_white400}"/>
+    <SolidColorBrush x:Key="App_white500Brush" Color="{StaticResource App_white500}"/>
+    <SolidColorBrush x:Key="App_white600Brush" Color="{StaticResource App_white600}"/>
+    <SolidColorBrush x:Key="App_white700Brush" Color="{StaticResource App_white700}"/>
+    <SolidColorBrush x:Key="App_white800Brush" Color="{StaticResource App_white800}"/>
+    <SolidColorBrush x:Key="App_white900Brush" Color="{StaticResource App_white900}"/>
 
 
     <!--  Gray -->
-    <Color x:Key="gray100">#f8f9fa</Color>
-    <Color x:Key="gray200">#e9ecef</Color>
-    <Color x:Key="gray300">#dee2e6</Color>
-    <Color x:Key="gray400">#ced4da</Color>
-    <Color x:Key="gray500">#adb5bd</Color>
-    <Color x:Key="gray600">#6c757d</Color>
-    <Color x:Key="gray700">#495057</Color>
-    <Color x:Key="gray800">#343a40</Color>
-    <Color x:Key="gray900">#212529</Color>
+    <Color x:Key="App_gray100">#f8f9fa</Color>
+    <Color x:Key="App_gray200">#e9ecef</Color>
+    <Color x:Key="App_gray300">#dee2e6</Color>
+    <Color x:Key="App_gray400">#ced4da</Color>
+    <Color x:Key="App_gray500">#adb5bd</Color>
+    <Color x:Key="App_gray600">#6c757d</Color>
+    <Color x:Key="App_gray700">#495057</Color>
+    <Color x:Key="App_gray800">#343a40</Color>
+    <Color x:Key="App_gray900">#212529</Color>
+
+    <SolidColorBrush x:Key="App_gray100Brush" Color="{StaticResource App_gray100}"/>
+    <SolidColorBrush x:Key="App_gray200Brush" Color="{StaticResource App_gray200}"/>
+    <SolidColorBrush x:Key="App_gray300Brush" Color="{StaticResource App_gray300}"/>
+    <SolidColorBrush x:Key="App_gray400Brush" Color="{StaticResource App_gray400}"/>
+    <SolidColorBrush x:Key="App_gray500Brush" Color="{StaticResource App_gray500}"/>
+    <SolidColorBrush x:Key="App_gray600Brush" Color="{StaticResource App_gray600}"/>
+    <SolidColorBrush x:Key="App_gray700Brush" Color="{StaticResource App_gray700}"/>
+    <SolidColorBrush x:Key="App_gray800Brush" Color="{StaticResource App_gray800}"/>
+    <SolidColorBrush x:Key="App_gray900Brush" Color="{StaticResource App_gray900}"/>
 
 </ResourceDictionary>

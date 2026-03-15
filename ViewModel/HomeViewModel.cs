@@ -58,7 +58,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         [ObservableProperty]
         private int editorSlideIndex = 0;
-
+        [ObservableProperty]
+        private int repeatListTagIndex = 0;
 
 
         // -----------------------------
@@ -446,6 +447,47 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        [RelayCommand]
+        async Task GetTaskList_RepeatList_Tag()
+        {
+            if (IsLoading) return;
+
+            try
+            {
+                IsLoading = true;
+
+
+                if (TaskList_RepeatTag.Any()) TaskList_RepeatTag.Clear();
+
+                var tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
+                if (tagListing != null)
+                {
+                    foreach (var tag in tagListing) TaskList_RepeatTag.Add(tag);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to get: RepeatTags. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: RepeatTags.", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        private void EditorAttach() 
+        {
+
+        }
+
+
+
+
+
+
 
 
         // -----------------------------
@@ -481,42 +523,15 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
 
 
-        [RelayCommand]
-        async Task GetTaskList_RepeatList_Tag()
-        {
-            if (IsLoading) return;
-
-            try
-            {
-                IsLoading = true;
-
-
-                if (TaskList_RepeatTag.Any()) TaskList_RepeatTag.Clear();
-
-                var tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
-                if (tagListing != null)
-                {
-                    foreach (var tag in tagListing) TaskList_RepeatTag.Add(tag);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Unable to get: RepeatTags. Error: {ex.Message}");
-                await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: RepeatTags.", "OK");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        // This is a placehold method to load data automatically on app startup.
+        // -----------------------------
+        // Async Method for Loading Data Automatically 
+        // -----------------------------
         public async Task LoadDataAsync() 
         {
             await GetGroupList();
-            //await GetTaskList();
             //await GetTaskList_RepeatList_Tag();
+            //await GetTaskList();
+
 
         }
 

@@ -59,7 +59,7 @@ namespace Mystic_ToDo_MAUI_.Services.ThemeHelpers
                 try
                 {
                     // Remove existing theme dictionaries (Dark/Light)
-                    var oldTheme = merged.Where(md => md is Dark || md is Light).ToList();
+                    var oldTheme = merged.Where(md => md is DarkTheme || md is LightTheme).ToList();
                     foreach (var md in oldTheme) merged.Remove(md);
 
                     // Remove previously added CustomStyles / BrushOnlyStyles so rebinds occur
@@ -70,10 +70,10 @@ namespace Mystic_ToDo_MAUI_.Services.ThemeHelpers
                     foreach (var md in oldStyles) merged.Remove(md);
 
                     // Add the new theme (colors only)
-                    if (string.Equals(themeName, "Dark", StringComparison.OrdinalIgnoreCase))
-                        merged.Add(new Dark());
+                    if (string.Equals(themeName, "DarkTheme", StringComparison.OrdinalIgnoreCase))
+                        merged.Add(new DarkTheme());
                     else
-                        merged.Add(new Light());
+                        merged.Add(new LightTheme());
 
                     // Add CustomStyles (color-only styles)
                     merged.Add(new CustomStyles());
