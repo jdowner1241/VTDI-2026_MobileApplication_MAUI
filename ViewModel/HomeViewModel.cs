@@ -61,6 +61,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [ObservableProperty]
         private int repeatListTagIndex = 0;
 
+        [ObservableProperty]
+        private ObservableCollection<string> editorAttachmentList = new();
+
+
 
         // -----------------------------
         // Constructor
@@ -75,6 +79,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
           
             this.IsGroupListExpanded = true;
             this.GroupExpanderIcon = "arrow_right.png";
+
+            this.EditorAttachmentList = new ObservableCollection<string>();
         }
 
 
@@ -478,12 +484,16 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
         [RelayCommand]
-        private void EditorAttach() 
+        private void EditorAttachment() 
         {
 
         }
 
+        [RelayCommand]
+        private void EditorAttachmentSelect() 
+        {
 
+        }
 
 
 

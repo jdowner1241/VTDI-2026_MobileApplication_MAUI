@@ -39,12 +39,12 @@ namespace Mystic_ToDo_MAUI_.Services
             {
                 if (MainThread.IsMainThread)
                 {
-                    _themeSwitcher.SetTheme("Dark");
+                    _themeSwitcher.SetTheme("DarkTheme");
                 }
                 else
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
-                        _themeSwitcher.SetTheme("Dark"));
+                        _themeSwitcher.SetTheme("DarkTheme"));
                 }
             }
             catch (ArgumentException ex)
