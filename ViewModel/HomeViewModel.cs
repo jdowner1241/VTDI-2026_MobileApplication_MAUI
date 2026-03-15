@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 using Mystic_ToDo_MAUI_.Services.db;
+using Mystic_ToDo_MAUI_.View.Editor;
 using Mystic_ToDo_MAUI_.ViewModel.GroupListVM;
 using System;
 using System.Collections.Generic;
@@ -17,15 +18,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 {
     public partial class HomeViewModel : BaseViewModel
     {
-
+        // -----------------------------
         // Repositories for database access
+        // -----------------------------
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
-
-        // ObservableCollections for data binding
-
-        //public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
 
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
@@ -33,6 +31,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public ObservableCollection<TaskList_RepeatTag> TaskList_RepeatTag { get; private set; } = new();
 
 
+        // -----------------------------
+        // GroupListViewModel properties and supporting structures
+        // -----------------------------
+        // ObservableCollections for data binding
+
+        //public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
         // Constant properties
         public const int RootParentId = 1;
 
@@ -44,14 +48,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
         private Dictionary<int, GroupListViewModel> _lookup = new();
 
-
         [ObservableProperty]
         private bool isGroupListExpanded;
         [ObservableProperty]
         private ImageSource groupExpanderIcon;
-       
 
+        // -----------------------------
+        // Editor properties and supporting structures
+        // -----------------------------
+        [ObservableProperty]
+        private int editorSlideIndex = 0;
+
+
+
+        // -----------------------------
         // Constructor
+        // -----------------------------
         public HomeViewModel() 
         { 
             Title = "Home";
@@ -407,6 +419,30 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 Debug.WriteLine($"Unable to reorder groups. Error: {ex.Message}");
                 await Shell.Current.DisplayAlertAsync("Error", $"Unable to reorder groups.", "OK");
+            }
+        }
+
+
+        // -----------------------------
+        // Editor Commands and Task
+        // -----------------------------
+        [RelayCommand]
+        private void NextEditorSlide() 
+        {
+            // 3 Slides
+            if (EditorSlideIndex < 2) 
+            {
+                EditorSlideIndex++;
+            }
+        }
+
+        [RelayCommand]
+        private void PreviousEditorSlide()
+        {
+            // 3 Slides
+            if (EditorSlideIndex > 0)
+            {
+                EditorSlideIndex--;
             }
         }
 

@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:groupvm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.GroupListVM"
              x:Class="Mystic_ToDo_MAUI_.View.Home"
              Title="{Binding Title}">
@@ -14,9 +15,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="0.4*" />
+            <RowDefinition Height="0.6*" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
 
         <!-- Folder Area -->
@@ -111,13 +112,92 @@
 
         </HorizontalStackLayout>
 
-
         <!-- Editor -->
-        
-        
-        
+        <Border Grid.Column="1" Grid.Row="0" 
+            BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
+             Padding="10,10" Margin="10,0,10,10">
+
+            <ScrollView>
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/> 
+                        <RowDefinition Height="*"/> 
+                        <RowDefinition Height="*"/> 
+                        <RowDefinition Height="*"/> 
+                        <RowDefinition Height="*"/> 
+                    </Grid.RowDefinitions>
+
+
+                    <!-- Editor : Title -->
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20"
+                                 Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="0" >
+
+                        <Entry Placeholder=" Enter Task Title" WidthRequest="400"/>
+
+                        <Button Text="{Binding EditorActionText}" WidthRequest="100"
+                                Command="{Binding EditorActionCommand}"/>
+                    </StackLayout>
+
+                    <!-- Editor :  Alarm -->
+
+                    <toolkit:Expander  Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
+                        <toolkit:Expander.Header>
+                            <Label Text="Alarm"
+                               FontAttributes="Bold"
+                               FontSize="Medium" />
+                        </toolkit:Expander.Header>
+                        <HorizontalStackLayout Padding="10">
+                            <Image Source="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Papio_anubis_%28Serengeti%2C_2009%29.jpg/200px-Papio_anubis_%28Serengeti%2C_2009%29.jpg"
+                                   Aspect="AspectFill"
+                                   HeightRequest="120"
+                                   WidthRequest="120" />
+                            <Label Text="Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae."
+                                    FontAttributes="Italic" />
+                        </HorizontalStackLayout>
+                    </toolkit:Expander>
+
+                    <!-- Editor :  Description -->
+                    <toolkit:Expander Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+                        <toolkit:Expander.Header>
+                            <Label Text="Alarm"
+                                 FontAttributes="Bold"
+                                 FontSize="Medium" />
+                        </toolkit:Expander.Header>
+                        <HorizontalStackLayout Padding="10">
+                            <Image Source="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Papio_anubis_%28Serengeti%2C_2009%29.jpg/200px-Papio_anubis_%28Serengeti%2C_2009%29.jpg"
+                                     Aspect="AspectFill"
+                                     HeightRequest="120"
+                                     WidthRequest="120" />
+                            <Label Text="Baboons are African and Arabian Old World monkeys belonging to the genus Papio, part of the subfamily Cercopithecinae."
+                                    FontAttributes="Italic" />
+                        </HorizontalStackLayout>
+                    </toolkit:Expander>
+
+
+                </Grid>
+            </ScrollView>
+        </Border>
+
+        <!-- Editor Table -->
+        <Border Grid.Column="1" Grid.Row="1" 
+           BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
+            Padding="10,10" Margin="10,10,10,10">
+            
+            
+        </Border>
         <!-- Footer-->
-        
+        <Border Grid.Column="1" Grid.Row="2" 
+           BackgroundColor="{StaticResource black500}" Stroke="{StaticResource purple400}" 
+            Padding="10,10" Margin="10,0,10,0">
+
+
+        </Border>
 
     </Grid>
 

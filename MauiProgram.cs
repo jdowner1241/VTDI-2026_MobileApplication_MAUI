@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using CommunityToolkit.Maui;
+
 
 namespace Mystic_ToDo_MAUI_
 {
@@ -9,6 +11,7 @@ namespace Mystic_ToDo_MAUI_
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
