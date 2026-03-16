@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:basecolor="clr-namespace:Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor"
              xmlns:groupvm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.GroupListVM"
              x:Class="Mystic_ToDo_MAUI_.View.Home"
              Title="{Binding Title}">
@@ -16,7 +17,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.4*" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="0.6*" />
         </Grid.RowDefinitions>
 
@@ -136,7 +137,8 @@
                     <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Start" 
                                  Spacing="20" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Margin="0, 10">
 
-                        <Entry Placeholder=" Enter Task Title" WidthRequest="400" />
+                        <Entry Placeholder=" Enter Task Title" WidthRequest="400" 
+                               Background="{StaticResource App_gray800Brush}"/>
 
                         <Button Text="{Binding EditorActionText}" WidthRequest="100"
                                 Command="{Binding EditorActionCommand}"/>
@@ -153,7 +155,8 @@
                         
                             <Label Text="Notes" ToolTipProperties.Text="Set a Description"
                                     FontAttributes="None" />
-                            <Editor WidthRequest="200" HeightRequest="70" Placeholder="Set a Description" />
+                            <Editor WidthRequest="200" HeightRequest="70" Placeholder="Set a Description" 
+                                    Background="{StaticResource App_gray800Brush}"/>
                     </StackLayout>
 
                     <!-- Editor :  Attachments -->
@@ -191,7 +194,8 @@
                         
                         <Label Text="Alarm" ToolTipProperties.Text="Set a Alarm"
                                     FontAttributes="None" />
-                        <DatePicker WidthRequest="150" ToolTipProperties.Text="Set a Alarm" />
+                        <DatePicker WidthRequest="150" ToolTipProperties.Text="Set a Alarm" 
+                                    Background="{StaticResource App_gray800Brush}"/>
                     </StackLayout>
 
                     <!-- Editor :  Alarm Repeat -->
@@ -203,7 +207,8 @@
                                     FontAttributes="None" />
                         <Picker WidthRequest="150" ToolTipProperties.Text="Repeat the Alarm"
                                 ItemsSource="{Binding TaskList_RepeatTag}"
-                                SelectedItem="{Binding RepeatListTagIndex}" />
+                                SelectedItem="{Binding RepeatListTagIndex}" 
+                                Background="{StaticResource App_gray800Brush}"/>
                     </StackLayout>
 
 
@@ -216,12 +221,29 @@
         <Border Grid.Column="1" Grid.Row="1" 
            BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
             Padding="10,10" Margin="10,0,10,0">
+
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="Center" Spacing="40">
+
+                <SearchBar  Placeholder="Search" ToolTipProperties.Text="Search for a Task" 
+                            WidthRequest="300"/>
+
+
+                <Picker ToolTipProperties.Text="Sort Type" 
+                        WidthRequest="150"/>
+
+                <Picker ToolTipProperties.Text="Sort Order" 
+                        WidthRequest="150"/>
+
+            </StackLayout>
         </Border>
         
         <!-- Editor Table -->
         <Border Grid.Column="1" Grid.Row="2"
                 BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
                 Padding="10,10" Margin="10,10,10,10">
+
+
+
         </Border>
 
         

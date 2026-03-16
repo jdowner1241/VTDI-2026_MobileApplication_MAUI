@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor.Themes.ThemeBrushes">
+
+
+    <!-- General Tokens  -->
+    <SolidColorBrush x:Key="App_PrimaryBrush" Color="{StaticResource App_PrimaryColor}" />
+    <SolidColorBrush x:Key="App_SecondaryBrush" Color="{StaticResource App_SecondaryColor}" />
+    <SolidColorBrush x:Key="App_TertiaryBrush" Color="{StaticResource App_TertiaryColor}" />
+    <SolidColorBrush x:Key="App_BackgroundBrush" Color="{StaticResource App_BackgroundColor}" />
+    <SolidColorBrush x:Key="App_SurfaceBrush" Color="{StaticResource App_SurfaceColor}" />
+    <SolidColorBrush x:Key="App_TextBrush" Color="{StaticResource App_TextColor}" />
+    <SolidColorBrush x:Key="App_TextHeaderBrush" Color="{StaticResource App_TextHeaderColor}" />
+    <SolidColorBrush x:Key="App_TextSubHeaderBrush" Color="{StaticResource App_TextSubHeaderColor}" />
+    <SolidColorBrush x:Key="App_MuteTextBrush" Color="{StaticResource App_MuteTextColor}" />
+    <SolidColorBrush x:Key="App_InverseTextBrush" Color="{StaticResource App_InverseTextColor}" />
+
+    <!-- States Tokens  -->
+    <SolidColorBrush x:Key="App_App_ErrorBrush" Color="{StaticResource App_ErrorColor}" />
+    <SolidColorBrush x:Key="App_WarningBrush" Color="{StaticResource App_WarningColor}" />
+    <SolidColorBrush x:Key="App_InfoBrush" Color="{StaticResource App_InfoColor}" />
+    <SolidColorBrush x:Key="App_SuccessBrush" Color="{StaticResource App_SuccessColor}" />
+    <SolidColorBrush x:Key="App_DisabledBrush" Color="{StaticResource App_DisabledColor}" />
+    <SolidColorBrush x:Key="App_SelectedBrush" Color="{StaticResource App_SelectedColor}" />
+    <SolidColorBrush x:Key="App_UnselectedBrush" Color="{StaticResource App_UnselectedColor}" />
+
+    <!-- States Tokens  -->
+    <SolidColorBrush x:Key="App_GlowBrush" Color="{StaticResource App_GlowColor}" />
+    <SolidColorBrush x:Key="App_ShadowBrush" Color="{StaticResource App_ShadowColor}" />
+
+    <!-- Controls Tokens  -->
+    <SolidColorBrush x:Key="App_ControlBackgroundBrush" Color="{StaticResource App_ControlBackgroundColor}" />
+    <SolidColorBrush x:Key="App_ControlTextBrush" Color="{StaticResource App_ControlTextColor}" />
+    <SolidColorBrush x:Key="App_PlaceholderTextBrush" Color="{StaticResource App_PlaceholderTextColor}" />
+    <SolidColorBrush x:Key="App_DividerBrush" Color="{StaticResource App_DividerColor}" />
+    <SolidColorBrush x:Key="App_NavigationBarBrush" Color="{StaticResource App_NavigationBarColor}" />
+    <SolidColorBrush x:Key="App_NavigationTextBrush" Color="{StaticResource App_NavigationTextColor}" />
+    <SolidColorBrush x:Key="App_TabBarBackgroundBrush" Color="{StaticResource App_TabBarBackgroundColor}" />
+    <SolidColorBrush x:Key="App_TabBarTextBrush" Color="{StaticResource App_TabBarTextColor}" />
+
+
+
+
+</ResourceDictionary>

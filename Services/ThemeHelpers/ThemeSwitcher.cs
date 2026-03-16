@@ -62,20 +62,27 @@ namespace Mystic_ToDo_MAUI_.Services.ThemeHelpers
                     var oldTheme = merged.Where(md => md is DarkTheme || md is LightTheme).ToList();
                     foreach (var md in oldTheme) merged.Remove(md);
 
-                    // Remove previously added CustomStyles / BrushOnlyStyles so rebinds occur
+                    // Remove previously added Brushes, CustomStyles and BrushOnlyStyles so rebinds occur
                     var oldStyles = merged
-                        .Where(md => md.GetType().Name.IndexOf("CustomStyles", StringComparison.OrdinalIgnoreCase) >= 0
+                        .Where(md => md.GetType().Name.IndexOf("ThemeBrushes", StringComparison.OrdinalIgnoreCase) >= 0
+                                  || md.GetType().Name.IndexOf("CustomStyles", StringComparison.OrdinalIgnoreCase) >= 0
                                   || md.GetType().Name.IndexOf("BrushOnlyStyles", StringComparison.OrdinalIgnoreCase) >= 0)
                         .ToList();
                     foreach (var md in oldStyles) merged.Remove(md);
 
                     // Add the new theme (colors only)
-                    if (string.Equals(themeName, "DarkTheme", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(themeName, "DarkTheme", StringComparison.OrdinalIgnoreCase)) 
+                    {
                         merged.Add(new DarkTheme());
+                    }
                     else
+                    {
                         merged.Add(new LightTheme());
+                    }
+                        
 
                     // Add CustomStyles (color-only styles)
+                    merged.Add(new ThemeBrushes());
                     merged.Add(new CustomStyles());
 
                     // Add BrushOnlyStyles AFTER CustomStyles so brush-backed setters augment existing styles
