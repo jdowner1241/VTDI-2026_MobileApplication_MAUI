@@ -118,7 +118,7 @@
              Padding="10,10" Margin="10,0,10,10">
 
             
-                <Grid >
+                <Grid RowSpacing="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.3*" />
                         <ColumnDefinition Width="0.3*" />
@@ -127,16 +127,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="40"/> 
+                        <RowDefinition Height="50"/> 
                         <RowDefinition Height="*"/> 
                     </Grid.RowDefinitions>
 
 
                     <!-- Editor : Task Title -->
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20"
-                                 Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" >
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Start" 
+                                 Spacing="20" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0" Margin="0, 10">
 
-                        <Entry Placeholder=" Enter Task Title" WidthRequest="400"/>
+                        <Entry Placeholder=" Enter Task Title" WidthRequest="400" />
 
                         <Button Text="{Binding EditorActionText}" WidthRequest="100"
                                 Command="{Binding EditorActionCommand}"/>
@@ -147,25 +147,31 @@
 
 
                     <!-- Editor :  Notes-->
-                    <StackLayout Orientation="Vertical"
-                            Grid.Column="0" Grid.Row="1" Spacing="10">
+                    <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Center"
+                            Grid.Column="0" Grid.Row="1" Spacing="10"
+                            Margin="5, 10 ">
+                        
                             <Label Text="Notes" ToolTipProperties.Text="Set a Description"
                                     FontAttributes="None" />
-                            <Editor WidthRequest="200" Placeholder="Set a Description" />
+                            <Editor WidthRequest="200" HeightRequest="70" Placeholder="Set a Description" />
                     </StackLayout>
 
                     <!-- Editor :  Attachments -->
                     <CollectionView ItemsSource="{Binding EditorAttachmentList}"
-                        Grid.Column="1" Grid.Row="1"         
+                        Grid.Column="1" Grid.Row="1" 
+                        Margin="5, 10 "
+                        VerticalOptions="Start" HorizontalOptions="Center"        
                         SelectionMode="Single"
                         SelectionChangedCommand="{Binding EditorAttachmentSelectCommand}"
                         SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
 
                         <CollectionView.Header>
-                            <HorizontalStackLayout Spacing="10">
-                                <Label Text="Notes" ToolTipProperties.Text="Set a Description"
-                                    FontAttributes="None" />
-                                <ImageButton Source="attach_file.png" Command="{Binding EditorAttachmentCommand}"/>
+                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center"  HorizontalOptions="Center">
+                            <Label Text="Attachment" FontAttributes="None" 
+                                   ToolTipProperties.Text="Set a Description"
+                                   VerticalOptions="Center"/>
+                                <ImageButton Source="attach_file.png" Aspect="AspectFit"
+                                             Command="{Binding EditorAttachmentCommand}"/>
                             </HorizontalStackLayout>
                         </CollectionView.Header>
 
@@ -179,20 +185,23 @@
 
                     
                     <!-- Editor :  Alarm -->
-                    <StackLayout Orientation="Vertical"
-                            Grid.Column="0" Grid.Row="3" Spacing="10">
-                        <Label Text="Notes" ToolTipProperties.Text="Set a Alarm"
+                    <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Start"
+                            Grid.Column="2" Grid.Row="1" Spacing="10"
+                            Margin="5, 10" >
+                        
+                        <Label Text="Alarm" ToolTipProperties.Text="Set a Alarm"
                                     FontAttributes="None" />
-                        <DatePicker WidthRequest="100" ToolTipProperties.Text="Set a Alarm" />
+                        <DatePicker WidthRequest="150" ToolTipProperties.Text="Set a Alarm" />
                     </StackLayout>
 
                     <!-- Editor :  Alarm Repeat -->
-                    <StackLayout Orientation="Vertical"
-                            Grid.Column="0" Grid.Row="4" Spacing="10">
+                    <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Center"
+                            Grid.Column="3" Grid.Row="1" Spacing="10"
+                            Margin="5, 10">
                     
                         <Label Text="Repeat Alarm" ToolTipProperties.Text="Repeat the Alarm"
                                     FontAttributes="None" />
-                        <Picker WidthRequest="100" ToolTipProperties.Text="Repeat the Alarm"
+                        <Picker WidthRequest="150" ToolTipProperties.Text="Repeat the Alarm"
                                 ItemsSource="{Binding TaskList_RepeatTag}"
                                 SelectedItem="{Binding RepeatListTagIndex}" />
                     </StackLayout>
