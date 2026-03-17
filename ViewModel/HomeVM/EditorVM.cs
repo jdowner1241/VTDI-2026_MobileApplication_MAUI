@@ -11,7 +11,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // +++++++++++++++++++++
         // Editor : Objects and Properties 
         // +++++++++++++++++++++
-
+        
 
 
         // +++++++++++++++++++++

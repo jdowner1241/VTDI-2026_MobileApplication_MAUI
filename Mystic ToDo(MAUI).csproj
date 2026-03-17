@@ -111,6 +111,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Services\Converters\" />
+	  <Folder Include="ViewModel\GroupListVM\" />
 	</ItemGroup>
 
 </Project>

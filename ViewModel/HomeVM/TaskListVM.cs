@@ -14,11 +14,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 
 
 
+
         // +++++++++++++++++++++
         // Constructor
         // +++++++++++++++++++++
         public TaskListVM()
         {
+
+
 
         }
 

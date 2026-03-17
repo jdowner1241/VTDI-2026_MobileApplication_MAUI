@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 
 namespace Mystic_ToDo_MAUI_.ViewModel
@@ -24,11 +25,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
+        private readonly DBManager<Attachments> _attachmentsRepo;
 
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
         public ObservableCollection<TaskList> TaskList { get; private set; } = new();
         public ObservableCollection<TaskList_RepeatTag> TaskList_RepeatTag { get; private set; } = new();
+
 
 
         // -----------------------------
@@ -62,8 +65,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private int repeatListTagIndex = 0;
 
         [ObservableProperty]
-        private ObservableCollection<string> editorAttachmentList = new();
+        private ObservableCollection<Attachments> editorAttachmentList = new();
+        [ObservableProperty]
+        private int editorAttachmentSelection = 0;
 
+     
 
 
         // -----------------------------
@@ -80,7 +86,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this.IsGroupListExpanded = true;
             this.GroupExpanderIcon = "arrow_right.png";
 
-            this.EditorAttachmentList = new ObservableCollection<string>();
+
+            this.EditorAttachmentList = new ObservableCollection<Attachments>
+            {
+                new Attachments { AttachmentName = "Report.pdf", AttachmentType = "PDF" },
+                new Attachments { AttachmentName = "Image1.png", AttachmentType = "Image" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" }
+            };
+            
+
+
+
         }
 
 
@@ -483,18 +504,29 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+
         [RelayCommand]
-        private void EditorAttachment() 
+        async Task EditorAttachmentGet() 
         {
 
         }
 
         [RelayCommand]
-        private void EditorAttachmentSelect() 
+        private void EditorAttachmentAdd() 
         {
 
         }
 
+        [RelayCommand]
+        private void EditorAttachmentSelect(Attachments selectedAttachment) 
+        {
+            if (selectedAttachment != null)
+            {
+                // For testing, just log or debug
+                Console.WriteLine($"Selected: {selectedAttachment.AttachmentName} ({selectedAttachment.AttachmentType})");
+            }
+
+        }
 
 
 
@@ -539,6 +571,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public async Task LoadDataAsync() 
         {
             await GetGroupList();
+            //await EditorAttachmentGet();
             //await GetTaskList_RepeatList_Tag();
             //await GetTaskList();
 

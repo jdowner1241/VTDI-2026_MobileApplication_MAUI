@@ -14,6 +14,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
         private DBManager<TaskList_AddedInfo>? _taskListAddedInfoRepo;
         private DBManager<TaskList_RepeatList>? _taskListRepeatListRepo;
         private DBManager<TaskList_RepeatTag>? _repeatTagRepo;
+        private DBManager<Attachments>? _attachmentsRepo;
 
         public DBInitializer()
         {
@@ -29,6 +30,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
                 _taskListAddedInfoRepo = new DBManager<TaskList_AddedInfo>();
                 _taskListRepeatListRepo = new DBManager<TaskList_RepeatList>();
                 _repeatTagRepo = new DBManager<TaskList_RepeatTag>();
+                _attachmentsRepo = new DBManager<Attachments>();
 
                 // InitializeAsync() on each DBManager
                 await _groupListRepo.InitializeAsync();
@@ -36,6 +38,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
                 await _taskListAddedInfoRepo.InitializeAsync();
                 await _taskListRepeatListRepo.InitializeAsync();
                 await _repeatTagRepo.InitializeAsync();
+                await _attachmentsRepo.InitializeAsync();
 
             // Seed for GroupList and TaskList_RepeatTag
             await _groupListRepo.SeedDefaultsAsync(new List<GroupList>

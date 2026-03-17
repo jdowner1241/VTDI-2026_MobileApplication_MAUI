@@ -32,10 +32,10 @@
                         Command="{Binding GetGroupListCommand}">
 
                     <CollectionView ItemsSource="{Binding GroupList}"
-                        SelectionMode="Single"
-                        SelectionChangedCommand="{Binding SelectGroupCommand}"
-                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
-                        Background="{StaticResource App_black500}">
+                                    SelectionMode="Single"
+                                    SelectionChangedCommand="{Binding SelectGroupCommand}"
+                                    SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                                    Background="{StaticResource App_black500}">
 
                         <CollectionView.Header>
                             <Label Text="Folder"
@@ -122,9 +122,9 @@
                 <Grid RowSpacing="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.3*" />
-                        <ColumnDefinition Width="0.3*" />
                         <ColumnDefinition Width="0.2*" />
                         <ColumnDefinition Width="0.2*" />
+                        <ColumnDefinition Width="0.4*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -145,6 +145,9 @@
 
                         <ImageButton Source="alarm.png" ToolTipProperties.Text="Set Alarm"/>
                         <ImageButton Source="event_repeat.png" ToolTipProperties.Text="Repeat Alarm"/>
+                        <ImageButton Source="attach_file.png" Aspect="AspectFit"
+                                     ToolTipProperties.Text="Add Attachment"
+                                     Command="{Binding EditorAttachmentAddCommand}"/>
                     </StackLayout>
 
 
@@ -159,37 +162,9 @@
                                     Background="{StaticResource App_gray800Brush}"/>
                     </StackLayout>
 
-                    <!-- Editor :  Attachments -->
-                    <CollectionView ItemsSource="{Binding EditorAttachmentList}"
-                        Grid.Column="1" Grid.Row="1" 
-                        Margin="5, 10 "
-                        VerticalOptions="Start" HorizontalOptions="Center"        
-                        SelectionMode="Single"
-                        SelectionChangedCommand="{Binding EditorAttachmentSelectCommand}"
-                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
-
-                        <CollectionView.Header>
-                            <HorizontalStackLayout Spacing="10" VerticalOptions="Center"  HorizontalOptions="Center">
-                            <Label Text="Attachment" FontAttributes="None" 
-                                   ToolTipProperties.Text="Set a Description"
-                                   VerticalOptions="Center"/>
-                                <ImageButton Source="attach_file.png" Aspect="AspectFit"
-                                             Command="{Binding EditorAttachmentCommand}"/>
-                            </HorizontalStackLayout>
-                        </CollectionView.Header>
-
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="Test File" FontSize="Body" />
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                        
-                    </CollectionView>
-
-                    
                     <!-- Editor :  Alarm -->
                     <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Start"
-                            Grid.Column="2" Grid.Row="1" Spacing="10"
+                            Grid.Column="1" Grid.Row="1" Spacing="10"
                             Margin="5, 10" >
                         
                         <Label Text="Alarm" ToolTipProperties.Text="Set a Alarm"
@@ -200,7 +175,7 @@
 
                     <!-- Editor :  Alarm Repeat -->
                     <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Center"
-                            Grid.Column="3" Grid.Row="1" Spacing="10"
+                            Grid.Column="2" Grid.Row="1" Spacing="10"
                             Margin="5, 10">
                     
                         <Label Text="Repeat Alarm" ToolTipProperties.Text="Repeat the Alarm"
@@ -211,8 +186,42 @@
                                 Background="{StaticResource App_gray800Brush}"/>
                     </StackLayout>
 
+                <!-- Editor :  Attachments -->
+                <Grid VerticalOptions="Start" HorizontalOptions="Center"
+                       Grid.Column="3" Grid.Row="1"
+                       Margin="5, 10 "
+                       RowDefinitions="Auto,*">
 
+                    <Grid Padding="5" ColumnDefinitions="2*,2*"  
+                            Background="{StaticResource App_purple800}" Grid.Row="0">
+
+                        <Label Text="Name" FontAttributes="Bold"  
+                                TextColor="{StaticResource App_white500}"/>
+                        <Label Text="Type" FontAttributes="Bold" Grid.Column="1"  
+                                TextColor="{StaticResource App_white500}"/>
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding EditorAttachmentList}"
+                                    ToolTipProperties.Text="Attachments"
+                                    VerticalOptions="FillAndExpand"
+                                    HeightRequest="70"
+                                    SelectionMode="Single"
+                                    SelectionChangedCommand="{Binding EditorAttachmentSelectCommand}"
+                                    SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                                    Grid.Row="1">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5" ColumnDefinitions="2*,2*">
+                                    <Label Text="{Binding AttachmentName}" />
+                                    <Label Text="{Binding AttachmentType}" Grid.Column="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </Grid>
+
+            </Grid>
  
         </Border>
 
