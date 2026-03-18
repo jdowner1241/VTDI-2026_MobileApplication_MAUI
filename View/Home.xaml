@@ -231,19 +231,35 @@
            BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
             Padding="10,10" Margin="10,0,10,0">
 
-            <StackLayout Orientation="Horizontal" VerticalOptions="Center" HorizontalOptions="Center" Spacing="40">
+            <Grid ColumnDefinitions="Auto,*">
+                <!-- Left side: Label -->
+                <Label Text="{Binding SelectedGroup.GroupName}"  
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Start"
+                       FontAttributes="Bold" FontSize="25" FontFamily="VampireWar"  
+                       TextColor="{StaticResource App_purple600}"
+                       Margin="30,0"
+                       Grid.Column="0"/>
 
-                <SearchBar  Placeholder="Search" ToolTipProperties.Text="Search for a Task" 
-                            WidthRequest="300"/>
+                <!-- Right side: Search + Pickers -->
+                <StackLayout Orientation="Horizontal" 
+                 VerticalOptions="Center" 
+                 HorizontalOptions="End"
+                 Spacing="30"
+                 Grid.Column="1">
+                    <SearchBar Placeholder="Search" ToolTipProperties.Text="Search for a Task"  
+                    WidthRequest="300" />
+
+                    <Picker ToolTipProperties.Text="Sort Type"  
+                WidthRequest="150" />
+
+                    <Picker ToolTipProperties.Text="Sort Order"  
+                WidthRequest="150" />
+                </StackLayout>
+            </Grid>
 
 
-                <Picker ToolTipProperties.Text="Sort Type" 
-                        WidthRequest="150"/>
 
-                <Picker ToolTipProperties.Text="Sort Order" 
-                        WidthRequest="150"/>
-
-            </StackLayout>
         </Border>
         
         <!-- Editor Table -->

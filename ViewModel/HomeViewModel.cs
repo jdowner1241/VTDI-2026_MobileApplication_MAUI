@@ -81,8 +81,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this._groupListRepo = new DBManager<GroupList>();
             this._taskListRepo = new DBManager<TaskList>();
             this._taskList_RepeatTagRepo = new DBManager<TaskList_RepeatTag>();
+
+
             this.selectedGroup = SelectedGroup;
-          
+         
+
+
             this.IsGroupListExpanded = true;
             this.GroupExpanderIcon = "arrow_right.png";
 
@@ -283,9 +287,19 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
             selectedGroup.IsSelected = true;
             SelectedGroup = selectedGroup;
-
-
         }
+
+        [RelayCommand]
+        async Task GroupListStartupSelection() 
+        {
+            if (GroupList.Count > 0)
+            {
+                SelectGroup(GroupList[0]); // Set the Default Group
+            }
+        }
+
+
+
 
         private void ClearSelection(IEnumerable<GroupListViewModel> groups)
         {
@@ -571,6 +585,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public async Task LoadDataAsync() 
         {
             await GetGroupList();
+            await GroupListStartupSelection();
             //await EditorAttachmentGet();
             //await GetTaskList_RepeatList_Tag();
             //await GetTaskList();
