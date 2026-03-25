@@ -4,7 +4,7 @@ using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 using Mystic_ToDo_MAUI_.Services.db;
 using Mystic_ToDo_MAUI_.View.Editor;
-using Mystic_ToDo_MAUI_.ViewModel.GroupListVM;
+using Mystic_ToDo_MAUI_.ViewModel.HomeVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,7 +30,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
         public ObservableCollection<TaskList> TaskList { get; private set; } = new();
-        public ObservableCollection<TaskList_RepeatTag> TaskList_RepeatTag { get; private set; } = new();
+        [ObservableProperty]
+        public ObservableCollection<string> repeatTags = new();
 
 
 
@@ -59,33 +60,42 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Editor properties and supporting structures
         // -----------------------------
+
+        private CancellationTokenSource _cts = new(); 
+
         [ObservableProperty]
         private int editorSlideIndex = 0;
+       // [ObservableProperty]
+       // private int repeatListTagIndex = 0;
         [ObservableProperty]
-        private int repeatListTagIndex = 0;
+        private string repeatListTagSelected;
+  
 
         [ObservableProperty]
         private ObservableCollection<Attachments> editorAttachmentList = new();
         [ObservableProperty]
         private int editorAttachmentSelection = 0;
-
+        [ObservableProperty]
+        private string editorActionText;
      
 
 
         // -----------------------------
         // Constructor
         // -----------------------------
-        public HomeViewModel() 
+        public HomeViewModel(
+            DBManager<GroupList> groupRepo,
+            DBManager<TaskList> taskRepo,
+            DBManager<TaskList_RepeatTag> repeatTagRepo,
+            DBManager<Attachments> attachmentsRepo
+        ) 
         { 
             Title = "Home";
-            this._groupListRepo = new DBManager<GroupList>();
-            this._taskListRepo = new DBManager<TaskList>();
-            this._taskList_RepeatTagRepo = new DBManager<TaskList_RepeatTag>();
-
-
-            this.selectedGroup = SelectedGroup;
-         
-
+            _groupListRepo = groupRepo;
+            _taskListRepo = taskRepo;
+            _taskList_RepeatTagRepo = repeatTagRepo;
+            _attachmentsRepo = attachmentsRepo;
+ 
 
             this.IsGroupListExpanded = true;
             this.GroupExpanderIcon = "arrow_right.png";
@@ -102,10 +112,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
                 new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" }
             };
-            
 
-
-
+            EditorActionText = "Add";
+   
         }
 
 
@@ -125,14 +134,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
                 var groupListing = await _groupListRepo.GetAllAsync();
 
-        
+                // Create Dictionary from DB
                 _lookup = groupListing.ToDictionary(
                     g => g.ID,
                     g => new GroupListViewModel(g, groupListing)
                 );
 
-
-                
 
                 // Build hierarchy
                 foreach (var vm in _lookup.Values)
@@ -184,8 +191,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 {
                     FlattenGroups(root, 0, flatList);
                 }
-
                 GroupList = flatList;
+
             }
             catch (Exception ex)
             {
@@ -295,6 +302,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             if (GroupList.Count > 0)
             {
                 SelectGroup(GroupList[0]); // Set the Default Group
+           
             }
         }
 
@@ -488,22 +496,38 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
-        [RelayCommand]
+        //[RelayCommand]
         async Task GetTaskList_RepeatList_Tag()
         {
-            if (IsLoading) return;
+            if (IsLoading ) return;
 
             try
             {
                 IsLoading = true;
 
+                var raw_tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
 
-                if (TaskList_RepeatTag.Any()) TaskList_RepeatTag.Clear();
+                _cts.Token.ThrowIfCancellationRequested();
 
-                var tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
-                if (tagListing != null)
+
+                if (raw_tagListing != null)
                 {
-                    foreach (var tag in tagListing) TaskList_RepeatTag.Add(tag);
+
+                    //RepeatTags.Clear();
+                    //foreach (var tag in raw_tagListing ?? Enumerable.Empty<TaskList_RepeatTag>())
+                    //{
+                    //    RepeatTags.Add(tag.RepeatTagName);
+                    //}
+
+                    RepeatTags = new ObservableCollection<string>(
+                          raw_tagListing?.Select(x => x.RepeatTagName)
+                          ?? Enumerable.Empty<string>()
+                      );
+
+
+                    // set AFTER population
+                    RepeatListTagSelected = RepeatTags.FirstOrDefault();
+
                 }
 
             }
@@ -586,13 +610,19 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             await GetGroupList();
             await GroupListStartupSelection();
-            //await EditorAttachmentGet();
-            //await GetTaskList_RepeatList_Tag();
+            await GetTaskList_RepeatList_Tag();
+
             //await GetTaskList();
-
-
+            //await EditorAttachmentGet();
         }
 
+        public void Cancel()
+        {
+            if (!_cts.IsCancellationRequested)
+                _cts.Cancel();
+
+            _cts = new CancellationTokenSource(); // reset for reuse
+        }
 
     }
 }

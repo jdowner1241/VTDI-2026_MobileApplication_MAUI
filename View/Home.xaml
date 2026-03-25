@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:basecolor="clr-namespace:Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor"
-             xmlns:groupvm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.GroupListVM"
+             xmlns:groupvm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.HomeVM"
              x:Class="Mystic_ToDo_MAUI_.View.Home"
              Title="{Binding Title}">
 
@@ -56,19 +56,20 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Selection indicator -->
-                                    <BoxView Grid.Column="0"
-                                                HeightRequest="20"
-                                                WidthRequest="10"
-                                                Color="{Binding SelectionIndicatorColor}" />   
-
-
                                     <!-- Content -->
                                     <StackLayout Grid.Column="1"
                                         Orientation="Horizontal"
                                         Spacing="10"
                                         Margin="{Binding IndentMargin}"
                                         Background="{StaticResource App_blue500}">
+
+                                        <StackLayout.Triggers>
+                                            <DataTrigger TargetType="StackLayout" 
+                                                         Binding="{Binding IsSelected}" 
+                                                         Value="True">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource App_blue200}"/>
+                                            </DataTrigger>
+                                        </StackLayout.Triggers>
 
                                         <Image Source="{Binding Icon}"
                                             HeightRequest="20"
@@ -180,10 +181,12 @@
                     
                         <Label Text="Repeat Alarm" ToolTipProperties.Text="Repeat the Alarm"
                                     FontAttributes="None" />
+
                         <Picker WidthRequest="150" ToolTipProperties.Text="Repeat the Alarm"
-                                ItemsSource="{Binding TaskList_RepeatTag}"
-                                SelectedItem="{Binding RepeatListTagIndex}" 
-                                Background="{StaticResource App_gray800Brush}"/>
+                                Background="{StaticResource App_gray800Brush}"
+                                ItemsSource="{Binding RepeatTags}"
+                                SelectedItem="{Binding RepeatListTagSelected, Mode=TwoWay}"/>
+                        
                     </StackLayout>
 
                 <!-- Editor :  Attachments -->

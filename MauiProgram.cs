@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using Mystic_ToDo_MAUI_.Model.db.tables;
+using Mystic_ToDo_MAUI_.Services.db;
 
 
 namespace Mystic_ToDo_MAUI_
@@ -25,8 +27,18 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddSingleton<Services.db.DBInitializer>();
             builder.Services.AddSingleton<Services.AppInitializer>();
 
+            // DB
+            builder.Services.AddSingleton<DBManager<GroupList>>();
+            builder.Services.AddSingleton<DBManager<TaskList>>();
+            builder.Services.AddSingleton<DBManager<TaskList_RepeatTag>>();
+            builder.Services.AddSingleton<DBManager<Attachments>>();
+
             // ViewModels
-            builder.Services.AddSingleton<ViewModel.HomeViewModel>();
+            builder.Services.AddTransient<ViewModel.HomeViewModel>();
+            builder.Services.AddTransient<ViewModel.HomeVM.EditorVM>();
+            builder.Services.AddTransient<ViewModel.HomeVM.TaskListVM>();
+            builder.Services.AddTransient<ViewModel.HomeVM.GroupListViewModel>();
+
 
             //  Repositories
 

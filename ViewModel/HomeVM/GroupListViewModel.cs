@@ -4,7 +4,7 @@ using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
 using System.Collections.ObjectModel;
 
-namespace Mystic_ToDo_MAUI_.ViewModel.GroupListVM
+namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 {
     public partial class GroupListViewModel : ObservableObject
     {

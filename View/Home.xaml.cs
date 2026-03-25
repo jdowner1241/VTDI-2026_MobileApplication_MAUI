@@ -11,4 +11,34 @@ public partial class Home : ContentPage
         BindingContext = homeViewModel;
   
 	}
+
+    //protected override void OnDisappearing()
+    //{
+    //    base.OnDisappearing();
+
+    //    if (BindingContext is HomeViewModel vm)
+    //    {
+    //        vm.Deactivate();
+    //    }
+    //}
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        if (BindingContext is HomeViewModel vm)
+        {
+            vm.Cancel();
+        }
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is HomeViewModel vm)
+        {
+            await vm.LoadDataAsync();
+        }
+    }
 }
