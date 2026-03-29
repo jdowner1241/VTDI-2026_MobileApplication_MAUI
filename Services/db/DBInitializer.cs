@@ -11,7 +11,6 @@ namespace Mystic_ToDo_MAUI_.Services.db
     {
         private DBManager<GroupList>? _groupListRepo;
         private DBManager<TaskList>? _taskListRepo;
-        private DBManager<TaskList_AddedInfo>? _taskListAddedInfoRepo;
         private DBManager<TaskList_RepeatList>? _taskListRepeatListRepo;
         private DBManager<TaskList_RepeatTag>? _repeatTagRepo;
         private DBManager<Attachments>? _attachmentsRepo;
@@ -24,20 +23,17 @@ namespace Mystic_ToDo_MAUI_.Services.db
         public async Task DBInitializerAsync()
         {
       
-                // Now safe to access FileSystem.AppDataDirectory
                 _groupListRepo = new DBManager<GroupList>();
-                _taskListRepo = new DBManager<TaskList>();
-                _taskListAddedInfoRepo = new DBManager<TaskList_AddedInfo>();
-                _taskListRepeatListRepo = new DBManager<TaskList_RepeatList>();
                 _repeatTagRepo = new DBManager<TaskList_RepeatTag>();
+                _taskListRepeatListRepo = new DBManager<TaskList_RepeatList>();
+                _taskListRepo = new DBManager<TaskList>();
                 _attachmentsRepo = new DBManager<Attachments>();
 
                 // InitializeAsync() on each DBManager
                 await _groupListRepo.InitializeAsync();
-                await _taskListRepo.InitializeAsync();
-                await _taskListAddedInfoRepo.InitializeAsync();
-                await _taskListRepeatListRepo.InitializeAsync();
                 await _repeatTagRepo.InitializeAsync();
+                await _taskListRepeatListRepo.InitializeAsync();
+                await _taskListRepo.InitializeAsync();
                 await _attachmentsRepo.InitializeAsync();
 
             // Seed for GroupList and TaskList_RepeatTag
@@ -70,6 +66,35 @@ namespace Mystic_ToDo_MAUI_.Services.db
                 new TaskList_RepeatTag { ID=3, RepeatTagName = "Monthly" },
                 new TaskList_RepeatTag { ID=4, RepeatTagName = "Yearly" }
             });
+
+            await _taskListRepeatListRepo.SeedDefaultsAsync(new List<TaskList_RepeatList>
+            {
+                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 1}, // Daily
+                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 2}, // Weekly
+                new TaskList_RepeatList { HowOften=2, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 3}, // Monthly
+                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 4}, // Yearly
+            });
+
+            await _taskListRepo.SeedDefaultsAsync(new List<TaskList>
+            {
+                new TaskList { Title = "Buy groceries", Notes = "Milk, Bread, Eggs", GroupID = 2, CreatedDate = DateTime.Now },
+                new TaskList { Title = "Finish project report", Notes = "Due by end of the week", GroupID = 3, CreatedDate = DateTime.Now },
+                new TaskList { Title = "Call plumber", Notes = "Fix the kitchen sink", GroupID = 2, CreatedDate = DateTime.Now },
+                new TaskList { Title = "Plan weekend trip", Notes = "", GroupID = 2, CreatedDate = DateTime.Now }
+            });
+
+
+            await _attachmentsRepo.SeedDefaultsAsync(new List<Attachments>
+            {
+                new Attachments { AttachmentName = "Report", AttachmentType = "PDF", AttachmentPath = "/files/report.pdf", TaskListId = 1 },
+                new Attachments { AttachmentName = "Image1", AttachmentType = "Image", AttachmentPath = "/files/image1.png", TaskListId = 1 },
+                new Attachments { AttachmentName = "Notes", AttachmentType = "Text", AttachmentPath = "/files/notes.txt", TaskListId = 1 },
+                new Attachments { AttachmentName = "Notes2", AttachmentType = "Text", AttachmentPath = "/files/notes2.txt", TaskListId = 1 },
+
+            });
+
+
+
 
         }
 

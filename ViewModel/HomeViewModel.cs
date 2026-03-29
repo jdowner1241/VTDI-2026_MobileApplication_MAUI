@@ -29,7 +29,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
-        public ObservableCollection<TaskList> TaskList { get; private set; } = new();
+        [ObservableProperty]
+        public ObservableCollection<TaskListVM> taskList = new();
         [ObservableProperty]
         public ObservableCollection<string> repeatTags = new();
 
@@ -77,7 +78,20 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private int editorAttachmentSelection = 0;
         [ObservableProperty]
         private string editorActionText;
-     
+
+
+        [ObservableProperty]
+        private ObservableCollection<string> sortTypeList = new();
+        [ObservableProperty]
+        private string sortTypeSelected;
+
+        [ObservableProperty]
+        private ObservableCollection<string> sortOrderList = new();
+        [ObservableProperty]
+        private string sortOrderSelected;
+
+        [ObservableProperty]
+        private TaskListVM taskSelected;
 
 
         // -----------------------------
@@ -513,12 +527,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 if (raw_tagListing != null)
                 {
 
-                    //RepeatTags.Clear();
-                    //foreach (var tag in raw_tagListing ?? Enumerable.Empty<TaskList_RepeatTag>())
-                    //{
-                    //    RepeatTags.Add(tag.RepeatTagName);
-                    //}
-
                     RepeatTags = new ObservableCollection<string>(
                           raw_tagListing?.Select(x => x.RepeatTagName)
                           ?? Enumerable.Empty<string>()
@@ -550,8 +558,36 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
         [RelayCommand]
-        private void EditorAttachmentAdd() 
+        async Task EditorAttachmentAdd() 
         {
+            var result = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Select an attachment"
+            });
+
+            if (result != null)
+            {
+                // Full path to the file
+                string filePath = result.FullPath;
+
+                // File name only
+                string fileName = Path.GetFileName(filePath);
+
+                // File extension/type
+                string fileType = Path.GetExtension(filePath);
+
+                // Populate your model
+                var attachment = new Attachments
+                {
+                    AttachmentName = fileName,
+                    AttachmentType = fileType,
+                    AttachmentPath = filePath,
+                    TaskListId = TaskSelected.TaskID // link to the task
+                };
+
+                // Save to DB or add to collection
+                await _attachmentsRepo.InsertAsync(attachment);
+            }
 
         }
 
@@ -566,6 +602,67 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
         }
 
+        [RelayCommand]
+        async Task LoadSortType() 
+        {
+            if (IsLoading) return;
+
+            try
+            {
+                IsLoading = true;
+
+                SortTypeList = new ObservableCollection<string>
+                {
+                   "Name",
+                   "Due Date"
+                };
+
+                // set AFTER population
+                SortTypeSelected = SortTypeList.FirstOrDefault();
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to get: Sort Type List. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: Sort Type List.", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        async Task LoadSortOrder()
+        {
+            if (IsLoading) return;
+
+            try
+            {
+                IsLoading = true;
+
+                SortOrderList = new ObservableCollection<string>
+                {
+                   "Asen",
+                   "Desen"
+                };
+
+                // set AFTER population
+                SortOrderSelected = SortOrderList.FirstOrDefault();
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to get: Sort Order List. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: Sort Order List.", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
 
 
 
@@ -586,7 +683,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 var taskListing = await _taskListRepo.GetAllAsync();
                 if (taskListing != null)
                 {
-                    foreach (var task in taskListing) TaskList.Add(task);
+                    // Filter tasks by selected group
+                    var groupTasks = taskListing.Where(t => t.GroupID == SelectedGroup.Id);
+
+                    foreach (var task in taskListing)
+                    {
+                        TaskList.Add(new TaskListVM(task, taskListing, groupTasks));
+                    }
                 }
 
             }
@@ -601,6 +704,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        [RelayCommand]
+        void TaskSelection(TaskListVM taskSelection) 
+        {
+            if (taskSelection == null) return;
+
+            // Clear previours selection
+            ClearSelection(GroupList);
+
+            // Mark the new selection
+            Debug.WriteLine($"Selected Task: {taskSelection.TaskTitle}");
+            taskSelection.IsSelected = true;
+            TaskSelected = taskSelection;
+
+        }
+
+  
 
 
         // -----------------------------
@@ -608,12 +727,31 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         public async Task LoadDataAsync() 
         {
+            //if (!File.Exists(Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db")))
+            //{
+            //    Debug.WriteLine("Database not ready yet.");
+            //    return;
+            //}
+
+            //if (!_groupListRepo.IsInitialized || 
+            //    !_groupListRepo.IsInitialized || 
+            //    !_taskListRepo.IsInitialized || 
+            //    !_taskList_RepeatTagRepo.IsInitialized
+            //    )
+            //{
+            //    Debug.WriteLine("Database not ready yet.");
+            //    return;
+            //}
+
+
             await GetGroupList();
             await GroupListStartupSelection();
             await GetTaskList_RepeatList_Tag();
+            await LoadSortType();
+            await LoadSortOrder();
 
-            //await GetTaskList();
-            //await EditorAttachmentGet();
+            await GetTaskList();
+            await EditorAttachmentGet();
         }
 
         public void Cancel()

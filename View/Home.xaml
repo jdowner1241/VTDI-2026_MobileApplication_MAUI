@@ -4,7 +4,8 @@
              xmlns:vm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:basecolor="clr-namespace:Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor"
-             xmlns:groupvm="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.HomeVM"
+             xmlns:homevms="clr-namespace:Mystic_ToDo_MAUI_.ViewModel.HomeVM"
+             
              x:Class="Mystic_ToDo_MAUI_.View.Home"
              Title="{Binding Title}">
 
@@ -47,7 +48,7 @@
                         </CollectionView.Header>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="groupvm:GroupListViewModel">
+                            <DataTemplate x:DataType="homevms:GroupListViewModel">
                                 <!-- Each folder row -->
 
                                 <Grid ColumnSpacing="5" RowSpacing="5">
@@ -254,10 +255,14 @@
                     WidthRequest="300" />
 
                     <Picker ToolTipProperties.Text="Sort Type"  
-                WidthRequest="150" />
+                            WidthRequest="150" 
+                            ItemsSource="{Binding SortTypeList}"
+                            SelectedItem="{Binding SortTypeSelected}"/>
 
                     <Picker ToolTipProperties.Text="Sort Order"  
-                WidthRequest="150" />
+                            WidthRequest="150" 
+                            ItemsSource="{Binding SortOrderList}"
+                            SelectedItem="{Binding SortOrderSelected}"/>
                 </StackLayout>
             </Grid>
 
@@ -270,7 +275,43 @@
                 BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
                 Padding="10,10" Margin="10,10,10,10">
 
+            <CollectionView ItemsSource="{Binding TaskList}"
+                            Margin="0,0,0,10"
+                            VerticalOptions="FillAndExpand"
+                            SelectionMode="Single"
+                            SelectionChangedCommand="{Binding TaskSelectionCommand}"
+                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
 
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="homevms:TaskListVM">
+                        <Grid Padding="5" Margin="0,10"
+                              ColumnDefinitions="auto,*" RowDefinitions="*,*"
+                              RowSpacing="10"
+                              Background="{StaticResource App_gray800}"
+                              HeightRequest="50">
+
+                            <CheckBox IsChecked="{Binding IsCompletedDisplay}" 
+                                      Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                                      VerticalOptions="Center" HorizontalOptions="Center"
+                                      />
+                            <Label Text="{Binding TaskTitle}" 
+                                   Grid.Column="1" Grid.Row="0" 
+                                   HorizontalTextAlignment="Start"/>
+
+                            <HorizontalStackLayout Grid.Column="1" Grid.Row="1" Spacing="10">
+                                <Image Source="{Binding AlarmDisplay}" HeightRequest="10" Aspect="AspectFit"/>
+                                <Label Text="{Binding DueDateDisplay}" 
+                                     Margin="0,10,0,0"/>
+                                <Image Source="{Binding RepeatDisplayIcon}" HeightRequest="10" Aspect="AspectFit"/>
+                                <Label Text="{Binding RepeatDisplay}" 
+                                    />
+                            </HorizontalStackLayout>
+          
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
 
         </Border>
 

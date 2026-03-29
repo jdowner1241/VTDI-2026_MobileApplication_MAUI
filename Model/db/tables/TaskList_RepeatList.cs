@@ -11,7 +11,6 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
         public int HowOften { get; set; } = 0;
         public DateTime CurrentDate { get; set; }
         public DateTime DueDate { get; set; }
-        public bool IsDefault { get; set; } = false;
 
         // Forigen Key For TaskRepeatTag
         public int RepeatTagID { get; set; } = 0;

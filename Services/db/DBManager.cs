@@ -1,4 +1,5 @@
-﻿using Mystic_ToDo_MAUI_.Model.db.tables;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Mystic_ToDo_MAUI_.Model.db.tables;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Mystic_ToDo_MAUI_.Services.db
         private SQLiteAsyncConnection? _database;
         private string? _dbPath;
 
+        public bool IsInitialized { get; private set; }
+
         public DBManager() 
         {
             _dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
@@ -25,6 +28,8 @@ namespace Mystic_ToDo_MAUI_.Services.db
             _database = new SQLiteAsyncConnection(_dbPath);
             var wasCreated = await _database.CreateTableAsync<T>();
             Debug.WriteLine($"Database : {typeof(T).Name}. Creation Status : {wasCreated}");
+
+            IsInitialized = true;
         }
 
 
@@ -33,8 +38,15 @@ namespace Mystic_ToDo_MAUI_.Services.db
 
         private void EnsureInitialized()
         {
-            if (_database == null)
+            if (_database == null) 
+            {
                 throw new InvalidOperationException("Database not initialized. Call InitializeAsync() first.");
+            }
+            else
+            {
+                IsInitialized = true;
+            }
+               
         }
 
 
@@ -122,22 +134,6 @@ namespace Mystic_ToDo_MAUI_.Services.db
             return result; 
         }
 
-        //public Task<int> SaveAsync(T item) => _database!.InsertOrReplaceAsync(item);
-        //public Task<List<T>> GetAllAsync() => _database!.Table<T>().ToListAsync();
-        //public Task<T> GetByIdAsync(int id) => _database!.FindAsync<T>(id);
-        //public Task<int> DeleteAsync(T item) => _database!.DeleteAsync(item);
-
-
-        //// Intialize DB and create table if not exists
-        //public async Task IntializeDatabase() 
-        //{
-        //    await _database.CreateTableAsync<TaskList_RepeatTag>();
-        //    await   CreateTableAsync<Task>();
-        //    await db.CreateTableAsync<Category>();
-
-        //}
-
-
         // Seed default value 
         public async Task SeedDefaultsAsync(IEnumerable<T> defaultItems)
         {
@@ -150,6 +146,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
                 if (existing == 0)
                 {
                     await _database.InsertAllAsync(defaultItems);
+                    Debug.WriteLine($"[DBManager] Seeded {typeof(T).Name} with defaults.");
                 }
             }    
         }
