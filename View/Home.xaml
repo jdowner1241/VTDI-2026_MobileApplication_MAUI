@@ -208,11 +208,22 @@
                     <CollectionView ItemsSource="{Binding EditorAttachmentList}"
                                     ToolTipProperties.Text="Attachments"
                                     VerticalOptions="FillAndExpand"
-                                    HeightRequest="70"
                                     SelectionMode="Single"
                                     SelectionChangedCommand="{Binding EditorAttachmentSelectCommand}"
                                     SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
                                     Grid.Row="1">
+                        
+                        <CollectionView.EmptyView>
+                            <Grid Padding="5" ColumnDefinitions="2*,2*">
+                                <Label Text="No attachments" 
+                                       Grid.ColumnSpan="2"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       TextColor="{StaticResource App_white500}" />
+                            </Grid>
+                        </CollectionView.EmptyView>
+
+
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate>

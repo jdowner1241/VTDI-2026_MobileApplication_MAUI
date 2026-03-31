@@ -37,13 +37,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public ObservableCollection<string> repeatTags = new();
 
 
-
         // -----------------------------
         // GroupListViewModel properties and supporting structures
         // -----------------------------
         // ObservableCollections for data binding
 
-        //public ObservableCollection<GroupListViewModel> GroupList { get; private set; } = new();
         // Constant properties
         public const int RootParentId = 1;
 
@@ -96,6 +94,25 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private TaskListVM taskSelected;
 
 
+        // Flags for Async loading state
+        [ObservableProperty]
+        bool loading_GroupList = false;
+        [ObservableProperty]
+        bool loading_TaskList_RepeatList_Tag = false;
+        [ObservableProperty]
+        bool loading_EditorAttachment = false;
+        [ObservableProperty]
+        bool loading_SortType = false;
+        [ObservableProperty]
+        bool loading_SortOrder = false;
+        [ObservableProperty]
+        bool loading_TaskList = false;
+
+
+        [ObservableProperty]
+        private string currentLoadingStep;
+
+
         // -----------------------------
         // Constructor
         // -----------------------------
@@ -119,17 +136,17 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this.GroupExpanderIcon = "arrow_right.png";
 
 
-            this.EditorAttachmentList = new ObservableCollection<Attachments>
-            {
-                new Attachments { AttachmentName = "Report.pdf", AttachmentType = "PDF" },
-                new Attachments { AttachmentName = "Image1.png", AttachmentType = "Image" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-                new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" }
-            };
+            //this.EditorAttachmentList = new ObservableCollection<Attachments>
+            //{
+            //    new Attachments { AttachmentName = "Report.pdf", AttachmentType = "PDF" },
+            //    new Attachments { AttachmentName = "Image1.png", AttachmentType = "Image" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
+            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" }
+            //};
 
             EditorActionText = "Add";
    
@@ -143,11 +160,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [RelayCommand]
         async Task GetGroupList()
         {
-            if (IsLoading) return;
+            if (Loading_GroupList) return;
 
             try
             {
-                IsLoading = true;
+                Loading_GroupList = true;
                 GroupList.Clear();
 
                 var groupListing = await _groupListRepo.GetAllAsync();
@@ -219,7 +236,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
             finally
             {
-                IsLoading = false;
+                Loading_GroupList = false;
             }
         }
 
@@ -520,15 +537,15 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         //[RelayCommand]
         async Task GetTaskList_RepeatList_Tag()
         {
-            if (IsLoading ) return;
+            if (Loading_TaskList_RepeatList_Tag) return;
 
             try
             {
-                IsLoading = true;
+                Loading_TaskList_RepeatList_Tag = true;
 
                 var raw_tagListing = await _taskList_RepeatTagRepo.GetAllAsync();
 
-                _cts.Token.ThrowIfCancellationRequested();
+                //_cts.Token.ThrowIfCancellationRequested();
 
 
                 if (raw_tagListing != null)
@@ -553,15 +570,46 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
             finally
             {
-                IsLoading = false;
+                Loading_TaskList_RepeatList_Tag = false;
             }
         }
 
 
         [RelayCommand]
-        async Task EditorAttachmentGet() 
+        async Task GetEditorAttachment() 
         {
+            if (Loading_EditorAttachment) return;
 
+            try
+            {
+                Loading_EditorAttachment = true;
+                if (EditorAttachmentList.Any()) EditorAttachmentList.Clear();
+
+                var attachments = await _attachmentsRepo.GetAllAsync();
+                if (attachments != null)
+                {
+                    if(TaskSelected != null) 
+                    {
+                        // Filter tasks by selected group
+                        var taskAttachments = attachments.Where(t => t.TaskListId == TaskSelected.TaskID);
+
+                        foreach (var attachment in taskAttachments)
+                        {
+                            EditorAttachmentList.Add(attachment);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to get: Attachment List. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to get: Attachment List.", "OK");
+            }
+            finally
+            {
+                Loading_EditorAttachment = false;
+            }
         }
 
         [RelayCommand]
@@ -612,11 +660,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [RelayCommand]
         async Task LoadSortType() 
         {
-            if (IsLoading) return;
+            if (Loading_SortType) return;
 
             try
             {
-                IsLoading = true;
+                Loading_SortType = true;
 
                 SortTypeList = new ObservableCollection<string>
                 {
@@ -636,18 +684,18 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
             finally
             {
-                IsLoading = false;
+                Loading_SortType = false;
             }
         }
 
         [RelayCommand]
         async Task LoadSortOrder()
         {
-            if (IsLoading) return;
+            if (Loading_SortOrder) return;
 
             try
             {
-                IsLoading = true;
+                Loading_SortOrder = true;
 
                 SortOrderList = new ObservableCollection<string>
                 {
@@ -667,7 +715,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
             finally
             {
-                IsLoading = false;
+                Loading_SortOrder = false;
             }
         }
 
@@ -680,11 +728,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [RelayCommand]
         async Task GetTaskList()
         {
-            if (IsLoading) return;
+            if (Loading_TaskList) return;
 
             try
             {
-                IsLoading = true;
+                Loading_TaskList = true;
                 if (TaskList.Any()) TaskList.Clear();
 
                 var taskListing = await _taskListRepo.GetAllAsync();
@@ -712,12 +760,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
             finally
             {
-                IsLoading = false;
+                Loading_TaskList = false;
             }
         }
 
         [RelayCommand]
-        void TaskSelection(TaskListVM taskSelection) 
+        async Task TaskSelection(TaskListVM taskSelection) 
         {
             if (taskSelection == null) return;
 
@@ -729,9 +777,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             taskSelection.IsSelected = true;
             TaskSelected = taskSelection;
 
+            // Load Attachments for the selected task
+            await GetEditorAttachment();
+
         }
 
-  
+
 
 
         // -----------------------------
@@ -764,8 +815,51 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
             await GetTaskList();
 
-            await EditorAttachmentGet();
+           await GetEditorAttachment();
         }
+
+        public async Task LoadDataTrackerAsync()
+        {
+            
+
+            if (IsLoading) return;
+
+            try
+            {
+
+                await RunStep("Loading groups...", GetGroupList);
+                await RunStep("Selecting default group...", GroupListStartupSelection);
+                await RunStep("Loading repeat tags...", GetTaskList_RepeatList_Tag);
+                await RunStep("Loading sort types...", LoadSortType);
+                await RunStep("Loading sort order...", LoadSortOrder);
+                await RunStep("Loading tasks...", GetTaskList);
+                await RunStep("Loading attachments...", GetEditorAttachment);
+            }
+            finally
+            {
+                CurrentLoadingStep = "Done";
+                IsLoading = false;
+            }
+        }
+
+        private async Task RunStep(string stepName, Func<Task> action)
+        {
+            try
+            {
+                CurrentLoadingStep = stepName;
+                Debug.WriteLine($"[START] {stepName}");
+
+                await action();
+
+                Debug.WriteLine($"[SUCCESS] {stepName}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ERROR] {stepName}: {ex.Message}");
+                throw; // or handle it here
+            }
+        }
+
 
         public void Cancel()
         {

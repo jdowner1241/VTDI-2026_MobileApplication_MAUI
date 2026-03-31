@@ -88,7 +88,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
             {
                 new Attachments { AttachmentName = "Report", AttachmentType = "PDF", AttachmentPath = "/files/report.pdf", TaskListId = 1 },
                 new Attachments { AttachmentName = "Image1", AttachmentType = "Image", AttachmentPath = "/files/image1.png", TaskListId = 1 },
-                new Attachments { AttachmentName = "Notes", AttachmentType = "Text", AttachmentPath = "/files/notes.txt", TaskListId = 1 },
+                new Attachments { AttachmentName = "Notes", AttachmentType = "Text", AttachmentPath = "/files/notes.txt", TaskListId = 2 },
                 new Attachments { AttachmentName = "Notes2", AttachmentType = "Text", AttachmentPath = "/files/notes2.txt", TaskListId = 1 },
 
             });
