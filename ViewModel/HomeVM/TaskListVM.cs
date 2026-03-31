@@ -18,6 +18,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // Task table : Objects and Properties 
         // +++++++++++++++++++++
         private readonly DBManager<TaskList_RepeatList> _repeatListRepo;
+        private readonly DBManager<TaskList_RepeatTag> _repeatTagRepo;
         private readonly DBManager<Attachments> _attachmentsRepo;
 
         public TaskList TaskEntity { get; }
@@ -49,17 +50,21 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         public string DueDateDisplay => DueDate?.ToString("dd/MM/yyyy") ?? string.Empty;
         public DateTime? CurrentDate => TaskRepeatInfo?.CurrentDate;
         public int? RepeatInterval => TaskRepeatInfo?.HowOften;
-        public string? RepeatFrequency => TaskRepeatInfo?.RepeatTag?.RepeatTagName;
+        //public string? RepeatFrequency => TaskRepeatInfo?.RepeatTag?.RepeatTagName;
+        public int? TaskList_RepeatTagID => TaskRepeatInfo?.RepeatTagID;
+
+        public TaskList_RepeatTag? TaskList_RepeatTag { get; private set; }
+
 
         public bool HasAlarm => DueDate != null ? true : false;
         public ImageSource? AlarmDisplay => HasAlarm == true ? "alarm.png" : null;
         //public ImageSource? AlarmDisplay => "alarm_on.png";
 
-        public bool HasRepeat => RepeatInterval != null && !string.IsNullOrEmpty(RepeatFrequency) ? true : false;
+        public bool HasRepeat => RepeatInterval != null && !string.IsNullOrEmpty(TaskList_RepeatTag?.RepeatTagName) ? true : false;
         public ImageSource? RepeatDisplayIcon => HasRepeat == true ? "event_repeat.png" : null;
 
-        public string RepeatDisplay =>  RepeatInterval.HasValue && !string.IsNullOrEmpty(RepeatFrequency)
-                                        ? $"Repeat: {RepeatInterval}, Every: {RepeatFrequency} Times"
+        public string RepeatDisplay =>  RepeatInterval.HasValue && !string.IsNullOrEmpty(TaskList_RepeatTag?.RepeatTagName)
+                                        ? $"Repeat: {TaskList_RepeatTag.RepeatTagName}, Every: {RepeatInterval} Times"
                                         : string.Empty;
 
 
@@ -78,6 +83,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
             IEnumerable<TaskList> alltasks, 
             IEnumerable<TaskList> grouptasks,
             DBManager<TaskList_RepeatList> repeatListRepo,
+            DBManager<TaskList_RepeatTag> repeatTagRepo,
             DBManager<Attachments> attachmentsRepo
             )
         {
@@ -85,13 +91,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
             _alltasks = alltasks;
             _grouptasks = grouptasks;
             _repeatListRepo = repeatListRepo;
+            _repeatTagRepo = repeatTagRepo;
             _attachmentsRepo = attachmentsRepo;
 
             attachments = new ObservableCollection<Attachments>(taskEntity.Attachments ?? new List<Attachments>());
         }
 
 
-        public async Task LoadRepeatInfoAsync()
+        public async Task LoadInfoAsync()
         {
             if (TaskEntity.Task_RepeatListID.HasValue)
             {
@@ -102,9 +109,27 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
                 OnPropertyChanged(nameof(HasRepeat));
                 OnPropertyChanged(nameof(DueDateDisplay));
                 OnPropertyChanged(nameof(RepeatInterval));
-                OnPropertyChanged(nameof(RepeatFrequency));
+                OnPropertyChanged(nameof(TaskList_RepeatTagID));
                 OnPropertyChanged(nameof(RepeatDisplay));
                 OnPropertyChanged(nameof(AlarmDisplay));
+                OnPropertyChanged(nameof(RepeatDisplayIcon));
+            }
+
+            //if (TaskEntity.Attachments != null)
+            //{
+            //    attachmentsList = await _attachmentsRepo.GetByIdAsync(TaskEntity.Attachments.Select(a => a.ID).ToList());
+            //    Attachments = new ObservableCollection<Attachments>(attachmentsList);
+            //    OnPropertyChanged(nameof(Attachments));
+            //}
+
+            if (TaskList_RepeatTagID.HasValue == true)
+            {
+                TaskList_RepeatTag = await _repeatTagRepo.GetByIdAsync(TaskList_RepeatTagID.Value);
+
+                OnPropertyChanged(nameof(TaskList_RepeatTag));
+                OnPropertyChanged(nameof(TaskList_RepeatTagID));
+                OnPropertyChanged(nameof(HasRepeat));
+                OnPropertyChanged(nameof(RepeatDisplay));
                 OnPropertyChanged(nameof(RepeatDisplayIcon));
             }
         }

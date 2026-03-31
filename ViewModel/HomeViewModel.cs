@@ -696,9 +696,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     foreach (var task in groupTasks)
                     {
                         var vm = new TaskListVM(task, taskListing, groupTasks, 
-                                                _taskList_RepeatListRepo, _attachmentsRepo);
+                                                _taskList_RepeatListRepo, _taskList_RepeatTagRepo, _attachmentsRepo);
 
-                        await vm.LoadRepeatInfoAsync();
+                        await vm.LoadInfoAsync();
 
                         TaskList.Add(vm);
                     }
