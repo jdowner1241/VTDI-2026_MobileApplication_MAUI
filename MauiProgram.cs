@@ -31,6 +31,7 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddSingleton<DBManager<GroupList>>();
             builder.Services.AddSingleton<DBManager<TaskList>>();
             builder.Services.AddSingleton<DBManager<TaskList_RepeatTag>>();
+            builder.Services.AddSingleton<DBManager<TaskList_RepeatList>>();
             builder.Services.AddSingleton<DBManager<Attachments>>();
 
             // ViewModels

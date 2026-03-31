@@ -1,11 +1,13 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mystic_ToDo_MAUI_.Model.db.tables;
+using Mystic_ToDo_MAUI_.Services.db;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Mail;
 using System.Text;
+
 
 namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 {
@@ -15,10 +17,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // +++++++++++++++++++++
         // Task table : Objects and Properties 
         // +++++++++++++++++++++
+        private readonly DBManager<TaskList_RepeatList> _repeatListRepo;
+        private readonly DBManager<Attachments> _attachmentsRepo;
 
         public TaskList TaskEntity { get; }
         private readonly IEnumerable<TaskList> _alltasks;
         private readonly IEnumerable<TaskList> _grouptasks;
+
 
         [ObservableProperty]
         private bool isSelected;
@@ -36,23 +41,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 
         [ObservableProperty]
         public ObservableCollection<Attachments>? attachments;
-        //public ObservableCollection<Attachments>? Attachments
-        //{
-        //    get
-        //    {
-        //        if (_attachments == null && Raw_Attachments != null)
-        //        {
-        //            _attachments = new ObservableCollection<Attachments>(Raw_Attachments);
-        //        }
-        //        return _attachments;
-        //    }
-        //    set
-        //    {
-        //        _attachments = value;
-        //    }
-        //}
 
-        public TaskList_RepeatList? TaskRepeatInfo => TaskEntity?.TaskList_RepeatList;
+        public TaskList_RepeatList? TaskRepeatInfo { get; private set; }
+
 
         public DateTime? DueDate => TaskRepeatInfo?.DueDate;
         public string DueDateDisplay => DueDate?.ToString("dd/MM/yyyy") ?? string.Empty;
@@ -60,8 +51,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         public int? RepeatInterval => TaskRepeatInfo?.HowOften;
         public string? RepeatFrequency => TaskRepeatInfo?.RepeatTag?.RepeatTagName;
 
-        public bool HasAlarm => RepeatInterval != null ? true : false;
-        public ImageSource? AlarmDisplay => HasAlarm == true ? "alarm_on.png" : null;
+        public bool HasAlarm => DueDate != null ? true : false;
+        public ImageSource? AlarmDisplay => HasAlarm == true ? "alarm.png" : null;
+        //public ImageSource? AlarmDisplay => "alarm_on.png";
 
         public bool HasRepeat => RepeatInterval != null && !string.IsNullOrEmpty(RepeatFrequency) ? true : false;
         public ImageSource? RepeatDisplayIcon => HasRepeat == true ? "event_repeat.png" : null;
@@ -80,14 +72,43 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // +++++++++++++++++++++
         // Constructor
         // +++++++++++++++++++++
-        public TaskListVM(TaskList taskEntity, IEnumerable<TaskList> alltasks, IEnumerable<TaskList> grouptasks)
+        public TaskListVM
+            (
+            TaskList taskEntity, 
+            IEnumerable<TaskList> alltasks, 
+            IEnumerable<TaskList> grouptasks,
+            DBManager<TaskList_RepeatList> repeatListRepo,
+            DBManager<Attachments> attachmentsRepo
+            )
         {
             TaskEntity = taskEntity;
             _alltasks = alltasks;
             _grouptasks = grouptasks;
+            _repeatListRepo = repeatListRepo;
+            _attachmentsRepo = attachmentsRepo;
 
             attachments = new ObservableCollection<Attachments>(taskEntity.Attachments ?? new List<Attachments>());
         }
+
+
+        public async Task LoadRepeatInfoAsync()
+        {
+            if (TaskEntity.Task_RepeatListID.HasValue)
+            {
+                TaskRepeatInfo = await _repeatListRepo.GetByIdAsync(TaskEntity.Task_RepeatListID.Value);
+                OnPropertyChanged(nameof(TaskRepeatInfo));
+                OnPropertyChanged(nameof(DueDate));
+                OnPropertyChanged(nameof(HasAlarm));
+                OnPropertyChanged(nameof(HasRepeat));
+                OnPropertyChanged(nameof(DueDateDisplay));
+                OnPropertyChanged(nameof(RepeatInterval));
+                OnPropertyChanged(nameof(RepeatFrequency));
+                OnPropertyChanged(nameof(RepeatDisplay));
+                OnPropertyChanged(nameof(AlarmDisplay));
+                OnPropertyChanged(nameof(RepeatDisplayIcon));
+            }
+        }
+
 
     }
 }

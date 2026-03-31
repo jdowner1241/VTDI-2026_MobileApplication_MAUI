@@ -276,38 +276,49 @@
                 Padding="10,10" Margin="10,10,10,10">
 
             <CollectionView ItemsSource="{Binding TaskList}"
-                            Margin="0,0,0,10"
-                            VerticalOptions="FillAndExpand"
                             SelectionMode="Single"
                             SelectionChangedCommand="{Binding TaskSelectionCommand}"
                             SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
 
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="3"/>
+                </CollectionView.ItemsLayout>
+
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="homevms:TaskListVM">
-                        <Grid Padding="5" Margin="0,10"
-                              ColumnDefinitions="auto,*" RowDefinitions="*,*"
-                              RowSpacing="10"
-                              Background="{StaticResource App_gray800}"
-                              HeightRequest="50">
 
-                            <CheckBox IsChecked="{Binding IsCompletedDisplay}" 
-                                      Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
-                                      VerticalOptions="Center" HorizontalOptions="Center"
-                                      />
-                            <Label Text="{Binding TaskTitle}" 
-                                   Grid.Column="1" Grid.Row="0" 
-                                   HorizontalTextAlignment="Start"/>
+                        <Border Background="{StaticResource App_gray800}" 
+                                Padding="2,5" HeightRequest="60"
+                                StrokeShape="RoundRectangle 10">
+                            
+                            <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="Start">
 
-                            <HorizontalStackLayout Grid.Column="1" Grid.Row="1" Spacing="10">
-                                <Image Source="{Binding AlarmDisplay}" HeightRequest="10" Aspect="AspectFit"/>
-                                <Label Text="{Binding DueDateDisplay}" 
-                                     Margin="0,10,0,0"/>
-                                <Image Source="{Binding RepeatDisplayIcon}" HeightRequest="10" Aspect="AspectFit"/>
-                                <Label Text="{Binding RepeatDisplay}" 
-                                    />
+                                <CheckBox IsChecked="{Binding IsCompletedDisplay}" 
+                                          VerticalOptions="Center" HorizontalOptions="Center" 
+                                          Margin="10,0"/>
+
+                                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Start"
+                                                     Spacing="5">
+
+                                    <Label Text="{Binding TaskTitle}" 
+                                            HorizontalTextAlignment="Start"/>
+
+                                    <HorizontalStackLayout Spacing="10"
+                                                           VerticalOptions="Center" HorizontalOptions="Start">
+                                        <Image Source="{Binding AlarmDisplay}" HeightRequest="13" Aspect="AspectFit" />
+                                        <Label Text="{Binding DueDateDisplay}" 
+                                               Margin="0,0,10,0" />
+                                        <Image Source="{Binding RepeatDisplayIcon}" HeightRequest="13" Aspect="AspectFit" />
+                                        <Label Text="{Binding RepeatDisplay}"/>
+                                    </HorizontalStackLayout>
+
+                                </VerticalStackLayout>
                             </HorizontalStackLayout>
-          
-                        </Grid>
+                        </Border>
+
+                        
+                        
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 

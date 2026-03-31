@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Mystic_ToDo_MAUI_.Services.db;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
@@ -25,7 +26,7 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
         // Foreign Key to  TaskRepeatTag
         public int? Task_RepeatListID { get; set; } = null;
         [Ignore]
-        public TaskList_RepeatList? TaskList_RepeatList { get; set; }
+        public TaskList_RepeatList? Task_RepeatList { get; set; }
 
         // One-to-many relationship: Task → Attachments
         [Ignore]
@@ -36,6 +37,16 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
         {
 
         }
+
+
+        // Methods 
+        //public async Task<TaskList_RepeatList?> GetRepeatListAsync(DBManager<TaskList_RepeatList> repo)
+        //{
+        //    if (Task_RepeatListID.HasValue)
+        //        return await repo.GetByIdAsync(Task_RepeatListID.Value);
+
+        //    return null;
+        //}
 
     }
 }

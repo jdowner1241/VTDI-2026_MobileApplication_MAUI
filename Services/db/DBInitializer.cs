@@ -80,7 +80,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
                 new TaskList { Title = "Buy groceries", Notes = "Milk, Bread, Eggs", GroupID = 2, CreatedDate = DateTime.Now },
                 new TaskList { Title = "Finish project report", Notes = "Due by end of the week", GroupID = 3, CreatedDate = DateTime.Now },
                 new TaskList { Title = "Call plumber", Notes = "Fix the kitchen sink", GroupID = 2, CreatedDate = DateTime.Now },
-                new TaskList { Title = "Plan weekend trip", Notes = "", GroupID = 2, CreatedDate = DateTime.Now }
+                new TaskList { Title = "Plan weekend trip", Notes = "", GroupID = 2, CreatedDate = DateTime.Now, Task_RepeatListID=2 }
             });
 
 

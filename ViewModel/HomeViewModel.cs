@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
@@ -25,6 +26,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
+        private readonly DBManager<TaskList_RepeatList> _taskList_RepeatListRepo;
         private readonly DBManager<Attachments> _attachmentsRepo;
 
         [ObservableProperty]
@@ -101,6 +103,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             DBManager<GroupList> groupRepo,
             DBManager<TaskList> taskRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
+            DBManager<TaskList_RepeatList> taskList_RepeatListRepo,
             DBManager<Attachments> attachmentsRepo
         ) 
         { 
@@ -108,6 +111,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             _groupListRepo = groupRepo;
             _taskListRepo = taskRepo;
             _taskList_RepeatTagRepo = repeatTagRepo;
+            _taskList_RepeatListRepo = taskList_RepeatListRepo;
             _attachmentsRepo = attachmentsRepo;
  
 
@@ -297,7 +301,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
 
         [RelayCommand]
-        void SelectGroup(GroupListViewModel selectedGroup) 
+        async Task SelectGroup(GroupListViewModel selectedGroup) 
         {
             if (selectedGroup == null) return;
 
@@ -308,6 +312,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
             selectedGroup.IsSelected = true;
             SelectedGroup = selectedGroup;
+
+            // Refresh TaskList based on new group selection
+            await GetTaskList();
         }
 
         [RelayCommand]
@@ -686,9 +693,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     // Filter tasks by selected group
                     var groupTasks = taskListing.Where(t => t.GroupID == SelectedGroup.Id);
 
-                    foreach (var task in taskListing)
+                    foreach (var task in groupTasks)
                     {
-                        TaskList.Add(new TaskListVM(task, taskListing, groupTasks));
+                        var vm = new TaskListVM(task, taskListing, groupTasks, 
+                                                _taskList_RepeatListRepo, _attachmentsRepo);
+
+                        await vm.LoadRepeatInfoAsync();
+
+                        TaskList.Add(vm);
                     }
                 }
 
@@ -751,6 +763,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             await LoadSortOrder();
 
             await GetTaskList();
+
             await EditorAttachmentGet();
         }
 
