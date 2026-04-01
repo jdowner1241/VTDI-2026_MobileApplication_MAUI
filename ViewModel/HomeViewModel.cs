@@ -29,13 +29,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private readonly DBManager<TaskList_RepeatList> _taskList_RepeatListRepo;
         private readonly DBManager<Attachments> _attachmentsRepo;
 
-        [ObservableProperty]
-        private ObservableCollection<GroupListViewModel> groupList = new();
-        [ObservableProperty]
-        public ObservableCollection<TaskListVM> taskList = new();
-        [ObservableProperty]
-        public ObservableCollection<string> repeatTags = new();
-
 
         // -----------------------------
         // GroupListViewModel properties and supporting structures
@@ -47,38 +40,47 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
         // Supporting methods and properties
         public record MoveGroupArgs(GroupListViewModel Group, GroupListViewModel NewParent);
+        private Dictionary<int, GroupListViewModel> _lookup = new();
 
+        // Collections and Selected Items 
+        [ObservableProperty]
+        private ObservableCollection<GroupListViewModel> groupList = new();
         [ObservableProperty]
         private GroupListViewModel selectedGroup;
 
-        private Dictionary<int, GroupListViewModel> _lookup = new();
-
+        // Controls 
         [ObservableProperty]
         private bool isGroupListExpanded;
         [ObservableProperty]
         private ImageSource groupExpanderIcon;
 
+        // Flags for Async loading state
+        [ObservableProperty]
+        bool loading_GroupList = false;
+
+
+
         // -----------------------------
         // Editor properties and supporting structures
         // -----------------------------
 
-        private CancellationTokenSource _cts = new(); 
+        // Constant properties
 
+
+        // Supporting methods and properties
+        private CancellationTokenSource _cts = new();
+
+
+        // Collections and Selected Items 
         [ObservableProperty]
-        private int editorSlideIndex = 0;
-       // [ObservableProperty]
-       // private int repeatListTagIndex = 0;
+        public ObservableCollection<string> repeatTags = new();
         [ObservableProperty]
         private string repeatListTagSelected;
-  
 
         [ObservableProperty]
         private ObservableCollection<Attachments> editorAttachmentList = new();
         [ObservableProperty]
         private int editorAttachmentSelection = 0;
-        [ObservableProperty]
-        private string editorActionText;
-
 
         [ObservableProperty]
         private ObservableCollection<string> sortTypeList = new();
@@ -91,12 +93,32 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private string sortOrderSelected;
 
         [ObservableProperty]
+        public ObservableCollection<TaskListVM> taskList = new();
+        [ObservableProperty]
         private TaskListVM taskSelected;
+
+        // Controls 
+        [ObservableProperty]
+        private bool editorModeIsEdit = false;
+        [ObservableProperty]
+        private string editorActionText = "Add";
+        //public string EditorActionText => EditorModeIsEdit ? "Edit" : "Add";
+        partial void OnEditorModeIsEditChanged(bool value)
+        {
+            EditorActionText = value ? "Edit" : "Add";
+        }
+
+        [ObservableProperty]
+        private string editorTaskTitle;
+
+        [ObservableProperty]
+        public string editorNotes;
+
+        [ObservableProperty]
+        private DateTime editorDueDate; 
 
 
         // Flags for Async loading state
-        [ObservableProperty]
-        bool loading_GroupList = false;
         [ObservableProperty]
         bool loading_TaskList_RepeatList_Tag = false;
         [ObservableProperty]
@@ -136,20 +158,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             this.GroupExpanderIcon = "arrow_right.png";
 
 
-            //this.EditorAttachmentList = new ObservableCollection<Attachments>
-            //{
-            //    new Attachments { AttachmentName = "Report.pdf", AttachmentType = "PDF" },
-            //    new Attachments { AttachmentName = "Image1.png", AttachmentType = "Image" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" },
-            //    new Attachments { AttachmentName = "Notes.txt", AttachmentType = "Text" }
-            //};
 
-            EditorActionText = "Add";
-   
         }
 
 
@@ -514,25 +523,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Editor Commands and Task
         // -----------------------------
-        [RelayCommand]
-        private void NextEditorSlide() 
-        {
-            // 3 Slides
-            if (EditorSlideIndex < 2) 
-            {
-                EditorSlideIndex++;
-            }
-        }
-
-        [RelayCommand]
-        private void PreviousEditorSlide()
-        {
-            // 3 Slides
-            if (EditorSlideIndex > 0)
-            {
-                EditorSlideIndex--;
-            }
-        }
 
         //[RelayCommand]
         async Task GetTaskList_RepeatList_Tag()
@@ -572,6 +562,64 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 Loading_TaskList_RepeatList_Tag = false;
             }
+        }
+
+        //[RelayCommand]
+        //async Task EditorAction() 
+        //{
+        //    if (EditorModeIsEdit)
+        //    {
+        //        // Edit existing task
+        //        if (TaskSelected != null)
+        //        {
+        //            TaskSelected.TaskTitle = EditorTaskTitle;
+        //            TaskSelected.Notes = EditorNotes;
+        //            TaskSelected.DueDate = EditorDueDate;
+        //            await _taskListRepo.UpdateAsync(TaskSelected.TaskEntity);
+        //            await GetTaskList(); // Refresh task list to reflect changes
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // Add new task
+        //        var newTask = new TaskList
+        //        {
+        //            Title = EditorTaskTitle,
+        //            Notes = EditorNotes,
+        //            DueDate = EditorDueDate,
+        //            GroupID = SelectedGroup.Id
+        //        };
+
+        //        var newRepeat = new TaskList_RepeatList
+        //        {
+        //            RepeatTagID = _taskList_RepeatTagRepo.GetAllAsync().Result
+        //                            .FirstOrDefault(t => t.RepeatTagName == RepeatListTagSelected)?.ID
+        //        };  
+
+
+        //        await _taskListRepo.InsertAsync(newTask);
+        //        await _taskList_RepeatListRepo.InsertAsync(new TaskList_RepeatList
+        //        {
+        //            TaskListID = newTask.ID,
+        //            RepeatTagID = newRepeat.RepeatTagID
+        //        });
+        //        await GetTaskList(); // Refresh task list to show new task
+        //    }
+
+        //    // Clear editor fields after action
+        //    await EditorClear();
+        //}
+
+
+        [RelayCommand]
+        async Task EditorClear() 
+        {
+            EditorTaskTitle = string.Empty;
+            EditorNotes = string.Empty;
+            EditorDueDate = DateTime.Now;
+            EditorModeIsEdit = false; // Reset to Add mode
+            TaskSelected.IsSelected = false; // Clear selection
+            RepeatListTagSelected = RepeatTags.FirstOrDefault() ?? string.Empty; 
         }
 
 
@@ -777,6 +825,23 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             taskSelection.IsSelected = true;
             TaskSelected = taskSelection;
 
+            // Populate Editor fields based on selected task
+            if (TaskSelected != null)
+            {
+                EditorModeIsEdit = true;
+                EditorTaskTitle = TaskSelected.TaskTitle;
+                EditorNotes = TaskSelected.Notes ?? string.Empty;
+                EditorDueDate = TaskSelected.DueDate ?? DateTime.Now;
+                if(TaskSelected.TaskList_RepeatTag != null)
+                {
+                    RepeatListTagSelected = TaskSelected.TaskList_RepeatTag.RepeatTagName 
+                                            ?? RepeatTags.FirstOrDefault() 
+                                            ?? string.Empty;
+                }
+            }
+                
+    
+
             // Load Attachments for the selected task
             await GetEditorAttachment();
 
@@ -790,11 +855,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         public async Task LoadDataAsync() 
         {
-            //if (!File.Exists(Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db")))
-            //{
-            //    Debug.WriteLine("Database not ready yet.");
-            //    return;
-            //}
+            if (!File.Exists(Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db")))
+            {
+                Debug.WriteLine("Database not ready yet.");
+                return;
+            }
 
             //if (!_groupListRepo.IsInitialized || 
             //    !_groupListRepo.IsInitialized || 
@@ -812,10 +877,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             await GetTaskList_RepeatList_Tag();
             await LoadSortType();
             await LoadSortOrder();
-
             await GetTaskList();
-
-           await GetEditorAttachment();
+            await GetEditorAttachment();
         }
 
         public async Task LoadDataTrackerAsync()
