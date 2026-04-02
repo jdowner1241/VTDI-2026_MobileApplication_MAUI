@@ -8,7 +8,6 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
     public class TaskList_RepeatList : BaseDB
     {
 
-        public int HowOften { get; set; } = 0;
         public DateTime CurrentDate { get; set; }
         public DateTime DueDate { get; set; }
 

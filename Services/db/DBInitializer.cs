@@ -69,10 +69,10 @@ namespace Mystic_ToDo_MAUI_.Services.db
 
             await _taskListRepeatListRepo.SeedDefaultsAsync(new List<TaskList_RepeatList>
             {
-                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 1}, // Daily
-                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 2}, // Weekly
-                new TaskList_RepeatList { HowOften=2, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 3}, // Monthly
-                new TaskList_RepeatList { HowOften=1, CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 4}, // Yearly
+                new TaskList_RepeatList { CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 1}, // Daily
+                new TaskList_RepeatList { CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 2}, // Weekly
+                new TaskList_RepeatList { CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 3}, // Monthly
+                new TaskList_RepeatList { CurrentDate=DateTime.Now, DueDate=DateTime.Parse("2026.5.26"), RepeatTagID = 4}, // Yearly
             });
 
             await _taskListRepo.SeedDefaultsAsync(new List<TaskList>

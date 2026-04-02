@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,13 +43,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public record MoveGroupArgs(GroupListViewModel Group, GroupListViewModel NewParent);
         private Dictionary<int, GroupListViewModel> _lookup = new();
 
-        // Collections and Selected Items 
+        // Controls, Collections and Selected Items 
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
         [ObservableProperty]
         private GroupListViewModel selectedGroup;
 
-        // Controls 
         [ObservableProperty]
         private bool isGroupListExpanded;
         [ObservableProperty]
@@ -71,11 +71,33 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private CancellationTokenSource _cts = new();
 
 
-        // Collections and Selected Items 
+        // Controls, Collections and Selected Items 
+        [ObservableProperty]
+        private bool editorModeIsEdit = false;
+        [ObservableProperty]
+        private string editorActionText = "Add";
+        partial void OnEditorModeIsEditChanged(bool value)
+        {
+            EditorActionText = value ? "Edit" : "Add";
+        }
+
+        [ObservableProperty]
+        private string editorTaskTitle;
+
+        [ObservableProperty]
+        public string editorNotes;
+
+        [ObservableProperty]
+        private DateTime editorAlarmDueDate;
+        [ObservableProperty]
+        private bool editorAlarmIsEnabled;
+
         [ObservableProperty]
         public ObservableCollection<string> repeatTags = new();
         [ObservableProperty]
         private string repeatListTagSelected;
+        [ObservableProperty]
+        private bool repeatListTagIsEnabled = false;
 
         [ObservableProperty]
         private ObservableCollection<Attachments> editorAttachmentList = new();
@@ -97,25 +119,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [ObservableProperty]
         private TaskListVM taskSelected;
 
-        // Controls 
-        [ObservableProperty]
-        private bool editorModeIsEdit = false;
-        [ObservableProperty]
-        private string editorActionText = "Add";
-        //public string EditorActionText => EditorModeIsEdit ? "Edit" : "Add";
-        partial void OnEditorModeIsEditChanged(bool value)
-        {
-            EditorActionText = value ? "Edit" : "Add";
-        }
-
-        [ObservableProperty]
-        private string editorTaskTitle;
-
-        [ObservableProperty]
-        public string editorNotes;
-
-        [ObservableProperty]
-        private DateTime editorDueDate; 
 
 
         // Flags for Async loading state
@@ -156,6 +159,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
             this.IsGroupListExpanded = true;
             this.GroupExpanderIcon = "arrow_right.png";
+
+            EditorAlarmIsEnabled = false;
+            RepeatListTagIsEnabled = false;
 
 
 
@@ -564,6 +570,58 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        [RelayCommand]
+        async Task EditorAlarmToggle() 
+        {
+            if (EditorAlarmIsEnabled)
+            {
+
+                EditorAlarmDueDate = DateTime.Now;
+                EditorAlarmIsEnabled = false;   // Hide DatePicker when toggled off
+                RepeatListTagSelected = RepeatTags.FirstOrDefault() ?? string.Empty;
+                RepeatListTagIsEnabled = false; // Disable repeat options when alarm is off
+
+            }
+            else
+            {
+                EditorAlarmIsEnabled = true; // Show DatePicker when toggled on
+            }
+        }
+
+        [RelayCommand]
+        async Task EditorRepeatToggle()
+        {
+            if (!EditorAlarmIsEnabled)
+            {
+                await Shell.Current.DisplayAlertAsync("Error", 
+                                                        "Alarm must be enabled to set repeat options.", 
+                                                        "OK");
+
+                // Force repeat options off when alarm is disabled
+                RepeatListTagIsEnabled = false;
+                RepeatListTagSelected = RepeatTags.FirstOrDefault()
+                                        ?? string.Empty;
+                return;
+            }
+
+            // Alarm is enabled → toggle repeat options
+            if (RepeatListTagIsEnabled)
+            {
+                // Currently on → turn off
+                RepeatListTagIsEnabled = false;
+                //RepeatListTagSelected = RepeatTags.FirstOrDefault()
+                                        //?? string.Empty;
+            }
+            else
+            {
+                // Currently off → turn on
+                RepeatListTagIsEnabled = true;
+                RepeatListTagSelected = TaskSelected?.TaskList_RepeatTag?.RepeatTagName
+                                        ?? RepeatTags.FirstOrDefault()
+                                        ?? string.Empty;
+            }
+        }
+
         //[RelayCommand]
         //async Task EditorAction() 
         //{
@@ -616,10 +674,18 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             EditorTaskTitle = string.Empty;
             EditorNotes = string.Empty;
-            EditorDueDate = DateTime.Now;
+            EditorAlarmDueDate = DateTime.Now;
             EditorModeIsEdit = false; // Reset to Add mode
             TaskSelected.IsSelected = false; // Clear selection
-            RepeatListTagSelected = RepeatTags.FirstOrDefault() ?? string.Empty; 
+            RepeatListTagSelected = RepeatTags.FirstOrDefault() ?? string.Empty;
+            EditorAttachmentList.Clear();
+            EditorAttachmentSelection = 0;
+            EditorAlarmDueDate = DateTime.Now;
+            EditorAlarmIsEnabled = false;
+            RepeatListTagSelected = RepeatTags.FirstOrDefault()
+                                    ?? string.Empty;
+            RepeatListTagIsEnabled = false;
+
         }
 
 
@@ -831,12 +897,31 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 EditorModeIsEdit = true;
                 EditorTaskTitle = TaskSelected.TaskTitle;
                 EditorNotes = TaskSelected.Notes ?? string.Empty;
-                EditorDueDate = TaskSelected.DueDate ?? DateTime.Now;
+
+                // Set alarm and repeat options based on task properties
+                if (TaskSelected.DueDate != null) 
+                {
+                    EditorAlarmIsEnabled = true;
+                    EditorAlarmDueDate = TaskSelected.DueDate ?? DateTime.Now;
+                } 
+                else
+                {
+                    EditorAlarmIsEnabled = false;
+                    RepeatListTagIsEnabled = false;
+                }
+                
                 if(TaskSelected.TaskList_RepeatTag != null)
                 {
+                    RepeatListTagIsEnabled = true;
                     RepeatListTagSelected = TaskSelected.TaskList_RepeatTag.RepeatTagName 
                                             ?? RepeatTags.FirstOrDefault() 
                                             ?? string.Empty;
+
+                }
+                else
+                {
+                    RepeatListTagSelected = RepeatTags.FirstOrDefault() ?? string.Empty;
+                    RepeatListTagIsEnabled = false;
                 }
             }
                 

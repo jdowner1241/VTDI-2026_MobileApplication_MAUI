@@ -47,29 +47,32 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 
 
         public DateTime? DueDate => TaskRepeatInfo?.DueDate;
-        public string DueDateDisplay => DueDate?.ToString("dd/MM/yyyy") ?? string.Empty;
+        public string AlarmDueDateDisplay => DueDate?.ToString("MM/dd/yyyy") ?? string.Empty;
         public DateTime? CurrentDate => TaskRepeatInfo?.CurrentDate;
-        public int? RepeatInterval => TaskRepeatInfo?.HowOften;
+        //public int? RepeatInterval => TaskRepeatInfo?.HowOften;
         //public string? RepeatFrequency => TaskRepeatInfo?.RepeatTag?.RepeatTagName;
-        public int? TaskList_RepeatTagID => TaskRepeatInfo?.RepeatTagID;
 
+
+        public int? TaskList_RepeatTagID => TaskRepeatInfo?.RepeatTagID;
         public TaskList_RepeatTag? TaskList_RepeatTag { get; private set; }
 
-
         public bool HasAlarm => DueDate != null ? true : false;
-        public ImageSource? AlarmDisplay => HasAlarm == true ? "alarm.png" : null;
-        //public ImageSource? AlarmDisplay => "alarm_on.png";
+        public ImageSource? AlarmDisplayIcon => HasAlarm == true ? "alarm.png" : null;
 
-        public bool HasRepeat => RepeatInterval != null && !string.IsNullOrEmpty(TaskList_RepeatTag?.RepeatTagName) ? true : false;
+
+
+
+        public bool HasRepeat => HasAlarm && 
+                                (
+                                    TaskList_RepeatTag?.ID != 0 || 
+                                    TaskList_RepeatTag != null
+                                ) 
+                                ? true : false;
         public ImageSource? RepeatDisplayIcon => HasRepeat == true ? "event_repeat.png" : null;
 
-        public string RepeatDisplay =>  RepeatInterval.HasValue && !string.IsNullOrEmpty(TaskList_RepeatTag?.RepeatTagName)
-                                        ? $"Repeat: {TaskList_RepeatTag.RepeatTagName}, Every: {RepeatInterval} Times"
+        public string RepeatDisplay => TaskList_RepeatTag != null
+                                        ? $"Repeat: {TaskList_RepeatTag.RepeatTagName}"
                                         : string.Empty;
-
-
-        // Control Properties 
-
 
 
 
@@ -107,11 +110,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
                 OnPropertyChanged(nameof(DueDate));
                 OnPropertyChanged(nameof(HasAlarm));
                 OnPropertyChanged(nameof(HasRepeat));
-                OnPropertyChanged(nameof(DueDateDisplay));
-                OnPropertyChanged(nameof(RepeatInterval));
+                OnPropertyChanged(nameof(AlarmDueDateDisplay));
                 OnPropertyChanged(nameof(TaskList_RepeatTagID));
                 OnPropertyChanged(nameof(RepeatDisplay));
-                OnPropertyChanged(nameof(AlarmDisplay));
+                OnPropertyChanged(nameof(AlarmDisplayIcon));
                 OnPropertyChanged(nameof(RepeatDisplayIcon));
             }
 

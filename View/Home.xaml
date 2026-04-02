@@ -149,8 +149,10 @@
                     <Button Text="Clear" WidthRequest="100"
                                 Command="{Binding EditorClearCommand}"/>
 
-                    <ImageButton Source="alarm.png" ToolTipProperties.Text="Set Alarm"/>
-                    <ImageButton Source="event_repeat.png" ToolTipProperties.Text="Repeat Alarm"/>
+                    <ImageButton Source="alarm.png" ToolTipProperties.Text="Set Alarm"
+                                 Command="{Binding EditorAlarmToggleCommand}"/>
+                    <ImageButton Source="event_repeat.png" ToolTipProperties.Text="Repeat Alarm"
+                                  Command="{Binding EditorRepeatToggleCommand}"/>
                     <ImageButton Source="attach_file.png" Aspect="AspectFit"
                                      ToolTipProperties.Text="Add Attachment"
                                      Command="{Binding EditorAttachmentAddCommand}"/>
@@ -172,19 +174,21 @@
                 <!-- Editor :  Alarm -->
                 <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Start"
                             Grid.Column="1" Grid.Row="1" Spacing="10"
-                            Margin="5, 10" >
+                            Margin="5, 10" 
+                            IsVisible="{Binding EditorAlarmIsEnabled}">
 
                     <Label Text="Alarm" ToolTipProperties.Text="Set a Alarm"
                                     FontAttributes="None" />
                     <DatePicker WidthRequest="150" ToolTipProperties.Text="Set a Alarm"
-                                    Date="{Binding EditorDueDate, Mode=TwoWay}"
+                                    Date="{Binding EditorAlarmDueDate, Mode=TwoWay}"
                                     Background="{StaticResource App_gray800Brush}"/>
                 </StackLayout>
 
                 <!-- Editor :  Alarm Repeat -->
                 <StackLayout Orientation="Vertical" VerticalOptions="Start" HorizontalOptions="Center"
                             Grid.Column="2" Grid.Row="1" Spacing="10"
-                            Margin="5, 10">
+                            Margin="5, 10"
+                            IsVisible="{Binding RepeatListTagIsEnabled}">
 
                     <Label Text="Repeat Alarm" ToolTipProperties.Text="Repeat the Alarm"
                                     FontAttributes="None" />
@@ -319,8 +323,8 @@
 
                                     <HorizontalStackLayout Spacing="10"
                                                            VerticalOptions="Center" HorizontalOptions="Start">
-                                        <Image Source="{Binding AlarmDisplay}" HeightRequest="13" Aspect="AspectFit" />
-                                        <Label Text="{Binding DueDateDisplay}" 
+                                        <Image Source="{Binding AlarmDisplayIcon}" HeightRequest="13" Aspect="AspectFit" />
+                                        <Label Text="{Binding AlarmDueDateDisplay}" 
                                                Margin="0,0,10,0" />
                                         <Image Source="{Binding RepeatDisplayIcon}" HeightRequest="13" Aspect="AspectFit" />
                                         <Label Text="{Binding RepeatDisplay}"/>
