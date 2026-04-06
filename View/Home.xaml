@@ -179,9 +179,23 @@
 
                     <Label Text="Alarm" ToolTipProperties.Text="Set a Alarm"
                                     FontAttributes="None" />
-                    <DatePicker WidthRequest="150" ToolTipProperties.Text="Set a Alarm"
-                                    Date="{Binding EditorAlarmDueDate, Mode=TwoWay}"
-                                    Background="{StaticResource App_gray800Brush}"/>
+
+                    <DatePicker WidthRequest="220"
+                                ToolTipProperties.Text="Set Date"
+                                Format="MMMM dd, yyyy"
+                                Date="{Binding EditorAlarmDate, Mode=TwoWay}"
+                                Background="{StaticResource App_gray800Brush}"
+                                HorizontalOptions="Center" 
+                                FontAutoScalingEnabled="True"/>
+
+                    <TimePicker WidthRequest="220"
+                                ToolTipProperties.Text="Set Time"
+                                Time="{Binding EditorAlarmTime, Mode=TwoWay}"
+                                Background="{StaticResource App_gray800Brush}"
+                                Format="hh:mm tt" 
+                                FontAutoScalingEnabled="True"
+                                HorizontalOptions="Center"/>
+
                 </StackLayout>
 
                 <!-- Editor :  Alarm Repeat -->
