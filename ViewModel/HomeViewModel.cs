@@ -26,6 +26,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Repositories for database access
         // -----------------------------
+        private readonly DBInitializer _dbInitializer;
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
@@ -160,6 +161,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // Constructor
         // -----------------------------
         public HomeViewModel(
+            DBInitializer dbInitializer,
             DBManager<GroupList> groupRepo,
             DBManager<TaskList> taskRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
@@ -168,6 +170,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         ) 
         { 
             Title = "Home";
+            _dbInitializer = dbInitializer;
             _groupListRepo = groupRepo;
             _taskListRepo = taskRepo;
             _taskList_RepeatTagRepo = repeatTagRepo;
@@ -1144,28 +1147,25 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // Set alarm and repeat options based on task properties
                 if (TaskSelected.DueDate != null) 
                 {
+                    var due = TaskSelected.DueDate.Value;
                     EditorAlarmIsEnabled = true;
-                    if (TaskSelected.DueDate.HasValue)
-                    {
-                        EditorAlarmDueDateTime = TaskSelected.DueDate.Value;
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Unable to show Alarm for selected task");
-                        EditorAlarmIsEnabled = false;
-                    }
+
+                    EditorAlarmDate = due.Date;
+                    EditorAlarmTime = due.TimeOfDay;
                 } 
                 else
                 {
+                    Debug.WriteLine("No due date set for this task.");
                     EditorAlarmIsEnabled = false;
                     RepeatListTagIsEnabled = false;
                 }
-                
-                if(TaskSelected.TaskList_RepeatTag != null)
+
+
+                if (TaskSelected.HasRepeat)
                 {
                     RepeatListTagIsEnabled = true;
-                    RepeatListTagSelected = TaskSelected.TaskList_RepeatTag.RepeatTagName 
-                                            ?? RepeatTags.FirstOrDefault() 
+                    RepeatListTagSelected = TaskSelected.TaskList_RepeatTag?.RepeatTagName
+                                            ?? RepeatTags.FirstOrDefault()
                                             ?? string.Empty;
                 }
                 else
@@ -1190,23 +1190,18 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         public async Task LoadDataAsync() 
         {
-            if (!File.Exists(Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db")))
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
+
+            if (!File.Exists(dbPath))
             {
-                Debug.WriteLine("Database not ready yet.");
-                return;
+                Debug.WriteLine("Database not ready yet. Creating schema...");
             }
 
-            //if (!_groupListRepo.IsInitialized || 
-            //    !_groupListRepo.IsInitialized || 
-            //    !_taskListRepo.IsInitialized || 
-            //    !_taskList_RepeatTagRepo.IsInitialized
-            //    )
-            //{
-            //    Debug.WriteLine("Database not ready yet.");
-            //    return;
-            //}
+            // Always ensure database is created and schema is up to date before loading data
+            await _dbInitializer.DBInitializerAsync();
 
 
+            // Now safe to call repo methods
             await GetGroupList();
             await GroupListStartupSelection();
             await GetTaskList_RepeatList_Tag();

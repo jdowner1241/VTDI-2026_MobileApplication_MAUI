@@ -134,6 +134,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                
 
                 <!-- Editor : Task Title -->
                 <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Start" 
@@ -156,6 +157,10 @@
                     <ImageButton Source="attach_file.png" Aspect="AspectFit"
                                      ToolTipProperties.Text="Add Attachment"
                                      Command="{Binding EditorAttachmentAddCommand}"/>
+
+                    <CarouselView >
+                        
+                    </CarouselView>
                 </StackLayout>
 
 
@@ -271,7 +276,7 @@
                 <Label Text="{Binding SelectedGroup.GroupName}"  
                        VerticalOptions="Center" 
                        HorizontalOptions="Start"
-                       FontAttributes="Bold" FontSize="25" FontFamily="VampireWar"  
+                       FontAttributes="Bold" FontSize="25" FontFamily="VampireWars"  
                        TextColor="{StaticResource App_purple600}"
                        Margin="30,0"
                        Grid.Column="0"/>

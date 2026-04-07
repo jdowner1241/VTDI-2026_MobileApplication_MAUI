@@ -62,19 +62,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 
 
 
-        public bool HasRepeat => HasAlarm && 
-                                (
-                                    TaskList_RepeatTag?.ID != 0 || 
-                                    TaskList_RepeatTag != null
-                                ) 
-                                ? true : false;
+        public bool HasRepeat => HasAlarm &&
+                                 TaskList_RepeatTag != null && 
+                                 TaskList_RepeatTag.ID > 0;
         public ImageSource? RepeatDisplayIcon => HasRepeat == true ? "event_repeat.png" : null;
 
-        public string RepeatDisplay => TaskList_RepeatTag != null
-                                        ? $"Repeat: {TaskList_RepeatTag.RepeatTagName}"
-                                        : string.Empty;
-
-
+        public string RepeatDisplay => TaskList_RepeatTag == null || TaskList_RepeatTag.ID == 0
+                                       ? string.Empty
+                                       : $"Repeat: {TaskList_RepeatTag.RepeatTagName}";
 
 
         // +++++++++++++++++++++

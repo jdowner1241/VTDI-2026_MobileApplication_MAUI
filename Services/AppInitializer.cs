@@ -28,8 +28,6 @@ namespace Mystic_ToDo_MAUI_.Services
             _homeViewModel = homeViewModel;
             _themeSwitcher = themeSwitcher;
             _dbInitializer = dbInitializer;
-
-            
         }
 
         public async Task InitializeAsync()

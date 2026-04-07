@@ -18,8 +18,8 @@ namespace Mystic_ToDo_MAUI_
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("Vampire-Wars.ttf", "VampireWars");
-                    fonts.AddFont("Vampire-Wars-Italic.ttf", "VampireWarsItalic");
+                    fonts.AddFont("VampireWars.ttf", "VampireWars");
+                    fonts.AddFont("VampireWarsItalic.ttf", "VampireWarsItalic");
                 });
 
             // Services
