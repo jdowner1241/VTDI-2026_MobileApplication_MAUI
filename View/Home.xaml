@@ -157,6 +157,10 @@
                     <ImageButton Source="attach_file.png" Aspect="AspectFit"
                                      ToolTipProperties.Text="Add Attachment"
                                      Command="{Binding EditorAttachmentAddCommand}"/>
+                    <ImageButton Source="delete_red.png" Aspect="AspectFit"
+                                    ToolTipProperties.Text="Delete Task"
+                                    IsVisible="{Binding EditorAllowDelete}"
+                                    Command="{Binding EditorTaskDeleteCommand}"/>
 
                     <CarouselView >
                         
@@ -269,7 +273,7 @@
         <!-- Search Bar-->
         <Border Grid.Column="1" Grid.Row="1" 
            BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
-            Padding="10,10" Margin="10,0,10,0">
+            Padding="10,5" Margin="10,2">
 
             <Grid ColumnDefinitions="Auto,*">
                 <!-- Left side: Label -->
@@ -285,17 +289,22 @@
                 <StackLayout Orientation="Horizontal" 
                  VerticalOptions="Center" 
                  HorizontalOptions="End"
-                 Spacing="30"
+                 Spacing="25"
                  Grid.Column="1">
-                    <SearchBar Placeholder="Search" ToolTipProperties.Text="Search for a Task"  
-                    WidthRequest="300" />
+                    
+                    <SearchBar Placeholder="Search" ToolTipProperties.Text="Search for a Task" 
+                               Text="{Binding EditorSearchQuery}"
+                                Background="{StaticResource App_gray800Brush}"
+                                WidthRequest="300" />
 
                     <Picker ToolTipProperties.Text="Sort Type"  
+                            Background="{StaticResource App_gray800Brush}"
                             WidthRequest="150" 
                             ItemsSource="{Binding SortTypeList}"
                             SelectedItem="{Binding SortTypeSelected}"/>
 
                     <Picker ToolTipProperties.Text="Sort Order"  
+                            Background="{StaticResource App_gray800Brush}"
                             WidthRequest="150" 
                             ItemsSource="{Binding SortOrderList}"
                             SelectedItem="{Binding SortOrderSelected}"/>
@@ -311,7 +320,7 @@
                 BackgroundColor="{StaticResource App_black500}" Stroke="{StaticResource App_purple400Brush}" 
                 Padding="10,10" Margin="10,10,10,10">
 
-            <CollectionView ItemsSource="{Binding TaskList}"
+            <CollectionView ItemsSource="{Binding FilteredTaskList}"
                             SelectionMode="Single"
                             SelectionChangedCommand="{Binding TaskSelectionCommand}"
                             SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">

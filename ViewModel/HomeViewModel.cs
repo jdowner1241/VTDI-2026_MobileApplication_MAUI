@@ -79,9 +79,12 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private bool editorModeIsEdit = false;
         [ObservableProperty]
         private string editorActionText = "Add";
+        [ObservableProperty]
+        public bool editorAllowDelete = false;
         partial void OnEditorModeIsEditChanged(bool value)
         {
             EditorActionText = value ? "Edit" : "Add";
+            EditorAllowDelete = value ? true : false;
         }
 
         [ObservableProperty]
@@ -127,14 +130,32 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private ObservableCollection<string> sortTypeList = new();
         [ObservableProperty]
         private string sortTypeSelected;
+        partial void OnSortTypeSelectedChanged(string value)
+        {
+            ApplyFilters();
+        }
 
         [ObservableProperty]
         private ObservableCollection<string> sortOrderList = new();
         [ObservableProperty]
         private string sortOrderSelected;
+        partial void OnSortOrderSelectedChanged(string value)
+        {
+            ApplyFilters();
+        }
+
+        [ObservableProperty]
+        private string editorSearchQuery;
+        partial void OnEditorSearchQueryChanged(string value)
+        {
+            ApplyFilters();
+        }
 
         [ObservableProperty]
         public ObservableCollection<TaskListVM> taskList = new();
+        [ObservableProperty]
+        public ObservableCollection<TaskListVM> filteredTaskList = new();
+
         [ObservableProperty]
         private TaskListVM taskSelected;
 
@@ -890,6 +911,35 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             await EditorClear();
         }
 
+        [RelayCommand]
+        async Task EditorTaskDelete() 
+        {
+            if (TaskSelected == null) return;
+
+            try
+            {
+                // Confirm deletion with the user
+                bool confirm = await Shell.Current.DisplayAlertAsync(
+                    "Confirm Deletion",
+                    $"Are you sure you want to delete the task '{TaskSelected.TaskTitle}'?",
+                    "Delete",
+                    "Cancel");
+                if (confirm)
+                {
+                    await _taskListRepo.DeleteAsync(TaskSelected.TaskEntity);
+                    Debug.WriteLine($"Task '{TaskSelected.TaskTitle}' deleted successfully.");
+                    await Shell.Current.DisplayAlertAsync("Info", $"Task '{TaskSelected.TaskTitle}' has been deleted.", "OK");
+                }
+                await GetTaskList(); // Refresh task list to reflect changes
+                await EditorClear(); // Clear editor fields after deletion
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unable to delete task. Error: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to delete task.", "OK");
+            }
+        }
+
 
         [RelayCommand]
         async Task EditorClear() 
@@ -1028,8 +1078,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
                 SortTypeList = new ObservableCollection<string>
                 {
-                   "Name",
-                   "Due Date"
+                    "Name",
+                    "Due Date",
+                    "Created Date",
+                    "Modified Date"
                 };
 
                 // set AFTER population
@@ -1112,6 +1164,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     }
                 }
 
+                ApplyFilters(); // Apply search and sorting after loading tasks
             }
             catch (Exception ex)
             {
@@ -1122,6 +1175,68 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 Loading_TaskList = false;
             }
+        }
+
+        private void ApplyFilters() 
+        {
+            if (TaskList == null || !TaskList.Any()) return;
+
+            // Get the Search Query and convert to lowercase for case-insensitive comparison
+            var query = EditorSearchQuery?.Trim().ToLower() ?? string.Empty;
+
+            // Search Filter
+            var filtered = TaskList.Where(t =>
+                                            string.IsNullOrEmpty(query) ||
+                                            t.TaskTitle.ToLower().Contains(query) ||
+                                            (t.Notes?.ToLower().Contains(query) ?? false) ||
+                                            t.RepeatDisplay.ToLower().Contains(query) ||
+                                            t.AlarmDueDateDisplay.ToLower().Contains(query)
+                                        );
+            // Sorting
+            filtered = ApplySorting(filtered);
+
+            // Update bonded Collection
+            FilteredTaskList = new ObservableCollection<TaskListVM>(filtered);
+
+        }
+
+        private IEnumerable<TaskListVM> ApplySorting(IEnumerable<TaskListVM> tasks) 
+        {
+            switch (SortTypeSelected)
+            {
+                case "Name":
+                    tasks = SortOrderSelected == "Asen"
+                        ? tasks.OrderBy(t => t.TaskTitle)
+                        : tasks.OrderByDescending(t => t.TaskTitle);
+                    break;
+
+                case "Due Date":
+                    tasks = SortOrderSelected == "Asen"
+                        ? tasks.OrderBy(t => t.DueDate)
+                        : tasks.OrderByDescending(t => t.DueDate);
+                    break;
+
+                case "Created Date":
+                    tasks = SortOrderSelected == "Asen"
+                        ? tasks.OrderBy(t => t.TaskCreatedDate)
+                        : tasks.OrderByDescending(t => t.TaskCreatedDate);
+                    break;
+
+                case "Modified Date":
+                    tasks = SortOrderSelected == "Asen"
+                        ? tasks.OrderBy(t => t.TaskModifiedDate)
+                        : tasks.OrderByDescending(t => t.TaskModifiedDate);
+                    break;
+
+                case "Completed":
+                    tasks = SortOrderSelected == "Asen"
+                        ? tasks.OrderBy(t => t.IsCompletedDisplay)
+                        : tasks.OrderByDescending(t => t.IsCompletedDisplay);
+                    break;
+            }
+
+            return tasks;
+
         }
 
         [RelayCommand]
