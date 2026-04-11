@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Services.db;
 using System;
@@ -17,9 +18,11 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // +++++++++++++++++++++
         // Task table : Objects and Properties 
         // +++++++++++++++++++++
+        private readonly HomeViewModel _homeViewModel;
         private readonly DBManager<TaskList_RepeatList> _repeatListRepo;
         private readonly DBManager<TaskList_RepeatTag> _repeatTagRepo;
         private readonly DBManager<Attachments> _attachmentsRepo;
+       // private readonly DBManager<TaskList> _taskListRepo;
 
         public TaskList TaskEntity { get; }
         private readonly IEnumerable<TaskList> _alltasks;
@@ -29,14 +32,30 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         [ObservableProperty]
         private bool isSelected;
 
+ 
 
         // Exposed Entity properties
         public int TaskID => TaskEntity.ID;
         public string TaskTitle => TaskEntity.Title;
         public DateTime TaskCreatedDate => TaskEntity.CreatedDate;
         public DateTime? TaskModifiedDate => TaskEntity.ModifiedDate;
+
+
         public bool IsActive => TaskEntity.IsActive;
-        public bool IsCompletedDisplay => !IsActive;
+        [ObservableProperty]
+        private bool isCompletedDisplay;
+
+        // public bool IsCompletedDisplay => !IsActive;
+
+        //[ObservableProperty]
+        //public bool isCompleted;
+
+        //private bool IsCompletedDisplay => !IsActive;
+
+
+
+        // public RelayCommand<bool> ToggleCompletionCommand { get;}
+
         public string? Notes => TaskEntity?.Notes;
         public List<Attachments>? Raw_Attachments => TaskEntity?.Attachments;
 
@@ -77,6 +96,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         // +++++++++++++++++++++
         public TaskListVM
             (
+            HomeViewModel homeViewModel,
             TaskList taskEntity, 
             IEnumerable<TaskList> alltasks, 
             IEnumerable<TaskList> grouptasks,
@@ -86,6 +106,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
             )
         {
             TaskEntity = taskEntity;
+            _homeViewModel = homeViewModel;
             _alltasks = alltasks;
             _grouptasks = grouptasks;
             _repeatListRepo = repeatListRepo;
@@ -93,7 +114,66 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
             _attachmentsRepo = attachmentsRepo;
 
             attachments = new ObservableCollection<Attachments>(taskEntity.Attachments ?? new List<Attachments>());
+
+            // Initialize the generated IsCompleted property backing field to reflect the entity state
+            // completed == !IsActive
+            isCompletedDisplay = !TaskEntity.IsActive;
+
+            //ToggleCompletionCommand = new RelayCommand<bool>(async (newValue) =>
+            //{
+            //    await _homeViewModel.ToggleTaskCompletionAsync(TaskEntity.ID, newValue);
+            //});
+
+
         }
+
+        //[RelayCommand]
+        //public async Task ToggleCompletion(bool newValue)
+        //{
+        //    await _homeViewModel.ToggleTaskCompletionAsync(TaskEntity.ID, newValue);
+
+        //    // Notify UI after persistence
+        //    OnPropertyChanged(nameof(IsActive));
+        //    OnPropertyChanged(nameof(IsCompletedDisplay));
+
+        //}
+
+        // This partial method is generated hook called when the [ObservableProperty] 'isCompleted' changes.
+        // It updates the underlying entity, persists the change and notifies dependent properties.
+        partial void OnIsCompletedDisplayChanged(bool value)
+        {
+            // value == true means the task is completed, so IsActive should be false
+            TaskEntity.IsActive = !value;
+
+            // Persist the change (fire-and-forget; the VM method handles async persistence)
+            _ = _homeViewModel.ToggleTaskCompletionAsync(TaskEntity.ID, value);
+
+            // Notify dependent properties
+            OnPropertyChanged(nameof(IsActive));
+            OnPropertyChanged(nameof(IsCompletedDisplay));
+        }
+
+        //public bool IsCompletedDisplay
+        //{
+        //    get => !TaskEntity.IsActive;
+        //    set
+        //    {
+        //        if (value != TaskEntity.IsActive) // value true means completed
+        //        {
+        //            TaskEntity.IsActive = !value; // Set IsActive to false if completed, true if not completed
+
+        //            // Notify property changes
+        //            OnPropertyChanged(nameof(IsCompletedDisplay));
+        //            OnPropertyChanged(nameof(IsActive));
+
+
+        //            // Run async toggle
+        //            _ = _homeViewModel.ToggleTaskCompletionAsync(TaskEntity.ID, value);
+        //        }
+        //    }
+        //}
+
+
 
 
         public async Task LoadInfoAsync()

@@ -15,7 +15,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         {
             GroupEntity = groupEntity;
             _allGroups = allGroups;
+
             BuildPath();
+            BuildSubGroups();
         }
 
         // Exposed entity properties
@@ -73,6 +75,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         //    IsExpanded = !IsExpanded;
         //}
 
+
+
         private void BuildPath()
         {
             var segments = new List<string>();
@@ -86,5 +90,20 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
 
             Path = string.Join(" > ", segments);
         }
+
+        private void BuildSubGroups()
+        {
+            var children = _allGroups.Where(g => g.ParentId == GroupEntity.ID);
+            foreach (var child in children)
+            {
+                var childVm = new GroupListViewModel(child, _allGroups)
+                {
+                    Level = this.Level + 1
+                };
+                SubGroups.Add(childVm);
+            }
+        }
+
+
     }
 }

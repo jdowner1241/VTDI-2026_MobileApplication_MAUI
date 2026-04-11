@@ -12,6 +12,7 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
         public string Title { get; set; }
         public string? Notes { get; set; }
         public int GroupID { get; set; } = 0;
+        public int? OrginalGroupID { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; } = null;
         public bool IsActive { get; set; } = true;

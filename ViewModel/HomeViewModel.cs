@@ -50,6 +50,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> groupList = new();
         [ObservableProperty]
+        private ObservableCollection<GroupListViewModel> defaultGroups = new();
+        [ObservableProperty]
+        private ObservableCollection<GroupListViewModel> customGroups = new();
+        [ObservableProperty]
         private GroupListViewModel selectedGroup;
 
         [ObservableProperty]
@@ -234,23 +238,51 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     g => new GroupListViewModel(g, groupListing)
                 );
 
-
-                // Build hierarchy
+                
+                // Custom Group list
                 foreach (var vm in _lookup.Values)
                 {
-                    Debug.WriteLine($"Processing group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
-
-
-                    if(vm.Id != RootParentId) 
+                    if (vm.ParentId is int parentId && _lookup.ContainsKey(parentId))
                     {
-                        if (vm.GroupEntity.ParentId is int parentId && _lookup.ContainsKey(parentId))
-                        {
-                            _lookup[parentId].SubGroups.Add(vm);
-                            Debug.WriteLine($"Processing Sub group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
-                        }
+                        var parent = _lookup[parentId];
+                        parent.SubGroups.Add(vm);
+
+                        vm.Level = _lookup[parentId].Level + 1;
                     }
-           
                 }
+
+                // Populate the default Group 
+                foreach (var root in _lookup.Values
+                             .Where(g => g.ParentId == null || g.ParentId == GroupListViewModel.RootParentId)
+                             .OrderBy(g => g.SortOrder))
+                {
+                    // Skip the actual Rool entity
+                    if (root.Id == GroupListViewModel.RootParentId)
+                        continue;
+
+                    root.Level = 0;
+                    GroupList.Add(root);
+                }
+
+                // Refresh derived collections
+                RefreshDerivedGroups();
+
+
+
+                // Build hierarchy
+                //foreach (var vm in _lookup.Values)
+                //{
+
+                //    if(vm.Id != RootParentId) 
+                //    {
+                //        if (vm.GroupEntity.ParentId is int parentId && _lookup.ContainsKey(parentId))
+                //        {
+                //            _lookup[parentId].SubGroups.Add(vm);
+                //            Debug.WriteLine($"Processing Sub group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
+                //        }
+                //    }
+
+                //}
 
                 // -----------------------------
                 // EXPAND/COLLAPSE ROOT LOAD
@@ -277,15 +309,15 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // -----------------------------
                 // FLATTEN TREE (All expanded)
                 // -----------------------------
-                var flatList = new ObservableCollection<GroupListViewModel>();
+                //var flatList = new ObservableCollection<GroupListViewModel>();
 
-                foreach (var root in _lookup.Values
-                         .Where(g => g.GroupEntity.ParentId == 1)
-                         .OrderBy(g => g.SortOrder))
-                {
-                    FlattenGroups(root, 0, flatList);
-                }
-                GroupList = flatList;
+                //foreach (var root in _lookup.Values
+                //         .Where(g => g.GroupEntity.ParentId == 1)
+                //         .OrderBy(g => g.SortOrder))
+                //{
+                //    FlattenGroups(root, 0, flatList);
+                //}
+                //GroupList = flatList;
 
             }
             catch (Exception ex)
@@ -299,14 +331,40 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        private void RefreshDerivedGroups()
+        {
+            DefaultGroups.Clear();
+            CustomGroups.Clear();
+
+            foreach (var g in GroupList)
+            {
+                if (g.IsDefault && g.Id != GroupListViewModel.RootParentId) 
+                {
+                    DefaultGroups.Add(g);
+                } 
+                else if (!g.IsDefault)
+                {
+                    CustomGroups.Add(g);
+                }
+            }
+        }
+
+
 
         //Toggle Expand
         public void ToggleExpand(GroupListViewModel item)
         {
             if (item.IsExpanded)
+            {
                 Collapse(item);
+                item.IsExpanded = false;
+            } 
             else
+            {
                 Expand(item);
+                item.IsExpanded = true;
+            }
+                
 
             item.IsExpanded = !item.IsExpanded;
         }
@@ -331,7 +389,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // Group Collapsed 
         private void Collapse(GroupListViewModel item)
         {
-            foreach (var child in item.SubGroups.ToList())
+            foreach (var child in item.SubGroups.OrderBy(c => c.SortOrder))
             {
                 RemoveRecursive(child);
             }
@@ -381,16 +439,42 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             if (selectedGroup == null) return;
 
-            // Clear previours selection
+            // Clear previous selection
             ClearSelection(GroupList);
+
+            // Clear all task collections before loading
+            TaskList.Clear();
+            FilteredTaskList.Clear();
 
             // Mark the new selection
             Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
             selectedGroup.IsSelected = true;
             SelectedGroup = selectedGroup;
 
+
             // Refresh TaskList based on new group selection
             await GetTaskList();
+
+            // If no tasks, clear the TaskList or show placeholder
+            if (TaskList == null || TaskList.Count == 0)
+            {
+                TaskList.Clear();
+                FilteredTaskList.Clear();
+
+
+                Debug.WriteLine($"No tasks found for group: {selectedGroup.GroupName}");
+                // ensures UI shows empty state
+                // optionally set a flag like IsTaskListEmpty = true for UI binding
+                await GetTaskList();
+            }
+        }
+
+        private IEnumerable<int> GetAllGroupIds(GroupListViewModel groupVm)
+        {
+            var ids = new List<int> { groupVm.Id };
+            foreach (var sub in groupVm.SubGroups)
+                ids.AddRange(GetAllGroupIds(sub));
+            return ids;
         }
 
         [RelayCommand]
@@ -457,11 +541,21 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     return; // duplicate name
                 }
 
+                GroupListViewModel parent = SelectedGroup;
+
+                // If Default/Important/Completed selected → create FolderGroup under Root
+                if (parent.IsDefault && (parent.GroupName == "Default" || 
+                                         parent.GroupName == "Important" || 
+                                         parent.GroupName == "Completed"))
+                {
+                    parent = _lookup[GroupListViewModel.RootParentId]; // Root
+                }
+
                 // Create new GroupList entity
                 var newGroup = new GroupList
                 {
                     GroupName = name,
-                    ParentId = selectedGroup?.Id,
+                    ParentId = parent.Id,
                     ColorHex = $"{BaseColors.blue300}",
                     IconPath = "dotnet_bot.png",
                     IsDefault = false
@@ -470,7 +564,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // Save the new group to the database
                 await _groupListRepo.InsertAsync(newGroup);
          
-
                 // Refresh the GroupList
                 await GetGroupList();
             }
@@ -487,7 +580,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             if (groupVm == null) return;
             try
             {
-                if(groupVm.IsDefault == true) 
+
+                if (groupVm.IsDefault == true) 
                 {
                     await Shell.Current.DisplayAlertAsync("Error", $"Default groups cannot be removed.", "OK");
                     return;
@@ -496,12 +590,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // Confirm deletion with the user
                 bool confirm = await Shell.Current.DisplayAlertAsync(
                     "Confirm Deletion", 
-                    $"Are you sure you want to delete the group '{groupVm.GroupName}'?", 
+                    $"Delete group '{groupVm.GroupName}' and all subfolders?", 
                     "Delete", 
                     "Cancel");
                 if (confirm) 
                 {
-                    await _groupListRepo.DeleteAsync(groupVm.GroupEntity);
+                    // Delete Recursively (Group + SubGroups)
+                    await DeleteGroupRecursive(groupVm);
                     Debug.WriteLine($"Group '{groupVm.GroupName}' deleted successfully.");
                     await Shell.Current.DisplayAlertAsync("Info", $"Group '{groupVm.GroupName}' has been deleted.", "OK");
                     
@@ -518,6 +613,16 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        private async Task DeleteGroupRecursive(GroupListViewModel groupVm)
+        {
+            foreach (var sub in groupVm.SubGroups)
+            {
+                await DeleteGroupRecursive(sub);
+            }
+            await _groupListRepo.DeleteAsync(groupVm.GroupEntity);
+        }
+
+
         // This method moves a group to a new parent group. It updates the ParentId of the group and saves it to the database.
         [RelayCommand]
         async Task MoveGroupToParent(MoveGroupArgs args ) 
@@ -526,21 +631,23 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
             try
             {
-                // Confirms that its not a default Group
-                if (!args.NewParent.IsDefault) 
+                //Prevent moving a group into Default/Important/Completed
+                var restricted = new[] { "Default", "Important", "Completed" };
+                if (restricted.Contains(args.NewParent.GroupName))
                 {
-                    args.Group.GroupEntity.ParentId = args.NewParent.GroupEntity.ID;
-                    await _groupListRepo.UpdateAsync(args.Group.GroupEntity);
-                    Debug.WriteLine($"Group '{args.Group.GroupName}' moved to new parent '{args.NewParent.GroupName}' successfully.");
-                } 
-                else
-                {
-                    await Shell.Current.DisplayAlertAsync("Error", $"Cannot move group to a default group.", "OK");
-                    Debug.WriteLine($"Cannot move group '{args.Group.GroupName}' to default parent '{args.NewParent.GroupName}'.");
+                    await Shell.Current.DisplayAlertAsync("Error", $"Cannot move group into default group '{args.NewParent.GroupName}'.", "OK");
+                    return;
                 }
-          
 
-                await GetGroupList(); // Refresh the GroupList
+                // Confirms that its not a default Group
+                args.Group.GroupEntity.ParentId = args.NewParent.GroupEntity.ID;
+                await _groupListRepo.UpdateAsync(args.Group.GroupEntity);
+
+                Debug.WriteLine($"Group '{args.Group.GroupName}' moved to new parent '{args.NewParent.GroupName}' successfully.");
+                
+                
+                await GetGroupList();
+
             }
             catch (Exception ex) 
             {
@@ -555,12 +662,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             try 
             {
+                var restricted = new[] { "Default", "Important", "Completed" };
+
                 for (int i = 0; i < newOrder.Count; i++)
                 {
-                    newOrder[i].GroupEntity.SortOrder = i; 
-                    await _groupListRepo.UpdateAsync(newOrder[i].GroupEntity);
+                    var groupVm = newOrder[i];
+                    if (restricted.Contains(groupVm.GroupName)) 
+                    {
+                        Debug.WriteLine($"Skipping reordering for default group '{groupVm.GroupName}'.");
+                        continue;
+                    }
+
+                    groupVm.GroupEntity.SortOrder = i;
+                    await _groupListRepo.UpdateAsync(groupVm.GroupEntity);
                 }
                 await GetGroupList(); // Refresh the GroupList
+ 
             }
             catch (Exception ex)
             {
@@ -1155,8 +1272,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
                     foreach (var task in groupTasks)
                     {
-                        var vm = new TaskListVM(task, taskListing, groupTasks, 
+                        var vm = new TaskListVM(this, task, taskListing, groupTasks, 
                                                 _taskList_RepeatListRepo, _taskList_RepeatTagRepo, _attachmentsRepo);
+
+                        //vm.IsCompletedDisplay = !task.IsActive;
 
                         await vm.LoadInfoAsync();
 
@@ -1297,6 +1416,77 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
         }
 
+
+        public async Task ToggleTaskCompletionAsync(int taskId, bool isCompleted)
+        {
+            try
+            {
+                var editedTask = await _taskListRepo.GetByIdAsync(taskId);
+                if (editedTask == null) return;
+
+                // Flip the Complete status 
+                editedTask.IsActive = !isCompleted;
+
+                // if inactive, move to Completed group
+                if (!editedTask.IsActive)
+                {
+                    // Task is being marked complete → move to Completed folder
+                    var completedFolder = GroupList.FirstOrDefault(g => g.GroupName == "Completed");
+
+                    // Only store original group if it's not Completed
+                    if (!editedTask.OrginalGroupID.HasValue && editedTask.GroupID != completedFolder?.Id)
+                    {
+                        editedTask.OrginalGroupID = editedTask.GroupID;
+                    }
+
+                    if (completedFolder != null)
+                        editedTask.GroupID = completedFolder.Id;
+
+                }
+                else
+                {
+                    // Task is being reactivated → restore original group
+                    if (editedTask.OrginalGroupID.HasValue)
+                    {
+                        editedTask.GroupID = editedTask.OrginalGroupID.Value;
+                        editedTask.OrginalGroupID = null; // clear after restoring
+                    }
+                    else
+                    {
+                        // Fallback: send to Default folder if no original group stored
+                        var defaultFolder = GroupList.FirstOrDefault(g => g.GroupName == "Default");
+                        if (defaultFolder != null) 
+                        {
+                            editedTask.GroupID = defaultFolder.Id;
+                        }   
+                    }
+                }
+
+                await _taskListRepo.UpdateAsync(editedTask);
+                if (SelectedGroup?.GroupName == "Completed" && editedTask.IsActive)
+                {
+                    var vmToRemove = TaskList.FirstOrDefault(t => t.TaskEntity.ID == editedTask.ID);
+                    if (vmToRemove != null)
+                    {
+                        TaskList.Remove(vmToRemove);
+                        FilteredTaskList.Remove(vmToRemove);
+                    }   
+                }
+                else
+                {
+                    // Otherwise refresh normally
+                    await GetTaskList();
+                }
+
+
+                //await GetTaskList(); // Refresh task list to reflect changes
+
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine($"Error togging task completion: {ex.Message}");
+            }
+        }
 
 
 
