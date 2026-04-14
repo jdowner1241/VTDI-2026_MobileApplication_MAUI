@@ -42,8 +42,18 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         [ObservableProperty]
         private bool isSelected;
 
+        [ObservableProperty]
+        private bool isExpandedSelected;
+
         public Color SelectionIndicatorColor =>
-            IsSelected ? Color.FromArgb(BaseColors.blue300) : Colors.Transparent;
+                                                IsSelected
+                                                 ? Color.FromArgb(BaseColors.purple400)   // highlight when selected
+                                                 : (Color ?? Colors.Transparent);       // fallback to group’s own color if not selected
+        public Color ExpandedSelectionColor =>
+                                                IsExpandedSelected ? Color.FromArgb(BaseColors.blue200) :
+                                                (Color ?? Colors.Transparent);
+
+
 
         // Tree depth
         public int Level { get; set; }

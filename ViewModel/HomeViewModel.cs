@@ -54,7 +54,19 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         [ObservableProperty]
         private ObservableCollection<GroupListViewModel> customGroups = new();
         [ObservableProperty]
-        private GroupListViewModel selectedGroup;
+        private GroupListViewModel selectedGroup;// global top-level selection
+        //[ObservableProperty]
+        //private GroupListViewModel expandedSelectedGroup; // tracks the one selected inside expanders
+        [ObservableProperty]
+        private bool isGroupListBeingAdded = false; // Used to confirm where adding a Group or Folder
+        [ObservableProperty]
+        private string groupListTypeText;
+        [ObservableProperty]
+        private string groupListNewMemberName;
+        partial void OnIsGroupListBeingAddedChanged(bool value)
+        {
+            GroupListTypeText = value ? "Add Group" : "Add Folder";
+        }
 
         [ObservableProperty]
         private bool isGroupListExpanded;
@@ -116,7 +128,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             editorAlarmDueDateTime = editorAlarmDate.Date + value;
             OnPropertyChanged(nameof(EditorAlarmTimeCulture));
         }
-
 
         [ObservableProperty]
         public ObservableCollection<string> repeatTags = new();
@@ -229,6 +240,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 Loading_GroupList = true;
                 GroupList.Clear();
+                DefaultGroups.Clear();
+                CustomGroups.Clear();
 
                 var groupListing = await _groupListRepo.GetAllAsync();
 
@@ -238,87 +251,20 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     g => new GroupListViewModel(g, groupListing)
                 );
 
-                
-                // Custom Group list
-                foreach (var vm in _lookup.Values)
-                {
-                    if (vm.ParentId is int parentId && _lookup.ContainsKey(parentId))
-                    {
-                        var parent = _lookup[parentId];
-                        parent.SubGroups.Add(vm);
-
-                        vm.Level = _lookup[parentId].Level + 1;
-                    }
-                }
-
-                // Populate the default Group 
+                // Populate only root-level groups (skip the actual Root entity)
                 foreach (var root in _lookup.Values
-                             .Where(g => g.ParentId == null || g.ParentId == GroupListViewModel.RootParentId)
+                             .Where(g => g.ParentId == GroupListViewModel.RootParentId || g.ParentId == null)
                              .OrderBy(g => g.SortOrder))
                 {
-                    // Skip the actual Rool entity
                     if (root.Id == GroupListViewModel.RootParentId)
-                        continue;
+                        continue; // Skip the actual Root entity
 
-                    root.Level = 0;
+                    root.Level = 0; // Root-level groups always start at level 0
                     GroupList.Add(root);
                 }
 
                 // Refresh derived collections
                 RefreshDerivedGroups();
-
-
-
-                // Build hierarchy
-                //foreach (var vm in _lookup.Values)
-                //{
-
-                //    if(vm.Id != RootParentId) 
-                //    {
-                //        if (vm.GroupEntity.ParentId is int parentId && _lookup.ContainsKey(parentId))
-                //        {
-                //            _lookup[parentId].SubGroups.Add(vm);
-                //            Debug.WriteLine($"Processing Sub group: {vm.GroupName} (ID: {vm.Id}, ParentID: {vm.ParentId})");
-                //        }
-                //    }
-
-                //}
-
-                // -----------------------------
-                // EXPAND/COLLAPSE ROOT LOAD
-                // (Disabled for now)
-                // -----------------------------
-                /*
-                foreach (var root in _lookup.Values
-                             .Where(g => g.GroupEntity.ParentId == null)
-                             .OrderBy(g => g.SortOrder))
-                {
-                    root.Level = 0;
-                    GroupList.Add(root);
-                }
-                */
-
-                // Assign the ToggleExpand command to each ViewModel
-                /*
-                foreach (var vm in _lookup.Values)
-                {
-                    vm.ExpandAction = ToggleExpand;
-                }
-                */
-
-                // -----------------------------
-                // FLATTEN TREE (All expanded)
-                // -----------------------------
-                //var flatList = new ObservableCollection<GroupListViewModel>();
-
-                //foreach (var root in _lookup.Values
-                //         .Where(g => g.GroupEntity.ParentId == 1)
-                //         .OrderBy(g => g.SortOrder))
-                //{
-                //    FlattenGroups(root, 0, flatList);
-                //}
-                //GroupList = flatList;
-
             }
             catch (Exception ex)
             {
@@ -338,15 +284,18 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
             foreach (var g in GroupList)
             {
-                if (g.IsDefault && g.Id != GroupListViewModel.RootParentId) 
+                if (g.IsDefault && g.Id != GroupListViewModel.RootParentId)
                 {
+                    g.Level = 0; // Default groups at root
                     DefaultGroups.Add(g);
-                } 
-                else if (!g.IsDefault)
+                }
+                else if (!g.IsDefault && g.ParentId == GroupListViewModel.RootParentId)
                 {
+                    g.Level = 0; // Top-level custom groups at root
                     CustomGroups.Add(g);
                 }
             }
+
         }
 
 
@@ -439,17 +388,48 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             if (selectedGroup == null) return;
 
-            // Clear previous selection
-            ClearSelection(GroupList);
-
             // Clear all task collections before loading
             TaskList.Clear();
             FilteredTaskList.Clear();
 
-            // Mark the new selection
+            // Clear global selection
+            ClearGroupSelection(GroupList);
+
+
+            // Clear selection state on all other groups
+            //ClearGroupSelection(GroupList);
+           // ClearGroupSelection(DefaultGroups);
+            //ClearGroupSelection(CustomGroups);
+            
+
+            // Mark the new one
             Debug.WriteLine($"Selected group: {selectedGroup.GroupName}");
             selectedGroup.IsSelected = true;
+
+            // Update the global SelectedGroup
             SelectedGroup = selectedGroup;
+
+
+            // force refresh of all collections
+            //OnPropertyChanged(nameof(GroupList));
+            //OnPropertyChanged(nameof(DefaultGroups));
+            //OnPropertyChanged(nameof(CustomGroups));
+
+            // Decide whether we're adding a Group or Folder
+            if (selectedGroup.IsDefault &&
+                    (selectedGroup.GroupName == "Default" ||
+                        selectedGroup.GroupName == "Important" ||
+                        selectedGroup.GroupName == "Completed")
+                )
+            {
+                // Default groups → adding a Group under Root
+                IsGroupListBeingAdded = true;
+            }
+            else
+            {
+                // Custom groups or subfolders → adding a Folder
+                IsGroupListBeingAdded = false;
+            }
 
 
             // Refresh TaskList based on new group selection
@@ -460,14 +440,40 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 TaskList.Clear();
                 FilteredTaskList.Clear();
-
-
                 Debug.WriteLine($"No tasks found for group: {selectedGroup.GroupName}");
-                // ensures UI shows empty state
-                // optionally set a flag like IsTaskListEmpty = true for UI binding
                 await GetTaskList();
             }
         }
+
+ 
+        private void ClearGroupSelection(IEnumerable<GroupListViewModel> groups)
+        {
+            foreach (var g in groups)
+            {
+                g.IsSelected = false;
+                if (g.SubGroups.Any())
+                    ClearGroupSelection(g.SubGroups);
+            }
+        }
+
+        //[RelayCommand]
+        //void SelectExpandedGroup(GroupListViewModel selectedSubGroup)
+        //{
+        //    if (selectedSubGroup == null) return;
+
+        //    // Clear all other expanded selections
+        //    foreach (var g in CustomGroups)
+        //    {
+        //        foreach (var sub in g.SubGroups)
+        //            sub.IsExpandedSelected = false;
+        //    }
+
+        //    // Mark the new one
+        //    selectedSubGroup.IsExpandedSelected = true;
+        //    ExpandedSelectedGroup = selectedSubGroup;
+        //}
+
+
 
         private IEnumerable<int> GetAllGroupIds(GroupListViewModel groupVm)
         {
@@ -484,19 +490,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 SelectGroup(GroupList[0]); // Set the Default Group
            
-            }
-        }
-
-
-
-
-        private void ClearSelection(IEnumerable<GroupListViewModel> groups)
-        {
-            foreach (var g in groups)
-            {
-                g.IsSelected = false;
-                if (g.SubGroups.Any())
-                    ClearSelection(g.SubGroups);
             }
         }
 
@@ -519,42 +512,49 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         async Task AddGroup() {
             try
             {
-                // Prompt user for Group name
-                var name = await Shell.Current.DisplayPromptAsync(
-                    "New Group", 
-                    "Enter group name:", 
-                    "OK", 
-                    "Cancel", 
-                    "Group Name", 50);
-                
                 // Validate input
-                if (string.IsNullOrWhiteSpace(name))
+                if (string.IsNullOrWhiteSpace(GroupListNewMemberName))
                 {
                     await Shell.Current.DisplayAlertAsync("Invalid Name", "Group name cannot be empty.", "OK");
                     return; // user cancelled or entered empty name
                 }
 
                 // Check for duplicate names (case-insensitive)
-                if (GroupList.Any(g => g.GroupName.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                if (GroupList.Any(g => g.GroupName.Equals(GroupListNewMemberName, StringComparison.OrdinalIgnoreCase)))
                 {
                     await Shell.Current.DisplayAlertAsync("Duplicate Name", "A group with this name already exists.", "OK");
                     return; // duplicate name
                 }
 
+                // Decide parent based on selection
                 GroupListViewModel parent = SelectedGroup;
 
-                // If Default/Important/Completed selected → create FolderGroup under Root
+                // No selected Group → default to Root as parent
+                if (parent == null)
+                {
+                    parent = _lookup[GroupListViewModel.RootParentId]; // Root
+                    IsGroupListBeingAdded = true; // Set to adding Group
+                    //await Shell.Current.DisplayAlertAsync("Error", "No parent group selected.", "OK");
+                    //return;
+                }
+
+                // Default groups → new Group under Root
                 if (parent.IsDefault && (parent.GroupName == "Default" || 
                                          parent.GroupName == "Important" || 
                                          parent.GroupName == "Completed"))
                 {
                     parent = _lookup[GroupListViewModel.RootParentId]; // Root
+                    IsGroupListBeingAdded = true; // Set to adding Group
+                }
+                else 
+                {
+                    IsGroupListBeingAdded = false; // Set to adding Folder
                 }
 
-                // Create new GroupList entity
+                // Create new Folder
                 var newGroup = new GroupList
                 {
-                    GroupName = name,
+                    GroupName = GroupListNewMemberName,
                     ParentId = parent.Id,
                     ColorHex = $"{BaseColors.blue300}",
                     IconPath = "dotnet_bot.png",
@@ -1363,8 +1363,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             if (taskSelection == null) return;
 
-            // Clear previours selection
-            ClearSelection(GroupList);
+            // Clear previous Group selection
+            //ClearGroupSelection(GroupList);
 
             // Mark the new selection
             Debug.WriteLine($"Selected Task: {taskSelection.TaskTitle}");
