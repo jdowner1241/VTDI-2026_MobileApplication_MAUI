@@ -26,6 +26,13 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddSingleton<Services.ThemeHelpers.ThemeSwitcher>();
             builder.Services.AddSingleton<Services.db.DBInitializer>();
             builder.Services.AddSingleton<Services.AppInitializer>();
+            builder.Services.AddSingleton<Services.Alarm.TaskRepo>();
+            builder.Services.AddSingleton<Services.Alarm.AlarmTracker>();
+            builder.Services.AddSingleton<IDispatcherTimer>(sp =>
+            {
+                var timer = Dispatcher.GetForCurrentThread().CreateTimer();
+                return timer;
+            });
 
             // DB
             builder.Services.AddSingleton<DBManager<GroupList>>();

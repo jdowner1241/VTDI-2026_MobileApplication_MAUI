@@ -57,7 +57,7 @@
                                     Background="{StaticResource App_black500}">
 
                         <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="2"/>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="1"/>
                         </CollectionView.ItemsLayout>
 
                         <!-- Default Groups -->
@@ -73,12 +73,13 @@
                                     <!-- Column 1: actual bordered content -->
                                     <Border Grid.Column="1"
                                             Margin="{Binding IndentMargin}"
-                                            Background="{StaticResource App_blue700}"
+                                            Background="{StaticResource App_purple700}"
+                                            
                                             StrokeShape="RoundRectangle 5">
-                                        <StackLayout Orientation="Horizontal" Spacing="10"
+                                        <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,2"
                                                      HorizontalOptions="Start" VerticalOptions="Center">
-                                            <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit"/>
-                                            <Label Text="{Binding GroupName}" FontSize="Body" TextColor="{StaticResource App_black900}" />
+                                            <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit" Margin="5,0,0,0"/>
+                                            <Label Text="{Binding GroupName}" FontSize="Body" TextColor="{StaticResource App_white900}" />
                                         </StackLayout>
                                     </Border>
                                 </Grid>
@@ -103,7 +104,7 @@
                                     Background="{StaticResource App_black500}">
 
                         <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="3"/>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="2"/>
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
@@ -122,12 +123,12 @@
                                             <!-- Column 1: actual bordered content -->
                                             <Border Grid.Column="1"
                                                     Margin="{Binding IndentMargin}"
-                                                    Background="{StaticResource App_blue700}"
+                                                    Background="{StaticResource App_purple700}"
                                                     StrokeShape="RoundRectangle 5">
-                                                <StackLayout Orientation="Horizontal" Spacing="10"
+                                                <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,2"
                                                              HorizontalOptions="Start" VerticalOptions="Center">
-                                                    <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit"/>
-                                                    <Label Text="{Binding GroupName}" FontSize="Body" TextColor="{StaticResource App_black900}" />
+                                                    <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit" Margin="5,0,0,0"/>
+                                                    <Label Text="{Binding GroupName}" FontSize="Body" TextColor="{StaticResource App_white900}" />
                                                 </StackLayout>
                                             </Border>
                                         </Grid>
@@ -143,7 +144,7 @@
                                                         SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
 
                                             <CollectionView.ItemsLayout>
-                                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="2"/>
+                                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="1"/>
                                             </CollectionView.ItemsLayout>
 
                                             <CollectionView.ItemTemplate>
@@ -159,9 +160,9 @@
                                                                 Margin="{Binding IndentMargin}"
                                                                 Background="{StaticResource App_blue400}"
                                                                 StrokeShape="RoundRectangle 5">
-                                                            <StackLayout Orientation="Horizontal" Spacing="10"
+                                                            <StackLayout Orientation="Horizontal" Spacing="10" Padding="0,2"
                                                                         HorizontalOptions="Start" VerticalOptions="Center">
-                                                                <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit"/>
+                                                                <Image Source="{Binding Icon}" HeightRequest="20" Aspect="AspectFit" Margin="5,0,0,0"/>
                                                                 <Label Text="{Binding GroupName}" FontSize="Body" TextColor="{StaticResource App_black900}" />
                                                             </StackLayout>
                                                         </Border>

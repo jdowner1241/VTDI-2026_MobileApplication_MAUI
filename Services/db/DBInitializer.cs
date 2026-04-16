@@ -41,19 +41,19 @@ namespace Mystic_ToDo_MAUI_.Services.db
             {
                 new GroupList {
                                 GroupName = "Root", ParentId = null,
-                                ColorHex=BaseColors.blue300, IconPath="dotnet_bot.png", IsDefault = true
+                                ColorHex=BaseColors.blue300, IconPath="list.png", IsDefault = true
                                 },
                 new GroupList {
                                 GroupName = "Default", ParentId = 1,
-                                ColorHex=BaseColors.blue300, IconPath="dotnet_bot.png", IsDefault = true
+                                ColorHex=BaseColors.blue300, IconPath="list.png", IsDefault = true
                                 },
                 new GroupList {
                                 GroupName = "Important", ParentId = 1,
-                                ColorHex=BaseColors.red300, IconPath="dotnet_bot.png", IsDefault = true
+                                ColorHex=BaseColors.red300, IconPath="notification_important.png", IsDefault = true
                                 },
                 new GroupList {
                                 GroupName = "Completed", ParentId = 1,
-                                ColorHex=BaseColors.gray300, IconPath="dotnet_bot.png", IsDefault = true
+                                ColorHex=BaseColors.gray300, IconPath="task_alt.png", IsDefault = true
                                 }
             });
 

@@ -551,15 +551,28 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     IsGroupListBeingAdded = false; // Set to adding Folder
                 }
 
+
                 // Create new Folder
                 var newGroup = new GroupList
                 {
                     GroupName = GroupListNewMemberName,
                     ParentId = parent.Id,
-                    ColorHex = $"{BaseColors.blue300}",
-                    IconPath = "dotnet_bot.png",
+                    ColorHex = $"{BaseColors.purple700}",
+                    IconPath = "list.png",
                     IsDefault = false
                 };
+
+                // Set Color and Icon Based on whether we're adding a Group or Folder
+                if (IsGroupListBeingAdded) 
+                {
+                    newGroup.IconPath = "list_arrow.png";
+                }
+                else 
+                {
+                    newGroup.IconPath = "description.png";
+                    newGroup.ColorHex = $"{BaseColors.blue400}";
+                }
+            
 
                 // Save the new group to the database
                 await _groupListRepo.InsertAsync(newGroup);
@@ -783,141 +796,375 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+        // [RelayCommand]
+        //async Task EditorAction()
+        //{
+        //    if (EditorModeIsEdit)
+        //    {
+        //        TaskList editedTask = await _taskListRepo.GetByIdAsync(TaskSelected.TaskID);
+        //        TaskList_RepeatList repeatInfo = new TaskList_RepeatList();
+        //        var repeatTagList = await _taskList_RepeatTagRepo.GetAllAsync();
+        //        var RepeatList = await _taskList_RepeatListRepo.GetAllAsync();
+        //        Attachments attachment = new Attachments();
+
+        //        // Edit existing task
+        //        if (TaskSelected != null)
+        //        {
+        //            // Update or Insert RepeatList based on EditorAlarm and EditorRepeat options
+        //            if(EditorAlarmIsEnabled) 
+        //            {
+
+        //                if (EditorAlarmDueDateTime < DateTime.Now)
+        //                {
+        //                    await Shell.Current.DisplayAlertAsync("Error", $"Due date cannot be in the past.", "OK");
+        //                    return; // Prevent saving if due date is in the past
+        //                }
+        //                repeatInfo.DueDate = EditorAlarmDueDateTime;
+        //                repeatInfo.CurrentDate = DateTime.Now;
+
+        //                if (RepeatListTagIsEnabled) 
+        //                {
+        //                    var selectedRepeatTag = repeatTagList.FirstOrDefault(t => t.RepeatTagName == RepeatListTagSelected);
+        //                    if (selectedRepeatTag != null)
+        //                    {
+        //                        repeatInfo.RepeatTagID = selectedRepeatTag.ID;
+        //                    }
+        //                    else 
+        //                    {
+        //                        repeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    repeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+        //                }
+
+        //                // Check if a RepeatList entry already exists for this task
+        //                var existingRepeatEntry = RepeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
+        //                if (existingRepeatEntry != null)
+        //                {
+        //                    repeatInfo.ID = existingRepeatEntry.ID; // Preserve the existing ID for update
+
+        //                    await _taskList_RepeatListRepo.UpdateAsync(repeatInfo);
+
+        //                }
+        //                else
+        //                {
+        //                    // No existing entry, insert new
+        //                    await _taskList_RepeatListRepo.InsertAsync(repeatInfo);
+
+        //                    // then update the TaskList with the new RepeatListID
+        //                    editedTask.Task_RepeatListID = RepeatList.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted RepeatList entry
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // If Alarm is not enabled, remove any existing RepeatList entry for the task
+        //                var existingRepeatEntry = RepeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
+        //                if (existingRepeatEntry != null)
+        //                {
+        //                    await _taskList_RepeatListRepo.DeleteAsync(existingRepeatEntry);
+        //                }
+        //            }
+
+        //            // Update Exsiting Task 
+        //            if(!string.IsNullOrEmpty(EditorTaskTitle)) 
+        //            {
+        //                if (EditorTaskTitle != TaskSelected.TaskTitle)
+        //                {
+        //                    // Only update ModifiedDate if there are changes to Title
+        //                    editedTask.Title = EditorTaskTitle;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                await Shell.Current.DisplayAlertAsync("Error", $"Task title cannot be empty.", "OK");
+        //                return; // Prevent saving if title is empty
+        //            }
+
+
+        //            if (!string.IsNullOrEmpty(EditorNotes))
+        //            {
+        //                if (EditorNotes != TaskSelected.Notes)
+        //                {
+        //                    // Only update Notes if changes were made
+        //                    editedTask.Notes = EditorNotes;
+        //                }
+        //                editedTask.Notes = EditorNotes;
+        //            }
+
+        //            editedTask.ModifiedDate = DateTime.Now;
+        //            //editedTask.Task_RepeatListID = repeatInfo.ID; // This is set above 
+
+        //            await _taskListRepo.UpdateAsync(editedTask);
+
+        //            // Update or Insert Attachments based on EditorAttachmentList
+        //            if (EditorAttachmentList != null )
+        //            {
+        //                if(EditorAttachmentList.Count > 0) 
+        //                {
+        //                    foreach (var attach in EditorAttachmentList)
+        //                    {
+        //                        var existingAttachment = await _attachmentsRepo.GetByIdAsync(attach.ID);
+        //                        if (existingAttachment != null)
+        //                        {
+        //                            attachment.ID = existingAttachment.ID;
+        //                            attachment.AttachmentName = attach.AttachmentName;
+        //                            attachment.AttachmentType = attach.AttachmentType;
+        //                            attachment.AttachmentPath = attach.AttachmentPath;
+        //                            attachment.TaskListId = attach.TaskListId;
+
+        //                            await _attachmentsRepo.UpdateAsync(attachment);
+        //                        }
+        //                        else
+        //                        {
+        //                            attachment.AttachmentName = attach.AttachmentName;
+        //                            attachment.AttachmentType = attach.AttachmentType;
+        //                            attachment.AttachmentPath = attach.AttachmentPath;
+        //                            attachment.TaskListId = editedTask.ID;
+
+        //                            await _attachmentsRepo.InsertAsync(attachment);
+        //                        }
+        //                    }
+
+        //                }
+        //                else
+        //                {
+        //                    // If the list is empty, remove all attachments for the task
+        //                    var existingAttachments = await _attachmentsRepo.GetAllAsync();
+        //                    var taskAttachments = existingAttachments.Where(a => a.TaskListId == editedTask.ID);
+        //                    foreach (var attach in taskAttachments)
+        //                    {
+        //                        await _attachmentsRepo.DeleteAsync(attach);
+        //                    }
+        //                }
+        //            }
+
+        //            await GetTaskList(); // Refresh task list to reflect changes
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // Add mode - create new task
+        //        TaskList newTask = new TaskList();
+        //        TaskList_RepeatList newRepeatInfo = new TaskList_RepeatList();
+        //        var repeatTagList = await _taskList_RepeatTagRepo.GetAllAsync();
+        //        var repeatList = await _taskList_RepeatListRepo.GetAllAsync();
+        //        Attachments newAttachment = new Attachments();
+
+        //        // Add repeat info if alarm is enabled
+        //        if (EditorAlarmIsEnabled)
+        //        {
+
+        //            if (EditorAlarmDueDateTime < DateTime.Now)
+        //            {
+        //                await Shell.Current.DisplayAlertAsync("Error", $"Due date cannot be in the past.", "OK");
+        //                newRepeatInfo.DueDate = EditorAlarmDueDateTime;
+        //                return; // Prevent saving if due date is in the past
+        //            }
+
+        //            newRepeatInfo.CurrentDate = DateTime.Now;
+
+
+        //            if (RepeatListTagIsEnabled)
+        //            {
+        //                var selectedRepeatTag = repeatTagList.FirstOrDefault(t => t.RepeatTagName == RepeatListTagSelected);
+        //                if (selectedRepeatTag != null)
+        //                {
+        //                    newRepeatInfo.RepeatTagID = selectedRepeatTag.ID;
+        //                }
+        //                else
+        //                {
+        //                    newRepeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+        //                }
+        //            }
+        //            else
+        //            {
+        //                newRepeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+        //            }
+
+        //            // Save new RepeatList entry and get its ID
+        //            await _taskList_RepeatListRepo.InsertAsync(newRepeatInfo);
+
+        //            // then update the TaskList with the new RepeatListID
+        //            newRepeatInfo.ID = repeatList.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted RepeatList entry
+
+        //        }
+
+        //        // Create new TaskList entity
+        //        if (!string.IsNullOrEmpty(EditorTaskTitle))
+        //        {
+        //            newTask.Title = EditorTaskTitle;
+
+        //        }
+        //        else
+        //        {
+        //            await Shell.Current.DisplayAlertAsync("Error", $"Task title cannot be empty.", "OK");
+        //            return; // Prevent saving if title is empty
+        //        }
+
+        //        if (!string.IsNullOrEmpty(newTask.Notes)) 
+        //        {
+        //            newTask.Notes = EditorNotes;
+        //        }
+
+        //        newTask.CreatedDate = DateTime.Now;
+        //        newTask.Task_RepeatListID = newRepeatInfo.ID;
+        //        newTask.GroupID = SelectedGroup.Id;
+        //        newTask.IsActive = true;
+
+        //        await _taskListRepo.InsertAsync(newTask);
+
+        //        // Get new Task ID (after insert) to link attachments
+        //        newTask.ID = _taskListRepo.GetAllAsync().Result.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted TaskList entry
+
+
+        //        // Create new Attachment if availeable 
+        //        if (EditorAttachmentList != null && EditorAttachmentList.Count > 0)
+        //        {
+        //            foreach (var attach in EditorAttachmentList)
+        //            {
+        //                newAttachment.AttachmentName = attach.AttachmentName;
+        //                newAttachment.AttachmentType = attach.AttachmentType;
+        //                newAttachment.AttachmentPath = attach.AttachmentPath;
+        //                newAttachment.TaskListId = newTask.ID;
+
+        //                await _attachmentsRepo.InsertAsync(newAttachment);
+        //            }
+        //        }
+
+
+        //        await GetTaskList(); // Refresh task list to show new task
+        //    }
+
+        //    // Clear editor fields after action
+        //    await EditorClear();
+        //}
+
+
         [RelayCommand]
         async Task EditorAction()
         {
             if (EditorModeIsEdit)
             {
+                // Load the existing task
                 TaskList editedTask = await _taskListRepo.GetByIdAsync(TaskSelected.TaskID);
-                TaskList_RepeatList repeatInfo = new TaskList_RepeatList();
                 var repeatTagList = await _taskList_RepeatTagRepo.GetAllAsync();
-                var RepeatList = await _taskList_RepeatListRepo.GetAllAsync();
-                Attachments attachment = new Attachments();
+                var repeatList = await _taskList_RepeatListRepo.GetAllAsync();
 
-                // Edit existing task
                 if (TaskSelected != null)
                 {
-                    // Update or Insert RepeatList based on EditorAlarm and EditorRepeat options
-                    if(EditorAlarmIsEnabled) 
+                    // ============================
+                    // Handle Repeat / Alarm Section
+                    // ============================
+                    if (EditorAlarmIsEnabled)
                     {
-                        
                         if (EditorAlarmDueDateTime < DateTime.Now)
                         {
-                            await Shell.Current.DisplayAlertAsync("Error", $"Due date cannot be in the past.", "OK");
-                            return; // Prevent saving if due date is in the past
+                            await Shell.Current.DisplayAlertAsync("Error", "Due date cannot be in the past.", "OK");
+                            return;
                         }
-                        repeatInfo.DueDate = EditorAlarmDueDateTime;
-                        repeatInfo.CurrentDate = DateTime.Now;
 
-                        if (RepeatListTagIsEnabled) 
+                        var repeatInfo = new TaskList_RepeatList
+                        {
+                            DueDate = EditorAlarmDueDateTime,
+                            CurrentDate = DateTime.Now
+                        };
+
+                        if (RepeatListTagIsEnabled)
                         {
                             var selectedRepeatTag = repeatTagList.FirstOrDefault(t => t.RepeatTagName == RepeatListTagSelected);
-                            if (selectedRepeatTag != null)
-                            {
-                                repeatInfo.RepeatTagID = selectedRepeatTag.ID;
-                            }
-                            else 
-                            {
-                                repeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
-                            }
+                            repeatInfo.RepeatTagID = selectedRepeatTag?.ID ?? 0; // default to NotSet
                         }
                         else
                         {
-                            repeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+                            repeatInfo.RepeatTagID = 0; // default to NotSet
                         }
 
-                        // Check if a RepeatList entry already exists for this task
-                        var existingRepeatEntry = RepeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
+                        // Update or insert repeat info
+                        var existingRepeatEntry = repeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
                         if (existingRepeatEntry != null)
                         {
-                            repeatInfo.ID = existingRepeatEntry.ID; // Preserve the existing ID for update
-
+                            repeatInfo.ID = existingRepeatEntry.ID; // preserve ID
                             await _taskList_RepeatListRepo.UpdateAsync(repeatInfo);
-
                         }
                         else
                         {
-                            // No existing entry, insert new
                             await _taskList_RepeatListRepo.InsertAsync(repeatInfo);
-
-                            // then update the TaskList with the new RepeatListID
-                            editedTask.Task_RepeatListID = RepeatList.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted RepeatList entry
+                            // Get the ID of the newly inserted repeat entry
+                            editedTask.Task_RepeatListID = (await _taskList_RepeatListRepo.GetAllAsync()).LastOrDefault()?.ID ?? 0;
                         }
                     }
                     else
                     {
-                        // If Alarm is not enabled, remove any existing RepeatList entry for the task
-                        var existingRepeatEntry = RepeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
+                        // Alarm disabled → remove repeat info if exists
+                        var existingRepeatEntry = repeatList.FirstOrDefault(r => r.ID == editedTask.Task_RepeatListID);
                         if (existingRepeatEntry != null)
                         {
                             await _taskList_RepeatListRepo.DeleteAsync(existingRepeatEntry);
+                            editedTask.Task_RepeatListID = null;
                         }
                     }
 
-                    // Update Exsiting Task 
-                    if(!string.IsNullOrEmpty(EditorTaskTitle)) 
+                    // ============================
+                    // Handle Task Title & Notes
+                    // ============================
+                    if (string.IsNullOrEmpty(EditorTaskTitle))
                     {
-                        if (EditorTaskTitle != TaskSelected.TaskTitle)
-                        {
-                            // Only update ModifiedDate if there are changes to Title
-                            editedTask.Title = EditorTaskTitle;
-                        }
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlertAsync("Error", $"Task title cannot be empty.", "OK");
-                        return; // Prevent saving if title is empty
+                        await Shell.Current.DisplayAlertAsync("Error", "Task title cannot be empty.", "OK");
+                        return;
                     }
 
-
-                    if (!string.IsNullOrEmpty(EditorNotes))
+                    if (EditorTaskTitle != TaskSelected.TaskTitle)
                     {
-                        if (EditorNotes != TaskSelected.Notes)
-                        {
-                            // Only update Notes if changes were made
-                            editedTask.Notes = EditorNotes;
-                        }
+                        editedTask.Title = EditorTaskTitle;
+                    }
+
+                    if (!string.IsNullOrEmpty(EditorNotes) && EditorNotes != TaskSelected.Notes)
+                    {
                         editedTask.Notes = EditorNotes;
                     }
 
                     editedTask.ModifiedDate = DateTime.Now;
-                    //editedTask.Task_RepeatListID = repeatInfo.ID; // This is set above 
 
                     await _taskListRepo.UpdateAsync(editedTask);
 
-                    // Update or Insert Attachments based on EditorAttachmentList
-                    if (EditorAttachmentList != null )
+                    // ============================
+                    // Handle Attachments
+                    // ============================
+                    if (EditorAttachmentList != null)
                     {
-                        if(EditorAttachmentList.Count > 0) 
+                        if (EditorAttachmentList.Count > 0)
                         {
                             foreach (var attach in EditorAttachmentList)
                             {
                                 var existingAttachment = await _attachmentsRepo.GetByIdAsync(attach.ID);
                                 if (existingAttachment != null)
                                 {
-                                    attachment.ID = existingAttachment.ID;
-                                    attachment.AttachmentName = attach.AttachmentName;
-                                    attachment.AttachmentType = attach.AttachmentType;
-                                    attachment.AttachmentPath = attach.AttachmentPath;
-                                    attachment.TaskListId = attach.TaskListId;
+                                    existingAttachment.AttachmentName = attach.AttachmentName;
+                                    existingAttachment.AttachmentType = attach.AttachmentType;
+                                    existingAttachment.AttachmentPath = attach.AttachmentPath;
+                                    existingAttachment.TaskListId = attach.TaskListId;
 
-                                    await _attachmentsRepo.UpdateAsync(attachment);
+                                    await _attachmentsRepo.UpdateAsync(existingAttachment);
                                 }
                                 else
                                 {
-                                    attachment.AttachmentName = attach.AttachmentName;
-                                    attachment.AttachmentType = attach.AttachmentType;
-                                    attachment.AttachmentPath = attach.AttachmentPath;
-                                    attachment.TaskListId = editedTask.ID;
+                                    var newAttachment = new Attachments
+                                    {
+                                        AttachmentName = attach.AttachmentName,
+                                        AttachmentType = attach.AttachmentType,
+                                        AttachmentPath = attach.AttachmentPath,
+                                        TaskListId = editedTask.ID
+                                    };
 
-                                    await _attachmentsRepo.InsertAsync(attachment);
+                                    await _attachmentsRepo.InsertAsync(newAttachment);
                                 }
                             }
-
                         }
                         else
                         {
-                            // If the list is empty, remove all attachments for the task
+                            // If list is empty → remove all attachments for this task
                             var existingAttachments = await _attachmentsRepo.GetAllAsync();
                             var taskAttachments = existingAttachments.Where(a => a.TaskListId == editedTask.ID);
                             foreach (var attach in taskAttachments)
@@ -927,101 +1174,81 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                         }
                     }
 
-                    await GetTaskList(); // Refresh task list to reflect changes
+                    await GetTaskList(); // Refresh task list
                 }
             }
             else
             {
-                // Add mode - create new task
-                TaskList newTask = new TaskList();
-                TaskList_RepeatList newRepeatInfo = new TaskList_RepeatList();
+                // ============================
+                // Add Mode - Create New Task
+                // ============================
+                var newTask = new TaskList
+                {
+                    CreatedDate = DateTime.Now,
+                    GroupID = SelectedGroup.Id,
+                    IsActive = true
+                };
+
                 var repeatTagList = await _taskList_RepeatTagRepo.GetAllAsync();
                 var repeatList = await _taskList_RepeatListRepo.GetAllAsync();
-                Attachments newAttachment = new Attachments();
 
-                // Add repeat info if alarm is enabled
+                if (string.IsNullOrEmpty(EditorTaskTitle))
+                {
+                    await Shell.Current.DisplayAlertAsync("Error", "Task title cannot be empty.", "OK");
+                    return;
+                }
+
+                newTask.Title = EditorTaskTitle;
+                newTask.Notes = EditorNotes;
+
+                var newRepeatInfo = new TaskList_RepeatList();
+
                 if (EditorAlarmIsEnabled)
                 {
-
                     if (EditorAlarmDueDateTime < DateTime.Now)
                     {
-                        await Shell.Current.DisplayAlertAsync("Error", $"Due date cannot be in the past.", "OK");
-                        newRepeatInfo.DueDate = EditorAlarmDueDateTime;
-                        return; // Prevent saving if due date is in the past
+                        await Shell.Current.DisplayAlertAsync("Error", "Due date cannot be in the past.", "OK");
+                        return;
                     }
 
+                    newRepeatInfo.DueDate = EditorAlarmDueDateTime;
                     newRepeatInfo.CurrentDate = DateTime.Now;
-                    
 
                     if (RepeatListTagIsEnabled)
                     {
                         var selectedRepeatTag = repeatTagList.FirstOrDefault(t => t.RepeatTagName == RepeatListTagSelected);
-                        if (selectedRepeatTag != null)
-                        {
-                            newRepeatInfo.RepeatTagID = selectedRepeatTag.ID;
-                        }
-                        else
-                        {
-                            newRepeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
-                        }
+                        newRepeatInfo.RepeatTagID = selectedRepeatTag?.ID ?? 0;
                     }
                     else
                     {
-                        newRepeatInfo.RepeatTagID = 0; // Set to the default NotSet tag
+                        newRepeatInfo.RepeatTagID = 0;
                     }
 
-                    // Save new RepeatList entry and get its ID
                     await _taskList_RepeatListRepo.InsertAsync(newRepeatInfo);
-
-                    // then update the TaskList with the new RepeatListID
-                    newRepeatInfo.ID = repeatList.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted RepeatList entry
-
+                    newRepeatInfo.ID = (await _taskList_RepeatListRepo.GetAllAsync()).LastOrDefault()?.ID ?? 0;
+                    newTask.Task_RepeatListID = newRepeatInfo.ID;
                 }
-
-                // Create new TaskList entity
-                if (!string.IsNullOrEmpty(EditorTaskTitle))
-                {
-                    newTask.Title = EditorTaskTitle;
-                    
-                }
-                else
-                {
-                    await Shell.Current.DisplayAlertAsync("Error", $"Task title cannot be empty.", "OK");
-                    return; // Prevent saving if title is empty
-                }
-
-                if (!string.IsNullOrEmpty(newTask.Notes)) 
-                {
-                    newTask.Notes = EditorNotes;
-                }
-
-                newTask.CreatedDate = DateTime.Now;
-                newTask.Task_RepeatListID = newRepeatInfo.ID;
-                newTask.GroupID = SelectedGroup.Id;
-                newTask.IsActive = true;
 
                 await _taskListRepo.InsertAsync(newTask);
+                newTask.ID = (await _taskListRepo.GetAllAsync()).LastOrDefault()?.ID ?? 0;
 
-                // Get new Task ID (after insert) to link attachments
-                newTask.ID = _taskListRepo.GetAllAsync().Result.LastOrDefault()?.ID ?? 0; // Get the ID of the newly inserted TaskList entry
-
-
-                // Create new Attachment if availeable 
                 if (EditorAttachmentList != null && EditorAttachmentList.Count > 0)
                 {
                     foreach (var attach in EditorAttachmentList)
                     {
-                        newAttachment.AttachmentName = attach.AttachmentName;
-                        newAttachment.AttachmentType = attach.AttachmentType;
-                        newAttachment.AttachmentPath = attach.AttachmentPath;
-                        newAttachment.TaskListId = newTask.ID;
+                        var newAttachment = new Attachments
+                        {
+                            AttachmentName = attach.AttachmentName,
+                            AttachmentType = attach.AttachmentType,
+                            AttachmentPath = attach.AttachmentPath,
+                            TaskListId = newTask.ID
+                        };
 
                         await _attachmentsRepo.InsertAsync(newAttachment);
                     }
                 }
 
-
-                await GetTaskList(); // Refresh task list to show new task
+                await GetTaskList(); // Refresh task list
             }
 
             // Clear editor fields after action
