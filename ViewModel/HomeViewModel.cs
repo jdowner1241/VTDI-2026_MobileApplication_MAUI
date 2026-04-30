@@ -202,7 +202,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             DBManager<TaskList> taskRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
             DBManager<TaskList_RepeatList> taskList_RepeatListRepo,
-            DBManager<Attachments> attachmentsRepo
+            DBManager<Attachments> attachmentsRepo,
+            Services.Alarm.TaskRepo taskRepoService
         ) 
         { 
             Title = "Home";
@@ -223,7 +224,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
+            // Subscribe to TaskRepo event
+            taskRepoService.TaskUpdated += async () =>
+            {
+                await RefreshEditor(); 
+                Debug.WriteLine("Task list refreshed due to TaskUpdated event.");
+            };
 
+        }
+
+        // -----------------------------
+        // General Refresh and Utility Commands
+        // -----------------------------
+        private async Task RefreshEditor() 
+        {
+            await GetGroupList();
+            await GetTaskList();
         }
 
 
@@ -488,7 +504,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             if (GroupList.Count > 0)
             {
-                SelectGroup(GroupList[0]); // Set the Default Group
+                await SelectGroup(GroupList[0]); // Set the Default Group
            
             }
         }
@@ -699,6 +715,59 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
+
+        public async Task EnsureTaskFolderConsistencyAsync(TaskList task)
+        {
+            if (task == null) return;
+
+            try
+            {
+                var groupList = await _groupListRepo.GetAllAsync();
+                if (groupList == null) return;
+
+                // Find the Completed and Default groups
+                var completedFolder = groupList.FirstOrDefault(g => g.GroupName == "Completed");
+                var defaultFolder = groupList.FirstOrDefault(g => g.GroupName == "Default");
+
+                if (!task.IsActive)
+                {
+                    // ✅ Inactive tasks must be in Completed folder
+                    if (completedFolder != null && task.GroupID != completedFolder.ID)
+                    {
+                        // Store original group if not already stored
+                        if (!task.OrginalGroupID.HasValue && task.GroupID != completedFolder.ID)
+                        {
+                            task.OrginalGroupID = task.GroupID;
+                        }
+
+                        task.GroupID = completedFolder.ID;
+                        await _taskListRepo.UpdateAsync(task);
+                    }
+                }
+                else
+                {
+                    // ✅ Active tasks should NOT be in Completed folder
+                    if (task.GroupID == completedFolder?.ID)
+                    {
+                        if (task.OrginalGroupID.HasValue)
+                        {
+                            task.GroupID = task.OrginalGroupID.Value;
+                            task.OrginalGroupID = null;
+                        }
+                        else if (defaultFolder != null)
+                        {
+                            task.GroupID = defaultFolder.ID;
+                        }
+
+                        await _taskListRepo.UpdateAsync(task);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error ensuring task folder consistency: {ex.Message}");
+            }
+        }
 
         // -----------------------------
         // Editor Commands and Task
@@ -1315,7 +1384,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 EditorAttachmentList.Clear();
             }
             EditorAttachmentSelection = 0;
+            EditorAlarmTime = DateTime.Now.TimeOfDay;
+            EditorAlarmDate = DateTime.Now.Date;
             EditorAlarmDueDateTime = DateTime.Now;
+
             EditorAlarmIsEnabled = false;
 
             if(RepeatListTagSelected != null) 
@@ -1482,7 +1554,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // TaskListing Commands and Task
         // -----------------------------
         [RelayCommand]
-        async Task GetTaskList()
+        public async Task GetTaskList()
         {
             if (Loading_TaskList) return;
 
@@ -1490,6 +1562,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             {
                 Loading_TaskList = true;
                 if (TaskList.Any()) TaskList.Clear();
+
+                // Guard againts Null Reference for SelectedGroup (use default Group)
+                if(SelectedGroup == null)
+                {
+                    Debug.WriteLine("GetTaskList called but SelectedGroup is null. Set Default Group to Continue.");
+                    await GetGroupList();
+                    await GroupListStartupSelection();
+                }
 
                 var taskListing = await _taskListRepo.GetAllAsync();
                 if (taskListing != null)
@@ -1499,11 +1579,14 @@ namespace Mystic_ToDo_MAUI_.ViewModel
 
                     foreach (var task in groupTasks)
                     {
+                        // Ensure Folder Assignment consistency
+                        await EnsureTaskFolderConsistencyAsync(task);
+
+                        // Assign task to the TaskListVM
                         var vm = new TaskListVM(this, task, taskListing, groupTasks, 
                                                 _taskList_RepeatListRepo, _taskList_RepeatTagRepo, _attachmentsRepo);
 
-                        //vm.IsCompletedDisplay = !task.IsActive;
-
+                        // Ensure TaskVM is Propertices are updated correctly 
                         await vm.LoadInfoAsync();
 
                         TaskList.Add(vm);
@@ -1657,6 +1740,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // if inactive, move to Completed group
                 if (!editedTask.IsActive)
                 {
+               
                     // Task is being marked complete → move to Completed folder
                     var completedFolder = GroupList.FirstOrDefault(g => g.GroupName == "Completed");
 

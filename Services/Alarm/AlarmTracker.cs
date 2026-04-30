@@ -31,7 +31,7 @@ namespace Mystic_ToDo_MAUI_.Services.Alarm
             foreach (var task in dueTasks)
             {
                 // Show Notification
-                ShowToastNotification(task);
+                await ShowToastNotification(task);
 
                 // Update task in database using Repeat or Non-Repeat method
                 await HandleRepeatAsync(task);

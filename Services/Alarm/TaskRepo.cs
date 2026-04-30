@@ -5,67 +5,34 @@ using Mystic_ToDo_MAUI_.View;
 using Mystic_ToDo_MAUI_.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Mystic_ToDo_MAUI_.Services.Alarm
 {
     public class TaskRepo
     {
-        private readonly HomeViewModel _homeViewModel;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatList> _repeatListRepo;
         private readonly DBManager<TaskList_RepeatTag> _repeatTagRepo;
+        private readonly DBManager<GroupList> _groupListRepo;
 
-
-        public TaskRepo(HomeViewModel homeViewModel, DBManager<TaskList> taskListRepo, DBManager<TaskList_RepeatList> repeatListRepo, DBManager<TaskList_RepeatTag> repeatTagRepo)
-        {
-            _homeViewModel = homeViewModel;
+        // events
+        public event Action? TaskUpdated; 
+  
+        public TaskRepo(
+            DBManager<TaskList> taskListRepo, 
+            DBManager<TaskList_RepeatList> repeatListRepo,
+            DBManager<TaskList_RepeatTag> repeatTagRepo,
+            DBManager<GroupList> groupListRepo)
+        {   
             _taskListRepo = taskListRepo;
             _repeatListRepo = repeatListRepo;
             _repeatTagRepo = repeatTagRepo;
+            _groupListRepo = groupListRepo;
+          
         }
 
-        //public async Task<IEnumerable<TaskList>> GetAllTasksAsync(DateTime now)
-        //{
-        //    var allTasks = await _taskListRepo.GetAllAsync();
-        //    var dueTasks = new List<TaskList>();
-
-        //    // Filter active tasks and check their repeat info
-        //    foreach (var task in allTasks.Where(t => t.IsActive)) 
-        //    {
-        //        // Check if the task has repeat info
-        //        if (task.Task_RepeatListID != null)
-        //        {
-        //            var repeatInfo = await _repeatListRepo.GetByIdAsync(task.Task_RepeatListID.Value);
-
-        //            if (repeatInfo != null)
-        //            {
-        //                if (repeatInfo.DueDate != null && repeatInfo.DueDate <= now)
-        //                {
-        //                    if(repeatInfo.RepeatTagID != null)
-        //                    {
-        //                        var repeatTag = await _repeatTagRepo.GetByIdAsync(repeatInfo.RepeatTagID);
-
-        //                        if (repeatTag != null)
-        //                        {
-        //                            repeatInfo.RepeatTag = repeatTag;
-        //                            task.Task_RepeatList = repeatInfo;
-        //                        }
-        //                        else
-        //                        {
-        //                            repeatInfo.RepeatTag = null;
-        //                            task.Task_RepeatList = repeatInfo;
-        //                        }
-        //                    }
-
-        //                    dueTasks.Add(task);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //   return dueTasks;
-        //}
 
         public async Task<IEnumerable<TaskList>> GetAllTasksAsync(DateTime now)
         {
@@ -139,16 +106,20 @@ namespace Mystic_ToDo_MAUI_.Services.Alarm
         {
             if (task == null) return;
 
-            // Trigger UpdateTaskAsync in HomeViewModel to refresh the UI and update active logic
-            await _homeViewModel.ToggleTaskCompletionAsync(task.ID, isCompleted);
+            Debug.WriteLine($"UpdateTask Non-Repeat");
+            Debug.WriteLine($"Before Change: Task : {task.Title} isCompleted Status: {isCompleted}");
 
-            // Save changes to the Task entity
-            await _taskListRepo.UpdateAsync(task);
+            // Trigger UpdateTaskAsync in HomeViewModel to refresh the UI and update active logic, also save task
+            await SetTaskCompletionAsync(task, isCompleted);
+            
 
             // If the task has repeat info, update that too
-            if (task.Task_RepeatList != null)
+            var editedTask = await _taskListRepo.GetByIdAsync(task.ID);
+            if (editedTask.Task_RepeatList != null)
             {
-                await _repeatListRepo.UpdateAsync(task.Task_RepeatList);
+                await _repeatListRepo.UpdateAsync(editedTask.Task_RepeatList);
+
+                Debug.WriteLine($"After Change: Task : {editedTask.Title} isCompleted Status: {editedTask.IsActive}");
             }
         }
 
@@ -156,10 +127,73 @@ namespace Mystic_ToDo_MAUI_.Services.Alarm
         {
             if (task.Task_RepeatList == null) return;
 
+            Debug.WriteLine($"UpdateTask Repeat");
+            Debug.WriteLine($"Task : {task.Title}");
+
             // Update task modified date to now then update RepeatList and TaskList in the database
             task.ModifiedDate = DateTime.Now;
             await _taskListRepo.UpdateAsync(task);
             await _repeatListRepo.UpdateAsync(task.Task_RepeatList);
+        }
+
+        public async Task SetTaskCompletionAsync(TaskList task, bool isCompleted)
+        {
+            try
+            {
+                var GroupList = await _groupListRepo.GetAllAsync();
+                if (GroupList == null) return;
+                var editedTask = await _taskListRepo.GetByIdAsync(task.ID);
+
+                if (editedTask == null) return;
+
+                // Flip the Complete status 
+                editedTask.IsActive = !isCompleted;
+
+                // if inactive, move to Completed group
+                if (!editedTask.IsActive)
+                {
+
+                    // Task is being marked complete → move to Completed folder
+                    var completedFolder = GroupList.FirstOrDefault(g => g.GroupName == "Completed");
+
+                    // Only store original group if it's not Completed
+                    if (!editedTask.OrginalGroupID.HasValue && editedTask.GroupID != completedFolder?.ID)
+                    {
+                        editedTask.OrginalGroupID = editedTask.GroupID;
+                    }
+
+                    if (completedFolder != null)
+                        editedTask.GroupID = completedFolder.ID;
+
+                }
+                else
+                {
+                    // Task is being reactivated → restore original group
+                    if (editedTask.OrginalGroupID.HasValue)
+                    {
+                        editedTask.GroupID = editedTask.OrginalGroupID.Value;
+                        editedTask.OrginalGroupID = null; // clear after restoring
+                    }
+                    else
+                    {
+                        // Fallback: send to Default folder if no original group stored
+                        var defaultFolder = GroupList.FirstOrDefault(g => g.GroupName == "Default");
+                        if (defaultFolder != null)
+                        {
+                            editedTask.GroupID = defaultFolder.ID;
+                        }
+                    }
+                }
+
+                await _taskListRepo.UpdateAsync(editedTask);
+
+                TaskUpdated?.Invoke();// Refresh task list to reflect changes
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error togging task completion: {ex.Message}");
+            }
         }
 
     }
