@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Services.db;
+using Syncfusion.Maui.Core.Hosting;
+
 
 
 namespace Mystic_ToDo_MAUI_
@@ -14,6 +16,7 @@ namespace Mystic_ToDo_MAUI_
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -46,6 +49,9 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddTransient<ViewModel.HomeVM.EditorVM>();
             builder.Services.AddTransient<ViewModel.HomeVM.TaskListVM>();
             builder.Services.AddTransient<ViewModel.HomeVM.GroupListViewModel>();
+            builder.Services.AddTransient<ViewModel.CalendarViewModel>();
+            builder.Services.AddTransient<ViewModel.CalendarVM.CalendarDateTaskVM>();
+
 
 
             //  Repositories

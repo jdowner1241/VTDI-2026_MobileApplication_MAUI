@@ -1,12 +1,108 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sfCalendar="clr-namespace:Syncfusion.Maui.Calendar;assembly=Syncfusion.Maui.Calendar"
+             xmlns:controls="clr-namespace:Plugin.Maui.Calendar.Controls;assembly=Plugin.Maui.Calendar"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Mystic_ToDo_MAUI_.View.Calendar"
              Title="Calendar">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!-- Group Selection & Selected Date -->
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="Center" Spacing="20">
+            <Label Text="Select Group" 
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start"/>
+            <Picker 
+                ToolTipProperties.Text="Choose a Group"
+                ItemsSource="{Binding AllGroups}"
+                ItemDisplayBinding="{Binding GroupName}"
+                SelectedItem="{Binding SelectedGroup}"
+    
+                Background="{StaticResource App_gray800Brush}"
+                HorizontalOptions="Center" 
+                VerticalOptions="Center"
+                WidthRequest="300"/>
+        </HorizontalStackLayout>
+
+        
+        <!-- Calendar -->
+        <controls:Calendar
+            Grid.Row="1"
+            EventsScrollViewVisible="True"
+            VerticalOptions="Fill"
+            HorizontalOptions="Fill"
+            Padding="10,5"
+            
+            EventIndicatorColor="{StaticResource App_indigo400}"
+            EventIndicatorSelectedColor="{StaticResource App_white400}"
+            EventIndicatorTextColor="{StaticResource App_blue400}"
+            EventIndicatorSelectedTextColor="{StaticResource App_cyan400}"
+            
+            DeselectedDayTextColor="{StaticResource App_gray300}"
+            OtherMonthDayColor="{StaticResource App_gray600}"
+            OtherMonthSelectedDayColor="{StaticResource App_indigo300}"
+            SelectedDayTextColor="{StaticResource App_white400}"
+            SelectedDayBackgroundColor="{StaticResource App_purple700}"
+            
+            SelectedTodayTextColor="{StaticResource App_yellow400}"
+            TodayOutlineColor="{StaticResource App_indigo400}"
+            TodayFillColor="Transparent"
+            TodayTextColor="{StaticResource App_white400}"
+
+            SelectedDate="{Binding SelectedDate}"
+            Events="{Binding Events}">
+   
+
+            <!-- Template for rendering events -->
+            <controls:Calendar.EventTemplate>
+                <DataTemplate>
+ 
+                        <Border Background="{StaticResource App_gray800}"
+                                Stroke="Purple"
+                                StrokeThickness="1"
+                                Padding="10,5"
+                                Margin="0,0,0,3"
+                                StrokeShape="RoundRectangle 10">
+
+                            <HorizontalStackLayout Spacing="5">
+                                <Image Source="alarm.png" HeightRequest="13" Aspect="AspectFit" 
+                                       VerticalOptions="Center"/>
+
+                                <VerticalStackLayout Padding="4">
+                                    <Label Text="{Binding TaskTitle}"
+                                       TextColor="White"
+                                       FontAttributes="Bold"
+                                       FontSize="14"/>
+                                    <Label Text="{Binding Description}"
+                                       TextColor="LightGray"
+                                       FontSize="12"/>
+                                </VerticalStackLayout>
+
+                            </HorizontalStackLayout>
+
+           
+                        </Border>
+
+
+                </DataTemplate>
+            </controls:Calendar.EventTemplate>
+
+
+
+        </controls:Calendar>
+
+
+
+
+    </Grid>
+    
 </ContentPage>

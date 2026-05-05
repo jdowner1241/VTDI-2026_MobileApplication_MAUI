@@ -45,17 +45,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel.HomeVM
         [ObservableProperty]
         private bool isCompletedDisplay;
 
-        // public bool IsCompletedDisplay => !IsActive;
-
-        //[ObservableProperty]
-        //public bool isCompleted;
-
-        //private bool IsCompletedDisplay => !IsActive;
-
-
-
-        // public RelayCommand<bool> ToggleCompletionCommand { get;}
-
         public string? Notes => TaskEntity?.Notes;
         public List<Attachments>? Raw_Attachments => TaskEntity?.Attachments;
 
