@@ -14,18 +14,14 @@ namespace Mystic_ToDo_MAUI_.Services
 
     public class AppInitializer
     {
-
-        private readonly HomeViewModel _homeViewModel;
         private readonly ThemeSwitcher _themeSwitcher;
         private readonly DBInitializer _dbInitializer;
 
 
         public AppInitializer(
-                                HomeViewModel homeViewModel, 
                                 ThemeSwitcher themeSwitcher, 
                                 DBInitializer dbInitializer)
         {
-            _homeViewModel = homeViewModel;
             _themeSwitcher = themeSwitcher;
             _dbInitializer = dbInitializer;
         }
@@ -51,13 +47,18 @@ namespace Mystic_ToDo_MAUI_.Services
                 Debug.WriteLine(ex.StackTrace);
             }
 
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
 
+            if (!File.Exists(dbPath))
+            {
+                Debug.WriteLine("Database not ready yet. Creating schema...");
+            }
+
+            // Always ensure database is created and schema is up to date before loading data
+            await _dbInitializer.DBInitializerAsync();
 
             // Initialize database components and seed data
             await _dbInitializer.DBInitializerAsync();
-
-            // Initialize ViewModels (if needed)
-            await _homeViewModel.LoadDataAsync();
 
         }
 

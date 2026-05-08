@@ -61,13 +61,40 @@
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<AndroidResource Remove="ViewModel\GroupListVM\**" />
+		<Compile Remove="ViewModel\GroupListVM\**" />
+		<EmbeddedResource Remove="ViewModel\GroupListVM\**" />
+		<MauiCss Remove="ViewModel\GroupListVM\**" />
+		<MauiXaml Remove="ViewModel\GroupListVM\**" />
+		<None Remove="ViewModel\GroupListVM\**" />
+
+		<!-- Package Google credentials as an app package asset so it can be opened with FileSystem.OpenAppPackageFileAsync("credentials.json") -->
+		<MauiAsset Include="Resources\Credentials\credentials.json" LogicalName="credentials.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</MauiAsset>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Remove="Resources\Raw\credentials.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\Credentials\credentials.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\Raw\credentials.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.1.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Google.Apis.Auth" Version="1.74.0" />
+		<PackageReference Include="Google.Apis.Calendar.v3" Version="1.73.0.4073" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.7" />
 		<PackageReference Include="Plugin.Maui.Calendar" Version="3.0.1" />
@@ -114,7 +141,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Services\Converters\" />
-	  <Folder Include="ViewModel\GroupListVM\" />
 	</ItemGroup>
 
 </Project>

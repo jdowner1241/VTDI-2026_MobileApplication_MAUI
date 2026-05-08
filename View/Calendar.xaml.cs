@@ -9,15 +9,6 @@ public partial class Calendar : ContentPage
 		InitializeComponent();
 		BindingContext = calendarViewModel;
     }
-    //protected override void OnDisappearing()
-    //{
-    //    base.OnDisappearing();
-
-    //    if (BindingContext is CalendarViewModel vm)
-    //    {
-    //        vm.Cancel();
-    //    }
-    //}
 
     protected override async void OnAppearing()
     {
@@ -25,6 +16,16 @@ public partial class Calendar : ContentPage
         if (BindingContext is CalendarViewModel vm)
         {
             await vm.LoadDataAsync();
+
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        if (BindingContext is CalendarViewModel vm)
+        {
+            vm.CancelSync();
         }
     }
 

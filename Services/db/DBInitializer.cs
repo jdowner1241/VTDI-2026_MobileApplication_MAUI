@@ -48,6 +48,10 @@ namespace Mystic_ToDo_MAUI_.Services.db
                                 ColorHex=BaseColors.blue300, IconPath="list.png", IsDefault = true
                                 },
                 new GroupList {
+                                GroupName = "Google Events", ParentId = 1,
+                                ColorHex=BaseColors.purple300, IconPath="notification_important.png", IsDefault = true
+                                },
+                new GroupList {
                                 GroupName = "Important", ParentId = 1,
                                 ColorHex=BaseColors.red300, IconPath="notification_important.png", IsDefault = true
                                 },
@@ -77,10 +81,10 @@ namespace Mystic_ToDo_MAUI_.Services.db
 
             await _taskListRepo.SeedDefaultsAsync(new List<TaskList>
             {
-                new TaskList { Title = "Buy groceries", Notes = "Milk, Bread, Eggs", GroupID = 2, CreatedDate = DateTime.Now },
-                new TaskList { Title = "Finish project report", Notes = "Due by end of the week", GroupID = 3, CreatedDate = DateTime.Now },
-                new TaskList { Title = "Call plumber", Notes = "Fix the kitchen sink", GroupID = 2, CreatedDate = DateTime.Now },
-                new TaskList { Title = "Plan weekend trip", Notes = "", GroupID = 2, CreatedDate = DateTime.Now, Task_RepeatListID=2 }
+                new TaskList { Title = "Buy groceries", Notes = "Milk, Bread, Eggs", GroupID = 2, CreatedDate = DateTime.Now, IsGoogleEvent = false, GoogleEventID = "" },
+                new TaskList { Title = "Finish project report", Notes = "Due by end of the week", GroupID = 2, CreatedDate = DateTime.Now, IsGoogleEvent = false, GoogleEventID = "" },
+                new TaskList { Title = "Call plumber", Notes = "Fix the kitchen sink", GroupID = 2, CreatedDate = DateTime.Now, IsGoogleEvent = false, GoogleEventID = "" },
+                new TaskList { Title = "Plan weekend trip", Notes = "", GroupID = 2, CreatedDate = DateTime.Now, Task_RepeatListID=2, IsGoogleEvent = false, GoogleEventID = "" }
             });
 
 

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Mystic_ToDo_MAUI_.Model.db.tables;
+using Mystic_ToDo_MAUI_.Services.API;
 using Mystic_ToDo_MAUI_.Services.db;
 using Syncfusion.Maui.Core.Hosting;
 
@@ -26,6 +27,7 @@ namespace Mystic_ToDo_MAUI_
                 });
 
             // Services
+            builder.Services.AddSingleton<Services.AppState>();
             builder.Services.AddSingleton<Services.ThemeHelpers.ThemeSwitcher>();
             builder.Services.AddSingleton<Services.db.DBInitializer>();
             builder.Services.AddSingleton<Services.AppInitializer>();
@@ -36,6 +38,8 @@ namespace Mystic_ToDo_MAUI_
                 var timer = Dispatcher.GetForCurrentThread().CreateTimer();
                 return timer;
             });
+            builder.Services.AddSingleton<GoogleCalendarAPIHelper>();
+            builder.Services.AddSingleton<GoogleTaskSyncService>();
 
             // DB
             builder.Services.AddSingleton<DBManager<GroupList>>();

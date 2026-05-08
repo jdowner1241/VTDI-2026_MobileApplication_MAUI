@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Mystic_ToDo_MAUI_.Model.db.tables;
 using Mystic_ToDo_MAUI_.Resources.SharedResources.SharedColor;
+using Mystic_ToDo_MAUI_.Services;
 using Mystic_ToDo_MAUI_.Services.db;
 using Mystic_ToDo_MAUI_.View.Editor;
 using Mystic_ToDo_MAUI_.ViewModel.HomeVM;
@@ -26,12 +27,13 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Repositories for database access
         // -----------------------------
-        private readonly DBInitializer _dbInitializer;
+        private readonly AppState _appState;
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
         private readonly DBManager<TaskList_RepeatList> _taskList_RepeatListRepo;
         private readonly DBManager<Attachments> _attachmentsRepo;
+
 
 
         // -----------------------------
@@ -197,7 +199,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // Constructor
         // -----------------------------
         public HomeViewModel(
-            DBInitializer dbInitializer,
+            AppState appState,
             DBManager<GroupList> groupRepo,
             DBManager<TaskList> taskRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
@@ -207,7 +209,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         ) 
         { 
             Title = "Home";
-            _dbInitializer = dbInitializer;
+            _appState = appState;
             _groupListRepo = groupRepo;
             _taskListRepo = taskRepo;
             _taskList_RepeatTagRepo = repeatTagRepo;
@@ -1804,18 +1806,24 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Async Method for Loading Data Automatically 
         // -----------------------------
+
+        public async Task VMInitializeAsync()
+        {
+            
+
+        }
+
+        public async Task RefreshDataAsync()
+        {
+            await _appState.WaitUntilReady();
+
+
+
+        }
+
         public async Task LoadDataAsync() 
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
-
-            if (!File.Exists(dbPath))
-            {
-                Debug.WriteLine("Database not ready yet. Creating schema...");
-            }
-
-            // Always ensure database is created and schema is up to date before loading data
-            await _dbInitializer.DBInitializerAsync();
-
+            await _appState.WaitUntilReady();
 
             // Now safe to call repo methods
             await GetGroupList();

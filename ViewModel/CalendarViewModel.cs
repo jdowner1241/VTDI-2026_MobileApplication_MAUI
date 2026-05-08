@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Google.Apis.Calendar.v3;
 using Mystic_ToDo_MAUI_.Model.db.tables;
+using Mystic_ToDo_MAUI_.Services;
 using Mystic_ToDo_MAUI_.Services.Alarm;
+using Mystic_ToDo_MAUI_.Services.API;
 using Mystic_ToDo_MAUI_.Services.db;
 using Mystic_ToDo_MAUI_.ViewModel.CalendarVM;
 using Mystic_ToDo_MAUI_.ViewModel.HomeVM;
@@ -11,8 +14,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Input;
 
 
 namespace Mystic_ToDo_MAUI_.ViewModel
@@ -22,11 +27,16 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         // Repositories for database access
         // -----------------------------
-        private readonly DBInitializer _dbInitializer;
+        private readonly AppState _appState;
         private readonly DBManager<GroupList> _groupListRepo;
         private readonly DBManager<TaskList> _taskListRepo;
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
         private readonly DBManager<TaskList_RepeatList> _taskList_RepeatListRepo;
+
+        private readonly GoogleCalendarAPIHelper _googleHelper;
+        private readonly GoogleTaskSyncService _syncService;
+
+        private CancellationTokenSource _cts;
 
 
         // -----------------------------
@@ -38,7 +48,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             LoadTasksForDate(value);
         }
-
 
         [ObservableProperty]
         public ObservableCollection<CalendarDateTaskVM> groupTasks = new();
@@ -61,29 +70,42 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public EventCollection events = new();
 
 
+     
+
         // Flags for Async loading state
         [ObservableProperty]
         bool loading_SelectedDateTasks = false;
         [ObservableProperty]
         bool loading_GroupList = false;
+        [ObservableProperty]
+        bool googleSyncEnabled = false;
+
+        private SemaphoreSlim _syncLock = new(1, 1);
 
         // -----------------------------
         // Constructor
         // -----------------------------
 
         public CalendarViewModel
-            (DBInitializer dbInitializer,
+            (
+            AppState appState,
             DBManager<TaskList> taskRepo,
             DBManager<GroupList> groupListRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
-            DBManager<TaskList_RepeatList> taskList_RepeatListRepo
+            DBManager<TaskList_RepeatList> taskList_RepeatListRepo,
+            GoogleCalendarAPIHelper googleHelper,
+            GoogleTaskSyncService syncService
             )
         {
-            _dbInitializer = dbInitializer;
+            Title = "Calendar";
+            _appState = appState;
             _groupListRepo = groupListRepo;
             _taskListRepo = taskRepo;
             _taskList_RepeatTagRepo = repeatTagRepo;
             _taskList_RepeatListRepo = taskList_RepeatListRepo;
+
+            _googleHelper = googleHelper;
+            _syncService = syncService;
 
             // Default to today
             SelectedDate = DateTime.Today;
@@ -140,58 +162,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
 
-
-        //async Task LoadTasksForDate(DateTime date)
-        //{
-        //    if (Loading_SelectedDateTasks) return;
-
-        //    try
-        //    {
-        //        Loading_SelectedDateTasks = true;
-
-        //        TasksForSelectedDate.Clear();
-        //        Events.Clear();
-
-        //        var tasks = await _taskListRepo.GetAllAsync();
-
-        //        foreach (var task in tasks)
-        //        {
-        //            // Skip tasks that don't match the selected group (if a group is selected)
-        //            if (SelectedGroup != null && task.GroupID != SelectedGroup.ID)
-        //                continue;
-
-
-        //            if (task.CreatedDate.Date == date.Date ||
-        //                (task.ModifiedDate.HasValue && task.ModifiedDate.Value.Date == date.Date))
-        //            {
-        //                var vm = new CalendarDateTaskVM(task, _taskListRepo, _taskList_RepeatTagRepo, _taskList_RepeatListRepo);
-        //                await vm.LoadInfoAsync();
-        //                TasksForSelectedDate.Add(vm);
-
-        //                // Add to EventCollection using DueDate or CreatedDate
-        //                var eventDate = vm.DueDate?.Date ?? task.CreatedDate.Date;
-
-        //                if (!Events.ContainsKey(eventDate))
-        //                    Events[eventDate] = new ArrayList();
-
-        //                // EventCollection stores values as non-generic ICollection.
-        //                // Cast to IList to call Add(object).
-        //                ((IList)Events[eventDate]).Add(vm); // store the VM directly
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine($"Unable to get Task for selected Date. Error: {ex.Message}");
-        //        await Shell.Current.DisplayAlertAsync("Error", $"Unable to get Task for selected Date.", "OK");
-        //    }
-        //    finally 
-        //    {
-        //        Loading_SelectedDateTasks = false;
-        //    }
-
-        //}
-
         [RelayCommand]
         async Task GetGroupList()
         {
@@ -237,20 +207,90 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
 
+        [RelayCommand]
+        public async Task SyncGoogleCalendar()
+        {
+            if (GoogleSyncEnabled) return;
+
+            try
+            {
+                GoogleSyncEnabled = true;
+
+                await LoadGoogleEventsAsync();
+                //var service = await GoogleCalendarAPIHelper.GetCalendarServiceAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error syncing Google Calendar: {ex.Message}");
+            }
+            finally
+            {
+                GoogleSyncEnabled = false;
+            }
+        }
+
+        // Google API integration for Fetching Calendar Events
+        public async Task LoadGoogleEventsAsync()
+        {
+      
+            await _syncLock.WaitAsync();
+            _cts = new CancellationTokenSource();
+
+            try
+            {
+
+                var service = await _googleHelper.GetCalendarServiceAsync();
+
+                var request = service.Events.List("primary");
+                request.TimeMin = DateTime.Now;
+                request.TimeMax = DateTime.Now.AddMonths(1);
+                request.ShowDeleted = false;
+                request.SingleEvents = true;
+                request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
+
+                var eventsResp = await request.ExecuteAsync();
+
+                if (eventsResp.Items != null && eventsResp.Items.Count > 0)
+                {
+                    foreach (var ev in eventsResp.Items)
+                    {
+                        // Sync Events from Google Calendar to local database as Tasks with a special "Google Events" group
+                        await _syncService.SaveGoogleEventAsync(ev);
+                    }
+
+
+                    // Reload tasks to include any new Google Events
+                    await Task.Delay(1000);
+                    await LoadGroupTasksAsync();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Sync cancelled.");
+                await Shell.Current.DisplayAlertAsync("Error", $"Unable to Sync Google Events.", "OK");
+            }
+            finally
+            {
+                _syncLock.Release();
+            }
+
+
+        }
+
+
+        public void CancelSync()
+        {
+            _cts?.Cancel();
+        }
+
+
         // -----------------------------
         // Async Method for Loading Data Automatically 
         // -----------------------------
         public async Task LoadDataAsync()
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
-
-            if (!File.Exists(dbPath))
-            {
-                Debug.WriteLine("Database not ready yet. Creating schema...");
-            }
-
-            // Always ensure database is created and schema is up to date before loading data
-            await _dbInitializer.DBInitializerAsync();
+            await _appState.WaitUntilReady();
 
             // Now safe to call repo methods
             await GetGroupList();
@@ -264,6 +304,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             // Show Task data for the selected date after ensuring DB is ready
             await RefreshTasks();
         }
+
+
+
 
 
     }

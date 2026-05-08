@@ -17,6 +17,9 @@ namespace Mystic_ToDo_MAUI_.Model.db.tables
         public DateTime? ModifiedDate { get; set; } = null;
         public bool IsActive { get; set; } = true;
 
+        public string GoogleEventID { get; set; } = string.Empty;
+        public bool IsGoogleEvent { get; set; } = false;
+
 
 
         //  Foreign key to TaskList_AddedInfo
