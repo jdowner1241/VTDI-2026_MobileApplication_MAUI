@@ -15,38 +15,6 @@ namespace Mystic_ToDo_MAUI_.Services.ThemeHelpers
           
         }
 
-
-        //public void SetTheme(string themeName)
-        //{
-        //    try 
-        //    {
-
-        //        var merged = Application.Current?.Resources?.MergedDictionaries;
-        //        if (merged == null)
-        //            return;
-
-        //        // Remove existing theme dictionary
-        //        var toRemove = merged.Where(md => md is Dark || md is Light).ToList();
-        //        foreach (var md in toRemove)
-        //            merged.Remove(md);
-
-        //        // Add the new theme
-        //        if (string.Equals(themeName, "Dark", StringComparison.OrdinalIgnoreCase))
-        //            merged.Add(new Dark());
-
-        //        else
-        //            merged.Add(new Light());
-
-        //        merged.Add(new CustomStyles());
-        //        merged.Add(new BrushOnlyStyles());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine($"Theme apply failed: {ex}");
-        //    }
-        //}
-
-
         public void SetTheme(string themeName)
         {
             var app = Application.Current;

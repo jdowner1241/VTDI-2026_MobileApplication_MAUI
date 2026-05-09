@@ -474,24 +474,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             }
         }
 
-        //[RelayCommand]
-        //void SelectExpandedGroup(GroupListViewModel selectedSubGroup)
-        //{
-        //    if (selectedSubGroup == null) return;
-
-        //    // Clear all other expanded selections
-        //    foreach (var g in CustomGroups)
-        //    {
-        //        foreach (var sub in g.SubGroups)
-        //            sub.IsExpandedSelected = false;
-        //    }
-
-        //    // Mark the new one
-        //    selectedSubGroup.IsExpandedSelected = true;
-        //    ExpandedSelectedGroup = selectedSubGroup;
-        //}
-
-
 
         private IEnumerable<int> GetAllGroupIds(GroupListViewModel groupVm)
         {
@@ -559,7 +541,9 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 // Default groups → new Group under Root
                 if (parent.IsDefault && (parent.GroupName == "Default" || 
                                          parent.GroupName == "Important" || 
-                                         parent.GroupName == "Completed"))
+                                         parent.GroupName == "Completed" ||
+                                         parent.GroupName == "Google Events"
+                                         ))
                 {
                     parent = _lookup[GroupListViewModel.RootParentId]; // Root
                     IsGroupListBeingAdded = true; // Set to adding Group

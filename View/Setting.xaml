@@ -273,36 +273,102 @@
 
 
                 <!-- About Section -->
-                <Frame
-                    Padding="15"
-                    BackgroundColor="#1E1E1E"
-                    BorderColor="#2C2C2C"
-                    CornerRadius="16"
-                    HasShadow="False">
+            <Frame
+                Padding="15"
+                BackgroundColor="#1E1E1E"
+                BorderColor="#2C2C2C"
+                CornerRadius="16"
+                HasShadow="False">
 
-                    <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout Spacing="10">
 
+                    <!-- Header -->
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="About Mystic ToDo"
+                        TextColor="White" />
+
+                    <!-- Description -->
+                    <Label
+                        FontSize="13"
+                        LineBreakMode="WordWrap"
+                        Text=" Mystic ToDo is a cross-platform productivity and task management application built using .NET MAUI. The app helps users organize tasks, reminders, schedules, and recurring activities through a clean and modern interface."
+                        TextColor="White" />
+
+                    <!-- Version -->
+                    <Grid ColumnDefinitions="Auto,*">
                         <Label
                             FontAttributes="Bold"
-                            FontSize="18"
-                            Text="About"
-                            TextColor="White" />
-
-                        <Label
-                            FontSize="14"
-                            Text="Mystic ToDo"
-                            TextColor="White" />
-
-                        <Label
                             FontSize="12"
-                            Opacity="0.7"
-                            Text="Version 0.1.8"
+                            Text="Version : "
+                            TextColor="#80B3FF" />
+
+                        <Label
+                            Grid.Column="1"
+                            FontSize="12"
+                            Text=" 0.1.11"
                             TextColor="White" />
+                    </Grid>
 
-                    </VerticalStackLayout>
-                </Frame>
+                    <!-- Platform -->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            Text="Platforms : "
+                            TextColor="#80B3FF" />
 
-            </VerticalStackLayout>
+                        <Label
+                            Grid.Column="1"
+                            FontSize="12"
+                            Text=" Windows , Android"
+                            TextColor="White" />
+                    </Grid>
+
+                    <!-- Database -->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            Text="Database : "
+                            TextColor="#80B3FF" />
+
+                        <Label
+                            Grid.Column="1"
+                            FontSize="12"
+                            Text=" SQLite"
+                            TextColor="White" />
+                    </Grid>
+
+                    <!-- Features -->
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            Text="Features : "
+                            TextColor="#80B3FF" />
+
+                        <Label
+                            Grid.Column="1"
+                            FontSize="12"
+                            LineBreakMode="WordWrap"
+                            Text=" Task Tracking, Calendar View, Recurring Tasks, Group Management, Dark/Light Themes, Google Calender Sycning. "
+                            TextColor="White" />
+                    </Grid>
+
+                    <!-- Footer -->
+                    <Label
+                        FontSize="11"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.6"
+                        Text="Developed with .NET MAUI in 2026"
+                        TextColor="White" />
+
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
         </ScrollView>
 
 
