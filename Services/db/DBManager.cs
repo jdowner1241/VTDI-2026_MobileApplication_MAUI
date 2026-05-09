@@ -11,42 +11,46 @@ namespace Mystic_ToDo_MAUI_.Services.db
     public class DBManager<T> where T : new()
     {
 
-        private SQLiteAsyncConnection? _database;
-        private string? _dbPath;
-
+        private readonly DBService _dbService;
+        private SQLiteAsyncConnection Database => _dbService.Database;
         public bool IsInitialized { get; private set; }
 
-        public DBManager() 
+        public DBManager(DBService dbService) 
         {
-            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
-            _database = new SQLiteAsyncConnection(_dbPath);
+            _dbService = dbService;
+            //_dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
+            //_database = new SQLiteAsyncConnection(_dbPath);
+        }
+        public async Task InitializeTableAsync()
+        {
+            EnsureInitialized();
+
+            await Database.CreateTableAsync<T>();
+
+            Debug.WriteLine($"[DBManager] Table created: {typeof(T).Name}");
         }
 
-        public async Task InitializeAsync()
-        {
-            _dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
-            _database = new SQLiteAsyncConnection(_dbPath);
-            var wasCreated = await _database.CreateTableAsync<T>();
-            Debug.WriteLine($"Database : {typeof(T).Name}. Creation Status : {wasCreated}");
 
-            IsInitialized = true;
-        }
+        //public async Task InitializeAsync()
+        //{
+        //    _dbPath = Path.Combine(FileSystem.AppDataDirectory, "mystic_todo.db");
+        //    _database = new SQLiteAsyncConnection(_dbPath);
+        //    var wasCreated = await _database.CreateTableAsync<T>();
+        //    Debug.WriteLine($"Database : {typeof(T).Name}. Creation Status : {wasCreated}");
+
+        //    IsInitialized = true;
+        //}
 
 
         // Get DB path 
-        public string GetDBPath() => _dbPath  ?? string.Empty;
+        //public string GetDBPath() => _dbPath  ?? string.Empty;
 
         private void EnsureInitialized()
         {
-            if (_database == null) 
-            {
-                throw new InvalidOperationException("Database not initialized. Call InitializeAsync() first.");
-            }
-            else
-            {
-                IsInitialized = true;
-            }
-               
+            if (_dbService == null)
+                throw new InvalidOperationException("DBService not injected.");
+
+            // Database property will throw if not ready anyway
         }
 
 
@@ -56,10 +60,10 @@ namespace Mystic_ToDo_MAUI_.Services.db
             EnsureInitialized();
             var result = 0;
 
-            if (_database != null)
+            if (Database != null)
             {
                 Debug.WriteLine($"[DBManager] Inserting {typeof(T).Name}: {item}");
-                result = await _database.InsertAsync(item);
+                result = await Database.InsertAsync(item);
                 Debug.WriteLine($"[DBManager] Insert result: {result}");
             }
     
@@ -72,10 +76,10 @@ namespace Mystic_ToDo_MAUI_.Services.db
             EnsureInitialized();
             var result = 0;
 
-            if (_database != null)
+            if (Database != null)
             {
                 Debug.WriteLine($"[DBManager] Updating {typeof(T).Name}: {item}");
-                result = await _database.UpdateAsync(item);
+                result = await Database.UpdateAsync(item);
                 Debug.WriteLine($"[DBManager] Update result: {result}");
             }
 
@@ -88,17 +92,17 @@ namespace Mystic_ToDo_MAUI_.Services.db
             EnsureInitialized();
             Debug.WriteLine($"[DBManager] Save called for {typeof(T).Name} with Id={id}");
 
-            var existing = await _database.FindAsync<T>(id);
+            var existing = await Database.FindAsync<T>(id);
             if (existing == null)
             {
                 Debug.WriteLine($"[DBManager] No existing record found. Inserting new.");
-                return await _database.InsertAsync(item);
+                return await Database.InsertAsync(item);
                 
             }
             else
             {
                 Debug.WriteLine($"[DBManager] Existing record found. Updating.");
-                return await _database.UpdateAsync(item);
+                return await Database.UpdateAsync(item);
                 
             }
         }
@@ -108,7 +112,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
         public Task<List<T>> GetAllAsync()
         {
             EnsureInitialized();
-            return _database.Table<T>().ToListAsync();
+            return Database.Table<T>().ToListAsync();
  
         }
 
@@ -116,7 +120,7 @@ namespace Mystic_ToDo_MAUI_.Services.db
         public Task<T> GetByIdAsync(int id)
         {
             EnsureInitialized();
-            return _database.FindAsync<T>(id);
+            return Database.FindAsync<T>(id);
         }
 
         // Delete 
@@ -125,14 +129,16 @@ namespace Mystic_ToDo_MAUI_.Services.db
             EnsureInitialized();
             var result = 0;
 
-            if (_database != null) 
+            if (Database != null) 
             {
                 Debug.WriteLine($"[DBManager] Deleting {typeof(T).Name}: {item}");
-                result = await _database.DeleteAsync(item);
+                result = await Database.DeleteAsync(item);
                 Debug.WriteLine($"[DBManager] Delete result: {result}");
             }
             return result; 
         }
+
+      
 
         // Seed default value 
         public async Task SeedDefaultsAsync(IEnumerable<T> defaultItems)
@@ -140,12 +146,12 @@ namespace Mystic_ToDo_MAUI_.Services.db
             EnsureInitialized();
 
 
-            if (_database != null) 
+            if (Database != null) 
             {
-                var existing = await _database.Table<T>().CountAsync();
+                var existing = await Database.Table<T>().CountAsync();
                 if (existing == 0)
                 {
-                    await _database.InsertAllAsync(defaultItems);
+                    await Database.InsertAllAsync(defaultItems);
                     Debug.WriteLine($"[DBManager] Seeded {typeof(T).Name} with defaults.");
                 }
             }    

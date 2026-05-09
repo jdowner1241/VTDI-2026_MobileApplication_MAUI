@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Google.Apis.Calendar.v3;
+using Mystic_ToDo_MAUI_.Model;
 using Mystic_ToDo_MAUI_.Services;
 using Mystic_ToDo_MAUI_.Services.API;
+using Mystic_ToDo_MAUI_.Services.db;
+using Mystic_ToDo_MAUI_.Services.ThemeHelpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +20,10 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // Repositories for database access
         // -----------------------------
         private readonly AppState _appState;
+        private readonly DBService _dbService;
+        private readonly DBInitializer _dbInitializer;
+        private readonly AppSettingsService _settingsService;
+        private readonly ThemeSwitcher _themeSwitcher;
         private readonly GoogleCalendarAPIHelper _googleHelper;
         private readonly GoogleTaskSyncService _syncService;
 
@@ -27,18 +34,52 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // -----------------------------
         [ObservableProperty]
         private bool isDarkModeEnabled;
+        partial void OnIsDarkModeEnabledChanged(bool value)
+        {
+            if (_isInitializing)
+                return;
+
+            if (value)
+            {
+                _themeSwitcher.SetTheme("DarkTheme");
+            }
+            else
+            {
+                _themeSwitcher.SetTheme("LightTheme");
+            }
+
+            _ = SaveSettingsAsync();
+        }
 
         [ObservableProperty]
         private bool alarmNotificationsEnabled;
+        partial void OnAlarmNotificationsEnabledChanged(bool value)
+        {
+            if (_isInitializing)
+                return;
+
+            _ = SaveSettingsAsync();
+        }
 
         [ObservableProperty]
         private bool repeatNotificationsEnabled;
+        partial void OnRepeatNotificationsEnabledChanged(bool value)
+        {
+            if (_isInitializing)
+                return;
+
+            _ = SaveSettingsAsync();
+        }
 
         [ObservableProperty]
         private bool googleSyncEnabled;
         partial void OnGoogleSyncEnabledChanged(bool value)
         {
+            if (_isInitializing)
+                return;
+
             Preferences.Default.Set("GoogleSyncEnabled", value);
+            _ = SaveSettingsAsync();
         }
 
 
@@ -61,7 +102,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         // Flags
         // -----------------------------
         private SemaphoreSlim _syncLock = new(1, 1);
-     
+        private bool _isInitializing;
 
         // -----------------------------
         // Constructor
@@ -70,13 +111,22 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         public SettingViewModel
             (
                 AppState appState,
+                DBInitializer dbInitializer,
+                DBService dbService,
                 GoogleCalendarAPIHelper googleHelper,
-                GoogleTaskSyncService syncService
+                GoogleTaskSyncService syncService,
+                AppSettingsService settingsService,
+                ThemeSwitcher themeSwitcher
             )
         {
             _appState = appState;
+            _dbInitializer = dbInitializer;
+            _dbService = dbService;
             _googleHelper = googleHelper;
             _syncService = syncService;
+
+            _settingsService = settingsService;
+            _themeSwitcher = themeSwitcher;
         }
 
         // -----------------------------
@@ -107,6 +157,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                     Preferences.Default.Set("GoogleAccountEmail", GoogleAccountEmail);
 
                     Debug.WriteLine($"Connected Google Account: {GoogleAccountEmail}");
+
+                    await SaveSettingsAsync();
 
                 }
             }
@@ -182,6 +234,8 @@ namespace Mystic_ToDo_MAUI_.ViewModel
                 "Disconnected",
                 "Google Calendar disconnected.",
                 "OK");
+
+            await SaveSettingsAsync();
         }
 
 
@@ -244,10 +298,134 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
 
+        [RelayCommand]
+        private async Task BackupDatabaseAsync()
+        {
+            try
+            {
+                var dbPath = Path.Combine(
+                    FileSystem.AppDataDirectory,
+                    "mystic_todo.db");
+
+                if (!File.Exists(dbPath))
+                {
+                    await Shell.Current.DisplayAlertAsync(
+                        "Backup Failed",
+                        "Database file not found.",
+                        "OK");
+
+                    return;
+                }
+
+                // Create backup folder
+                var backupFolder = Path.Combine(
+                    FileSystem.AppDataDirectory,
+                    "Backups");
+
+                Directory.CreateDirectory(backupFolder);
+
+                // Timestamped backup name
+                var backupFile = Path.Combine(
+                    backupFolder,
+                    $"mystic_todo_backup_{DateTime.Now:yyyyMMdd_HHmmss}.db");
+
+                // Copy DB
+                File.Copy(dbPath, backupFile, true);
+
+                await Shell.Current.DisplayAlertAsync(
+                    "Backup Complete",
+                    $"Database backup created successfully.\n\n{backupFile}",
+                    "OK");
+
+                Debug.WriteLine($"Backup created: {backupFile}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Backup error: {ex.Message}");
+
+                await Shell.Current.DisplayAlertAsync(
+                    "Backup Error",
+                    ex.Message,
+                    "OK");
+            }
+        }
+
+        [RelayCommand]
+        private async Task ResetDatabaseAsync()
+        {
+            var confirm = await Shell.Current.DisplayAlertAsync(
+                "Reset Database",
+                "This will delete ALL local data and recreate the database.\n\nContinue?",
+                "Yes",
+                "No");
+
+            if (!confirm)
+                return;
+
+            try
+            {
+                IsLoading = true;
+
+                var dbPath = Path.Combine(
+                    FileSystem.AppDataDirectory,
+                    "mystic_todo.db");
+
+                // STOP DB USAGE FIRST (IMPORTANT)
+                _cts?.Cancel(); // stop any running operations
+                await Task.Delay(200);
+
+                // CLOSE CONNECTION (CRITICAL FIX)
+                await _dbService.CloseAsync();
+                await Task.Delay(300);
+
+                // Delete old DB
+                if (File.Exists(dbPath))
+                {
+                    File.Delete(dbPath);
+
+                    Debug.WriteLine("Old database deleted.");
+                }
+
+                // Recreate schema + seed
+                await _dbInitializer.DBInitializerAsync();
+
+                await Shell.Current.DisplayAlertAsync(
+                       "Reset Complete",
+                       "Database recreated successfully.\nPlease restart the app for best stability.",
+                       "OK");
+
+                Debug.WriteLine("Database reset completed.");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Reset DB error: {ex.Message}");
+
+                await Shell.Current.DisplayAlertAsync(
+                    "Reset Error",
+                    ex.Message,
+                    "OK");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
 
 
-        public ICommand BackupDatabaseCommand { get; }
-        public ICommand ResetDatabaseCommand { get; }
+        private async Task SaveSettingsAsync()
+        {
+            var settings = new AppSettingsModel
+            {
+                IsDarkModeEnabled = IsDarkModeEnabled,
+                AlarmNotificationsEnabled = AlarmNotificationsEnabled,
+                RepeatNotificationsEnabled = RepeatNotificationsEnabled,
+                GoogleSyncEnabled = GoogleSyncEnabled,
+                GoogleAccountEmail = GoogleAccountEmail
+            };
+
+            await _settingsService.SaveSettingsAsync(settings);
+        }
 
 
         // Refresh Other UI elements
@@ -268,22 +446,38 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         {
             await _appState.WaitUntilReady();
 
-            // Load Settings from Preferences file 
+            _isInitializing = true;
 
+            // Load Settings from Preferences file 
+            var settings = await _settingsService.LoadSettingsAsync();
+
+            IsDarkModeEnabled = settings.IsDarkModeEnabled;
+            AlarmNotificationsEnabled = settings.AlarmNotificationsEnabled;
+            RepeatNotificationsEnabled = settings.RepeatNotificationsEnabled;
 
             // Load Google Sync State
-            GoogleSyncEnabled =
-                Preferences.Default.Get("GoogleSyncEnabled", false);
+            GoogleSyncEnabled = settings.GoogleSyncEnabled;
+            GoogleAccountEmail = settings.GoogleAccountEmail;
 
-            if (GoogleSyncEnabled)
-            {
-                IsGoogleConnected = true;
-                //GoogleAccountEmail = "Google Account Connected";
-                GoogleAccountEmail =
-                    Preferences.Default.Get(
-                        "GoogleAccountEmail",
-                        "Not Connected");
-            }
+            IsGoogleConnected =
+                GoogleSyncEnabled &&
+                !string.IsNullOrWhiteSpace(GoogleAccountEmail) &&
+                GoogleAccountEmail != "Not Connected";
+
+            //// Load Google Sync State
+            //GoogleSyncEnabled =
+            //    Preferences.Default.Get("GoogleSyncEnabled", false);
+
+            //if (GoogleSyncEnabled)
+            //{
+            //    IsGoogleConnected = true;
+            //    //GoogleAccountEmail = "Google Account Connected";
+            //    GoogleAccountEmail =
+            //        Preferences.Default.Get(
+            //            "GoogleAccountEmail",
+            //            "Not Connected");
+            //}
+            _isInitializing = false;
         }
 
     }

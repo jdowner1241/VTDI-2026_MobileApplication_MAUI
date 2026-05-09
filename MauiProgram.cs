@@ -28,7 +28,9 @@ namespace Mystic_ToDo_MAUI_
 
             // Services
             builder.Services.AddSingleton<Services.AppState>();
+            builder.Services.AddSingleton<Services.AppSettingsService>();
             builder.Services.AddSingleton<Services.ThemeHelpers.ThemeSwitcher>();
+            builder.Services.AddSingleton<Services.db.DBService>();
             builder.Services.AddSingleton<Services.db.DBInitializer>();
             builder.Services.AddSingleton<Services.AppInitializer>();
             builder.Services.AddSingleton<Services.Alarm.TaskRepo>();
@@ -40,6 +42,9 @@ namespace Mystic_ToDo_MAUI_
             });
             builder.Services.AddSingleton<GoogleCalendarAPIHelper>();
             builder.Services.AddSingleton<GoogleTaskSyncService>();
+
+            //  Repositories
+
 
             // DB
             builder.Services.AddSingleton<DBManager<GroupList>>();
@@ -56,9 +61,7 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddTransient<ViewModel.CalendarViewModel>();
             builder.Services.AddTransient<ViewModel.CalendarVM.CalendarDateTaskVM>();
             builder.Services.AddTransient<ViewModel.SettingViewModel>();
-
-
-            //  Repositories
+            
 
 #if DEBUG
             builder.Logging.AddDebug();
