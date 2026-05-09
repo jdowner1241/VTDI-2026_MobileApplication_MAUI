@@ -55,7 +55,7 @@ namespace Mystic_ToDo_MAUI_
             builder.Services.AddTransient<ViewModel.HomeVM.GroupListViewModel>();
             builder.Services.AddTransient<ViewModel.CalendarViewModel>();
             builder.Services.AddTransient<ViewModel.CalendarVM.CalendarDateTaskVM>();
-
+            builder.Services.AddTransient<ViewModel.SettingViewModel>();
 
 
             //  Repositories

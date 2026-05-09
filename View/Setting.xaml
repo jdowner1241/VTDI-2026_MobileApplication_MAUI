@@ -3,10 +3,307 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Mystic_ToDo_MAUI_.View.Setting"
              Title="Setting">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+        <ScrollView>
+            <VerticalStackLayout
+                Padding="20"
+                Spacing="20">
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="4">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="28"
+                        Text="Settings"
+                        TextColor="White" />
+
+                    <Label
+                        FontSize="14"
+                        Opacity="0.7"
+                        Text="Manage application preferences and integrations"
+                        TextColor="White" />
+                </VerticalStackLayout>
+
+
+                <!-- Appearance Section -->
+                <Frame
+                    Padding="15"
+                    BackgroundColor="#1E1E1E"
+                    BorderColor="#2C2C2C"
+                    CornerRadius="16"
+                    HasShadow="False">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Appearance"
+                            TextColor="White" />
+
+                        <!-- Theme -->
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <VerticalStackLayout>
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="Dark Mode"
+                                    TextColor="White" />
+
+                                <Label
+                                    FontSize="12"
+                                    Opacity="0.7"
+                                    Text="Enable dark application theme"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding IsDarkModeEnabled}" />
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+
+                <!-- Notifications Section -->
+                <Frame
+                    Padding="15"
+                    BackgroundColor="#1E1E1E"
+                    BorderColor="#2C2C2C"
+                    CornerRadius="16"
+                    HasShadow="False">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Notifications"
+                            TextColor="White" />
+
+                        <!-- Alarm Notifications -->
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <VerticalStackLayout>
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="Task Alarms"
+                                    TextColor="White" />
+
+                                <Label
+                                    FontSize="12"
+                                    Opacity="0.7"
+                                    Text="Enable reminder notifications"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding AlarmNotificationsEnabled}" />
+                        </Grid>
+
+                        <!-- Repeat Notifications -->
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <VerticalStackLayout>
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="Repeat Task Alerts"
+                                    TextColor="White" />
+
+                                <Label
+                                    FontSize="12"
+                                    Opacity="0.7"
+                                    Text="Allow repeated reminder notifications"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding RepeatNotificationsEnabled}" />
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+
+                <!-- Google Calendar Section -->
+                <Frame
+                    Padding="15"
+                    BackgroundColor="#1E1E1E"
+                    BorderColor="#2C2C2C"
+                    CornerRadius="16"
+                    HasShadow="False">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Google Calendar"
+                            TextColor="White" />
+
+                        <Label
+                            FontSize="13"
+                            Opacity="0.7"
+                            Text="Manage Google Calendar synchronization"
+                            TextColor="White" />
+
+                        <!-- Sync Toggle -->
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <VerticalStackLayout>
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="Enable Sync"
+                                    TextColor="White" />
+
+                                <Label
+                                    FontSize="12"
+                                    Opacity="0.7"
+                                    Text="Automatically sync tasks with Google Calendar"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding GoogleSyncEnabled}" />
+                        </Grid>
+
+                        <!-- Account -->
+                        <VerticalStackLayout Spacing="5">
+                            <Label
+                                FontAttributes="Bold"
+                                Text="Connected Account"
+                                TextColor="White" />
+
+                            <Label
+                                FontSize="13"
+                                Text="{Binding GoogleAccountEmail}"
+                                TextColor="#B0B0B0" />
+                        </VerticalStackLayout>
+
+                        <!-- Buttons -->
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Button
+                                BackgroundColor="#3B82F6"
+                                Command="{Binding ConnectGoogleCommand}"
+                                CornerRadius="12"
+                                Text="Connect"
+                                TextColor="White" />
+
+                            <Button
+                                BackgroundColor="#4CAF50"
+                                Command="{Binding SyncNowCommand}"
+                                CornerRadius="12"
+                                Text="Sync Now"
+                                TextColor="White" />
+
+                            <Button
+                                BackgroundColor="#D9534F"
+                                Command="{Binding DisconnectGoogleCommand}"
+                                CornerRadius="12"
+                                Text="Disconnect"
+                                TextColor="White" />
+
+                        </HorizontalStackLayout>
+
+                        <!-- Sync Progress -->
+                        <VerticalStackLayout Spacing="6">
+
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                IsVisible="{Binding IsSyncingGoogle}"
+                                Text="Syncing Google Calendar..."
+                                TextColor="White" />
+
+                            <ProgressBar
+                                HeightRequest="8"
+                                IsVisible="{Binding IsSyncingGoogle}"
+                                Progress="{Binding SyncProgress}" />
+
+                            <Label
+                                FontSize="12"
+                                HorizontalOptions="End"
+                                IsVisible="{Binding IsSyncingGoogle}"
+                                Text="{Binding SyncProgressText}"
+                                TextColor="#B0B0B0" />
+
+                        </VerticalStackLayout>
+
+                </VerticalStackLayout>
+                </Frame>
+
+
+                <!-- Database Section -->
+                <Frame
+                    Padding="15"
+                    BackgroundColor="#1E1E1E"
+                    BorderColor="#2C2C2C"
+                    CornerRadius="16"
+                    HasShadow="False">
+
+                    <VerticalStackLayout Spacing="15">
+
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="Database"
+                            TextColor="White" />
+
+                        <Button
+                            BackgroundColor="#F59E0B"
+                            Command="{Binding BackupDatabaseCommand}"
+                            CornerRadius="12"
+                            Text="Backup Database"
+                            TextColor="White" />
+
+                        <Button
+                            BackgroundColor="#EF4444"
+                            Command="{Binding ResetDatabaseCommand}"
+                            CornerRadius="12"
+                            Text="Reset Database"
+                            TextColor="White" />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+
+                <!-- About Section -->
+                <Frame
+                    Padding="15"
+                    BackgroundColor="#1E1E1E"
+                    BorderColor="#2C2C2C"
+                    CornerRadius="16"
+                    HasShadow="False">
+
+                    <VerticalStackLayout Spacing="10">
+
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="About"
+                            TextColor="White" />
+
+                        <Label
+                            FontSize="14"
+                            Text="Mystic ToDo"
+                            TextColor="White" />
+
+                        <Label
+                            FontSize="12"
+                            Opacity="0.7"
+                            Text="Version 0.1.8"
+                            TextColor="White" />
+
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+
 </ContentPage>

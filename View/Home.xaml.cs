@@ -12,16 +12,6 @@ public partial class Home : ContentPage
   
 	}
 
-    //protected override void OnDisappearing()
-    //{
-    //    base.OnDisappearing();
-
-    //    if (BindingContext is HomeViewModel vm)
-    //    {
-    //        vm.Deactivate();
-    //    }
-    //}
-
     protected override void OnDisappearing()
     {
         base.OnDisappearing();

@@ -32,10 +32,6 @@
                 VerticalOptions="Center"
                 WidthRequest="300"/>
 
-            <Button 
-                Text="Sync Google Calendar" 
-                Command="{Binding SyncGoogleCalendarCommand}" />
-
         </HorizontalStackLayout>
 
         

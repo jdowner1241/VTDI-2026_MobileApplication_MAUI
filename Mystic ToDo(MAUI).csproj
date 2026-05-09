@@ -141,6 +141,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Services\Converters\" />
+	  <Folder Include="ViewModel\SettingsVM\" />
 	</ItemGroup>
 
 </Project>

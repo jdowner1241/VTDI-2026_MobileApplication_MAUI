@@ -33,9 +33,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         private readonly DBManager<TaskList_RepeatTag> _taskList_RepeatTagRepo;
         private readonly DBManager<TaskList_RepeatList> _taskList_RepeatListRepo;
 
-        private readonly GoogleCalendarAPIHelper _googleHelper;
-        private readonly GoogleTaskSyncService _syncService;
-
         private CancellationTokenSource _cts;
 
 
@@ -77,10 +74,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         bool loading_SelectedDateTasks = false;
         [ObservableProperty]
         bool loading_GroupList = false;
-        [ObservableProperty]
-        bool googleSyncEnabled = false;
-
-        private SemaphoreSlim _syncLock = new(1, 1);
 
         // -----------------------------
         // Constructor
@@ -92,9 +85,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             DBManager<TaskList> taskRepo,
             DBManager<GroupList> groupListRepo,
             DBManager<TaskList_RepeatTag> repeatTagRepo,
-            DBManager<TaskList_RepeatList> taskList_RepeatListRepo,
-            GoogleCalendarAPIHelper googleHelper,
-            GoogleTaskSyncService syncService
+            DBManager<TaskList_RepeatList> taskList_RepeatListRepo
             )
         {
             Title = "Calendar";
@@ -103,9 +94,6 @@ namespace Mystic_ToDo_MAUI_.ViewModel
             _taskListRepo = taskRepo;
             _taskList_RepeatTagRepo = repeatTagRepo;
             _taskList_RepeatListRepo = taskList_RepeatListRepo;
-
-            _googleHelper = googleHelper;
-            _syncService = syncService;
 
             // Default to today
             SelectedDate = DateTime.Today;
@@ -207,77 +195,7 @@ namespace Mystic_ToDo_MAUI_.ViewModel
         }
 
 
-        [RelayCommand]
-        public async Task SyncGoogleCalendar()
-        {
-            if (GoogleSyncEnabled) return;
-
-            try
-            {
-                GoogleSyncEnabled = true;
-
-                await LoadGoogleEventsAsync();
-                //var service = await GoogleCalendarAPIHelper.GetCalendarServiceAsync();
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error syncing Google Calendar: {ex.Message}");
-            }
-            finally
-            {
-                GoogleSyncEnabled = false;
-            }
-        }
-
-        // Google API integration for Fetching Calendar Events
-        public async Task LoadGoogleEventsAsync()
-        {
-      
-            await _syncLock.WaitAsync();
-            _cts = new CancellationTokenSource();
-
-            try
-            {
-
-                var service = await _googleHelper.GetCalendarServiceAsync();
-
-                var request = service.Events.List("primary");
-                request.TimeMin = DateTime.Now;
-                request.TimeMax = DateTime.Now.AddMonths(1);
-                request.ShowDeleted = false;
-                request.SingleEvents = true;
-                request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-
-                var eventsResp = await request.ExecuteAsync();
-
-                if (eventsResp.Items != null && eventsResp.Items.Count > 0)
-                {
-                    foreach (var ev in eventsResp.Items)
-                    {
-                        // Sync Events from Google Calendar to local database as Tasks with a special "Google Events" group
-                        await _syncService.SaveGoogleEventAsync(ev);
-                    }
-
-
-                    // Reload tasks to include any new Google Events
-                    await Task.Delay(1000);
-                    await LoadGroupTasksAsync();
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine("Sync cancelled.");
-                await Shell.Current.DisplayAlertAsync("Error", $"Unable to Sync Google Events.", "OK");
-            }
-            finally
-            {
-                _syncLock.Release();
-            }
-
-
-        }
-
+ 
 
         public void CancelSync()
         {
