@@ -69,7 +69,13 @@ The application is built using the MVVM architecture and uses SQLite for local d
 ## 📥 Installation
 
 1. Clone the repository
-2. Build and run the application
+2. Open the solution file:
+   Mystic_ToDo(MAUI).sln
+3. Restore NuGet packages (Visual Studio will usually do this automatically)
+4. Select target platform:
+   Windows Machine OR
+   Android Emulator
+5. Build and Run the application (Press ▶ Start)
 
 ---
 
